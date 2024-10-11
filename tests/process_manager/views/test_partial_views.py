@@ -76,19 +76,25 @@ class TestMessagesView(LoginRequiredTest):
 
     def test_get(self, auth_client):
         """Tests basic calls of view method."""
-        from django.contrib.sessions.backends.db import SessionStore
-        from django.contrib.sessions.models import Session
+        from datetime import UTC, datetime, timedelta
 
-        session = Session.objects.get()
-        message_data = ["message 1", "message 2"]
-        store = SessionStore(session_key=session.session_key)
-        store["messages"] = message_data
-        store.save()
+        from main.models import DruncMessage
+
+        t1 = datetime.now(tz=UTC)
+        msg1 = "message 1"
+        t2 = t1 + timedelta(seconds=10)
+        msg2 = "message 2"
+        DruncMessage.objects.bulk_create(
+            [
+                DruncMessage(timestamp=t1, message=msg1),
+                DruncMessage(timestamp=t2, message=msg2),
+            ]
+        )
 
         with assertTemplateUsed("process_manager/partials/message_items.html"):
             response = auth_client.get(self.endpoint)
         assert response.status_code == HTTPStatus.OK
 
-        # messages have been removed from the session and added to the context
-        assert response.context["messages"] == message_data[::-1]
-        assert "messages" not in store.load()
+        # messages have been added to the context in reverse order
+        assert response.context["messages"][0] == f"{t2}: {msg2}"
+        assert response.context["messages"][1] == f"{t1}: {msg1}"
