@@ -2,7 +2,6 @@
 
 import django_tables2
 from django.contrib.auth.decorators import login_required
-from django.db import transaction
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from druncschema.process_manager_pb2 import ProcessInstance
@@ -63,10 +62,7 @@ def process_table(request: HttpRequest) -> HttpResponse:
 @login_required
 def messages(request: HttpRequest) -> HttpResponse:
     """Renders Kafka messages from the database."""
-    with transaction.atomic():
-        messages = [
-            f"{msg.timestamp}: {msg.message}" for msg in DruncMessage.objects.all()
-        ]
+    messages = [f"{msg.timestamp}: {msg.message}" for msg in DruncMessage.objects.all()]
     return render(
         request=request,
         context=dict(messages=messages[::-1]),
