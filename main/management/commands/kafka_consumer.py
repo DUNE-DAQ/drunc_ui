@@ -6,7 +6,6 @@ from typing import Any
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.db import transaction
 from druncschema.broadcast_pb2 import BroadcastMessage
 from kafka import KafkaConsumer
 
@@ -48,15 +47,12 @@ class Command(BaseCommand):
                     message_bodies.append(bm.data.value.decode("utf-8"))
 
                 if message_bodies:
-                    with transaction.atomic():
-                        # atomic here to prevent race condition with messages being
-                        # displayed by the web application
-                        DruncMessage.objects.bulk_create(
-                            [
-                                DruncMessage(timestamp=t, message=msg)
-                                for t, msg in zip(message_timestamps, message_bodies)
-                            ]
-                        )
+                    DruncMessage.objects.bulk_create(
+                        [
+                            DruncMessage(timestamp=t, message=msg)
+                            for t, msg in zip(message_timestamps, message_bodies)
+                        ]
+                    )
 
             # TODO: handle this (and timezone?) via settings.py
             MESSAGE_EXPIRE_SECS = 60
@@ -64,14 +60,11 @@ class Command(BaseCommand):
             # Remove expired messages from the database.
             message_timeout = timedelta(seconds=MESSAGE_EXPIRE_SECS)
             expire_time = datetime.now(tz=UTC) - message_timeout
-            with transaction.atomic():
-                # atomic here to prevent race condition with messages being
-                # displayed by the web application
-                query = DruncMessage.objects.filter(timestamp__lt=expire_time)
-                if query.count():
-                    if debug:
-                        self.stdout.write(
-                            f"Deleting {query.count()} messages "
-                            f"older than {expire_time}."
-                        )
-                    query.delete()
+            query = DruncMessage.objects.filter(timestamp__lt=expire_time)
+            if query.count():
+                if debug:
+                    self.stdout.write(
+                        f"Deleting {query.count()} messages "
+                        f"older than {expire_time}."
+                    )
+                query.delete()
