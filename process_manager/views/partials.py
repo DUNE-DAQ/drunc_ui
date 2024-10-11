@@ -21,7 +21,6 @@ def process_table(request: HttpRequest) -> HttpResponse:
     no check boxes selected. POST renders the table with checked boxes for any table row
     with a uuid provided in the select key of the request data.
     """
-    selected_rows = request.POST.getlist("select", [])
     session_info = get_session_info()
 
     status_enum_lookup = dict(item[::-1] for item in ProcessInstance.StatusCode.items())
@@ -39,7 +38,6 @@ def process_table(request: HttpRequest) -> HttpResponse:
                 "session": metadata.session,
                 "status_code": status_enum_lookup[process_instance.status_code],
                 "exit_code": process_instance.return_code,
-                "checked": (uuid in selected_rows),
             }
         )
     table = ProcessTable(table_data)
@@ -47,11 +45,6 @@ def process_table(request: HttpRequest) -> HttpResponse:
     # sort table data based on request parameters
     table_configurator = django_tables2.RequestConfig(request)
     table_configurator.configure(table)
-
-    # If all rows are selected, we check the header box
-    # The value is irrelevant, we just need to set the attribute
-    if len(selected_rows) == len(table_data):
-        table.columns["select"].attrs["th__input"]["checked"] = "checked"
 
     return render(
         request=request,

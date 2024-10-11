@@ -1,6 +1,7 @@
 """Tables for the process_manager app."""
 
 import django_tables2 as tables
+from django.utils.safestring import mark_safe
 
 restart_column_template = (
     "<a href={href} onclick=\"return confirm('{message}')\">{text}</a>".format(
@@ -26,6 +27,16 @@ logs_column_template = (
     "<a href=\"{% url 'process_manager:logs' record.uuid %}\">LOGS</a>"
 )
 
+header_checkbox_hyperscript = "on click set .row-checkbox.checked to my.checked"
+
+row_checkbox_hyperscript = """
+on click
+if <input.row-checkbox:not(:checked)/> is empty
+  set #header-checkbox.checked to true
+else
+  set #header-checkbox.checked to false
+"""
+
 
 class ProcessTable(tables.Table):
     """Defines and Process Table for the data from the Process Manager."""
@@ -43,6 +54,23 @@ class ProcessTable(tables.Table):
     select = tables.CheckBoxColumn(
         accessor="uuid",
         verbose_name="Select",
-        checked="checked",
-        attrs={"th__input": {"onclick": "toggle(this)"}},
+        attrs={
+            "th__input": {
+                "id": "header-checkbox",
+                "hx-preserve": "true",
+                "_": header_checkbox_hyperscript,
+            }
+        },
     )
+
+    def render_select(self, value: str) -> str:
+        """Customise behaviour of checkboxes in the select column.
+
+        Overriding the default render method for this column is required as the
+        hx-preserve attitribute requires all elements to have unique id values. We also
+        need to add the hyperscript required for the header checkbox behaviour.
+        """
+        return mark_safe(
+            f'<input type="checkbox" name="select" value="{value}" id="{value}-input" '
+            f'hx-preserve="true" class="row-checkbox" _="{row_checkbox_hyperscript}"'
+        )

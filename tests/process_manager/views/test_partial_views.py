@@ -2,7 +2,6 @@ from http import HTTPStatus
 from unittest.mock import MagicMock
 from uuid import uuid4
 
-import pytest
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
@@ -16,13 +15,16 @@ class TestProcessTableView(LoginRequiredTest):
 
     endpoint = reverse("process_manager:process_table")
 
-    @pytest.mark.parametrize("method", ("get", "post"))
-    def test_method(self, method, auth_client, mocker):
+    def test_get(self, auth_client, mocker):
         """Tests basic calls of view method."""
-        self._mock_session_info(mocker, [])
-        response = getattr(auth_client, method)(self.endpoint)
+        uuids = [str(uuid4()) for _ in range(5)]
+        self._mock_session_info(mocker, uuids)
+        response = auth_client.get(self.endpoint)
         assert response.status_code == HTTPStatus.OK
-        assert isinstance(response.context["table"], ProcessTable)
+        table = response.context["table"]
+        assert isinstance(table, ProcessTable)
+        for row, uuid in zip(table.data.data, uuids):
+            assert row["uuid"] == uuid
 
     def _mock_session_info(self, mocker, uuids):
         """Mocks views.get_session_info with ProcessInstanceList like data."""
@@ -33,40 +35,6 @@ class TestProcessTableView(LoginRequiredTest):
             instance_mock.status_code = 0
         mock().data.values.__iter__.return_value = instance_mocks
         return mock
-
-    def test_post_checked_rows(self, mocker, auth_client):
-        """Tests table data is correct when post data is included."""
-        all_uuids = [str(uuid4()) for _ in range(5)]
-        selected_uuids = all_uuids[::2]
-
-        self._mock_session_info(mocker, all_uuids)
-
-        response = auth_client.post(self.endpoint, data=dict(select=selected_uuids))
-        assert response.status_code == HTTPStatus.OK
-        table = response.context["table"]
-        assert isinstance(table, ProcessTable)
-
-        for row in table.data.data:
-            assert row["checked"] == (row["uuid"] in selected_uuids)
-        assert "checked" not in table.columns["select"].attrs["th__input"]
-
-    def test_post_header_checked(self, mocker, auth_client):
-        """Tests header checkbox is checked if all rows are checked."""
-        all_uuids = [str(uuid4()) for _ in range(5)]
-        selected_uuids = all_uuids
-
-        self._mock_session_info(mocker, all_uuids)
-
-        response = auth_client.post(self.endpoint, data=dict(select=selected_uuids))
-        assert response.status_code == HTTPStatus.OK
-        table = response.context["table"]
-        assert isinstance(table, ProcessTable)
-
-        # All rows should be checked
-        assert all(row["checked"] for row in table.data.data)
-
-        # So header should be checked as well
-        assert table.columns["select"].attrs["th__input"]["checked"] == "checked"
 
 
 class TestMessagesView(LoginRequiredTest):
