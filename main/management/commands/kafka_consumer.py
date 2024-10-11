@@ -58,20 +58,20 @@ class Command(BaseCommand):
                             ]
                         )
 
-                # TODO: handle this (and timezone?) via settings.py
-                MESSAGE_EXPIRE_SECS = 60
+            # TODO: handle this (and timezone?) via settings.py
+            MESSAGE_EXPIRE_SECS = 60
 
-                # Remove expired messages from the database.
-                message_timeout = timedelta(seconds=MESSAGE_EXPIRE_SECS)
-                expire_time = datetime.now(tz=UTC) - message_timeout
-                with transaction.atomic():
-                    # atomic here to prevent race condition with messages being
-                    # displayed by the web application
-                    query = DruncMessage.objects.filter(timestamp__lt=expire_time)
-                    if query.count():
-                        if debug:
-                            self.stdout.write(
-                                f"Deleting {query.count()} messages "
-                                f"older than {expire_time}."
-                            )
-                        query.delete()
+            # Remove expired messages from the database.
+            message_timeout = timedelta(seconds=MESSAGE_EXPIRE_SECS)
+            expire_time = datetime.now(tz=UTC) - message_timeout
+            with transaction.atomic():
+                # atomic here to prevent race condition with messages being
+                # displayed by the web application
+                query = DruncMessage.objects.filter(timestamp__lt=expire_time)
+                if query.count():
+                    if debug:
+                        self.stdout.write(
+                            f"Deleting {query.count()} messages "
+                            f"older than {expire_time}."
+                        )
+                    query.delete()
