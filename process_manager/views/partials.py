@@ -65,7 +65,8 @@ def messages(request: HttpRequest) -> HttpResponse:
     """Renders Kafka messages from the database."""
     with transaction.atomic():
         messages = [
-            f"{msg.timestamp}: {msg.message}" for msg in DruncMessage.objects.all()
+            f"{msg.timestamp.isoformat()}: {msg.message}"
+            for msg in DruncMessage.objects.all()
         ]
     return render(
         request=request,
