@@ -50,7 +50,7 @@ class Command(BaseCommand):
                 if message_bodies:
                     with transaction.atomic():
                         # atomic here to prevent race condition with messages being
-                        # popped by the web application
+                        # displayed by the web application
                         DruncMessage.objects.bulk_create(
                             [
                                 DruncMessage(timestamp=t, message=msg)
@@ -58,11 +58,20 @@ class Command(BaseCommand):
                             ]
                         )
 
-                MSG_PERSIST_TIME = 60  # seconds
+                # TODO: handle this (and timezone?) via settings.py
+                MESSAGE_EXPIRE_SECS = 60
 
                 # Remove expired messages from the database.
-                expire_time = datetime.now(tz=UTC) - timedelta(seconds=MSG_PERSIST_TIME)
+                message_timeout = timedelta(seconds=MESSAGE_EXPIRE_SECS)
+                expire_time = datetime.now(tz=UTC) - message_timeout
                 with transaction.atomic():
                     # atomic here to prevent race condition with messages being
-                    # popped by the web application
-                    DruncMessage.objects.filter(timestamp__lt=expire_time).delete()
+                    # displayed by the web application
+                    query = DruncMessage.objects.filter(timestamp__lt=expire_time)
+                    if query.count():
+                        if debug:
+                            self.stdout.write(
+                                f"Deleting {query.count()} messages "
+                                f"older than {expire_time}."
+                            )
+                        query.delete()
