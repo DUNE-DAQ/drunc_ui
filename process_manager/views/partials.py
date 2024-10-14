@@ -22,6 +22,7 @@ def process_table(request: HttpRequest) -> HttpResponse:
     with a uuid provided in the select key of the request data.
     """
     session_info = get_session_info()
+    search_session = request.GET.get("search_session", "")
 
     status_enum_lookup = dict(item[::-1] for item in ProcessInstance.StatusCode.items())
 
@@ -30,6 +31,8 @@ def process_table(request: HttpRequest) -> HttpResponse:
     for process_instance in process_instances:
         metadata = process_instance.process_description.metadata
         uuid = process_instance.uuid.uuid
+        if search_session and metadata.session != search_session:
+            continue
         table_data.append(
             {
                 "uuid": uuid,
