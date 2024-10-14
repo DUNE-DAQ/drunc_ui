@@ -154,4 +154,6 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 KAFKA_ADDRESS = os.getenv("KAFKA_ADDRESS", "kafka:9092")
 
+MESSAGE_EXPIRE_SECS = os.getenv("MESSAGE_EXPIRE_SECS", 1800)
+
 django_stubs_ext.monkeypatch()
