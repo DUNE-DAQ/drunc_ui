@@ -40,6 +40,7 @@ def process_table(request: HttpRequest) -> HttpResponse:
                 "exit_code": process_instance.return_code,
             }
         )
+    # Filter table data based on search parameter
     if search := request.GET.get("search", ""):
         table_data = [
             row
