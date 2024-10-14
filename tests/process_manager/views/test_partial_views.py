@@ -80,11 +80,13 @@ class TestMessagesView(LoginRequiredTest):
 
         from main.models import DruncMessage
 
-        time = [datetime.now(tz=UTC)]
-        time.append(time[0] + timedelta(seconds=10))
-        msg = ["message 1", "message 2"]
+        t1 = datetime.now(tz=UTC)
+        t2 = t1 + timedelta(minutes=10)
         DruncMessage.objects.bulk_create(
-            [DruncMessage(timestamp=t, message=m) for t, m in zip(time, msg)]
+            [
+                DruncMessage(timestamp=t1, message="message 0"),
+                DruncMessage(timestamp=t2, message="message 1"),
+            ]
         )
 
         with assertTemplateUsed("process_manager/partials/message_items.html"):
@@ -92,6 +94,7 @@ class TestMessagesView(LoginRequiredTest):
         assert response.status_code == HTTPStatus.OK
 
         # messages have been added to the context in reverse order
-        for i in range(0, 2, -1):
-            rendered = f"{time[i]}: {msg[i]}"
-            assert response.context["messages"][i] == rendered
+        t1_str = t1.strftime("%Y-%m-%d %H:%M:%S")
+        assert response.context["messages"][1] == f"{t1_str}: message 0"
+        t2_str = t2.strftime("%Y-%m-%d %H:%M:%S")
+        assert response.context["messages"][0] == f"{t2_str}: message 1"

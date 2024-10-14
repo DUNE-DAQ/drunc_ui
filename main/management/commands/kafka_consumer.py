@@ -54,7 +54,7 @@ class Command(BaseCommand):
                         ]
                     )
 
-            # TODO: handle this (and timezone?) via settings.py
+            # TODO: handle this via settings.py
             MESSAGE_EXPIRE_SECS = 60
 
             # Remove expired messages from the database.
