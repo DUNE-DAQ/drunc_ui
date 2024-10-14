@@ -4,10 +4,10 @@ RUN apt-get update \
   && apt-get -y install --no-install-recommends git ssh openssh-server \
   && rm -fr /var/lib/apt/lists/*
 
-COPY requirements.txt /
+COPY drunc_docker_service_lite/requirements.txt /
 RUN pip install --no-cache-dir -r /requirements.txt
 
-COPY process-manager-no-kafka.json /
+COPY drunc_docker_service/process-manager-no-kafka.json /
 
 EXPOSE 22
 RUN mkdir -p /root/.ssh && \
