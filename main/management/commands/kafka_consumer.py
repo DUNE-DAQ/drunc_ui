@@ -55,7 +55,7 @@ class Command(BaseCommand):
                     )
 
             # Remove expired messages from the database.
-            message_timeout = timedelta(seconds=settings.MESSAGE_EXPIRE_SECS)
+            message_timeout = timedelta(seconds=float(settings.MESSAGE_EXPIRE_SECS))
             expire_time = datetime.now(tz=UTC) - message_timeout
             query = DruncMessage.objects.filter(timestamp__lt=expire_time)
             if query.count():
