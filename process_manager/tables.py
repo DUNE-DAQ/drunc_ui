@@ -69,6 +69,11 @@ class ProcessTable(tables.Table):
         Overriding the default render method for this column is required as the
         hx-preserve attitribute requires all elements to have unique id values. We also
         need to add the hyperscript required for the header checkbox behaviour.
+
+        Called during table rendering.
+
+        Args:
+          value: uuid from the table row data
         """
         return mark_safe(
             f'<input type="checkbox" name="select" value="{value}" id="{value}-input" '
