@@ -41,14 +41,18 @@ def process_table(request: HttpRequest) -> HttpResponse:
             }
         )
     # Filter table data based on search parameter
-    if search := request.GET.get("search", ""):
+    if (search := request.GET.get("search", "")) and len(table_data) > 0:
+        column, _, search = search.partition(":")
+        if not search:
+            search = column
+            columns = list(table_data[0].keys())
+        else:
+            columns = [column]
+        search = search.lower()
         table_data = [
             row
             for row in table_data
-            if any(
-                search in row[k]
-                for k in ["uuid", "name", "user", "session", "status_code"]
-            )
+            if any(search in str(row[k]).lower() for k in columns)
         ]
     table = ProcessTable(table_data)
 
