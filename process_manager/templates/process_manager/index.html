@@ -54,12 +54,12 @@
                name="search"
                placeholder="Search..."
                hx-get="{% url 'process_manager:process_table' %}"
-               hx-trigger="keyup delay:500ms, changed, search, every 1s"
+               hx-trigger="input changed delay:500ms, search, every 1s"
                hx-target="div.table-container"
-               hx-swap="outerHTML">
+               hx-swap="innerHTML">
         <div id="table-container"
              hx-get="{% url 'process_manager:process_table' %}"
-             hx-swap="outerHTML"
+             hx-swap="innerHTML"
              hx-trigger="load"></div>
       </form>
     </div>

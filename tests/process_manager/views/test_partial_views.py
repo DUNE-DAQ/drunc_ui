@@ -27,7 +27,7 @@ class TestProcessTableView(LoginRequiredTest):
         for row, uuid in zip(table.data.data, uuids):
             assert row["uuid"] == uuid
 
-    def _mock_session_info(self, mocker, uuids, sessions: list[str] | None = None):
+    def _mock_session_info(self, mocker, uuids, sessions: list[str] = []):
         """Mocks views.get_session_info with ProcessInstanceList like data."""
         mock = mocker.patch("process_manager.views.partials.get_session_info")
         instance_mocks = [MagicMock() for uuid in uuids]
