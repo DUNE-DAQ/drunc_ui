@@ -23,8 +23,7 @@ class TestProcessTableView(LoginRequiredTest):
         assert response.status_code == HTTPStatus.OK
         table = response.context["table"]
         assert isinstance(table, ProcessTable)
-        for row, uuid in zip(table.data.data, uuids):
-            assert row["uuid"] == uuid
+        assert all(row["uuid"] == uuid for row, uuid in zip(table.data.data, uuids))
 
     def _mock_session_info(self, mocker, uuids):
         """Mocks views.get_session_info with ProcessInstanceList like data."""
