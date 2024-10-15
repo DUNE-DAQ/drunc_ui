@@ -31,7 +31,7 @@ header_checkbox_hyperscript = "on click set .row-checkbox.checked to my.checked"
 
 row_checkbox_hyperscript = """
 on click
-if <input.row-checkbox:not(:checked)/> is empty
+if <.row-checkbox:not(:checked)/> is empty
   set #header-checkbox.checked to true
 else
   set #header-checkbox.checked to false
