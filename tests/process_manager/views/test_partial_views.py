@@ -2,6 +2,7 @@ from http import HTTPStatus
 from unittest.mock import MagicMock
 from uuid import uuid4
 
+import pytest
 from django.test import Client
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
@@ -76,3 +77,69 @@ class TestMessagesView(LoginRequiredTest):
         # messages have been removed from the session and added to the context
         assert response.context["messages"] == message_data[::-1]
         assert "messages" not in store.load()
+
+
+process_1 = {
+    "uuid": "1",
+    "name": "Process1",
+    "user": "user1",
+    "session": "session1",
+    "status_code": "running",
+    "exit_code": 0,
+}
+process_2 = {
+    "uuid": "2",
+    "name": "Process2",
+    "user": "user2",
+    "session": "session2",
+    "status_code": "completed",
+    "exit_code": 0,
+}
+
+
+@pytest.mark.parametrize(
+    "search,table,expected",
+    [
+        pytest.param(
+            "",
+            [process_1, process_2],
+            [process_1, process_2],
+            id="no search",
+        ),
+        pytest.param(
+            "Process1",
+            [process_1, process_2],
+            [process_1],
+            id="search all columns",
+        ),
+        pytest.param(
+            "name:Process1",
+            [process_1, process_2],
+            [process_1],
+            id="search specific column",
+        ),
+        pytest.param(
+            "nonexistent:Process1",
+            [process_1, process_2],
+            [process_1],
+            id="search non-existent column",
+        ),
+        pytest.param(
+            "Process1",
+            [],
+            [],
+            id="filter empty table",
+        ),
+        pytest.param(
+            "process1",
+            [process_1, process_2],
+            [process_1],
+            id="search case insensitive",
+        ),
+    ],
+)
+def test_filter_table(search, table, expected):
+    """Test filter_table function."""
+    from process_manager.views.partials import filter_table
+
+    assert filter_table(search, table) == expected
