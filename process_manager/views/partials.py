@@ -65,6 +65,7 @@ def messages(request: HttpRequest) -> HttpResponse:
     """Renders Kafka messages from the database."""
     messages = []
     for msg in DruncMessage.objects.all():
+        # Time is stored as UTC. localtime(t) converts this to our configured timezone.
         timestamp = localtime(msg.timestamp).strftime("%Y-%m-%d %H:%M:%S")
         messages.append(f"{timestamp}: {msg.message}")
 
