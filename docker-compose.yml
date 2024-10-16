@@ -2,7 +2,7 @@ services:
   app:
     build: .
     command:
-      - sh
+      - bash
       - -c
       - |
         python manage.py migrate
@@ -12,6 +12,10 @@ services:
     volumes:
       - .:/usr/src/app
       - db:/usr/src/app/db
+    environment:
+      - PROCESS_MANAGER_URL=drunc:10054
+    depends_on:
+      - drunc
   drunc:
     build: ./drunc_docker_service/
     command:
@@ -20,8 +24,44 @@ services:
       - |
         /usr/sbin/sshd &&
         source env.sh &&
-        drunc-process-manager --log-level debug file://./data/process-manager-no-kafka.json
+        drunc-process-manager --log-level debug file:///process-manager-kafka.json
     expose:
       - 10054
+    depends_on:
+      kafka:
+        condition: service_healthy
+  kafka:
+    image: bitnami/kafka:latest
+    environment:
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+    expose:
+      - 9092
+    healthcheck:
+      test: timeout 5s kafka-cluster.sh cluster-id --bootstrap-server localhost:9092
+      interval: 1s
+      timeout: 6s
+      retries: 20
+  kafka_consumer:
+    build: .
+    command:
+      - bash
+      - -c
+      - |
+        python manage.py kafka_consumer --debug
+    environment:
+      - KAFKA_ADDRESS=kafka:9092
+    volumes:
+      - .:/usr/src/app
+      - db:/usr/src/app/db
+    depends_on:
+      kafka:
+        condition: service_healthy
+      app:
+        condition: service_started
 volumes:
   db:
