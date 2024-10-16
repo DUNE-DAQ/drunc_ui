@@ -1,4 +1,2 @@
 {% load render_table from django_tables2 %}
-<div hx-get="{% url 'process_manager:process_table' %}"
-     hx-trigger="load delay:1s"
-     hx-swap="outerHTML">{% render_table table %}</div>
+{% render_table table %}
