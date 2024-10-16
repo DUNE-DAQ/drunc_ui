@@ -1,7 +1,15 @@
 <!--Navbar-->
+{% load static %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
   <div class="container">
-    <a class="navbar-brand" href="{% url 'main:index' %}">DUNE Run Control</a>
+    <a class="navbar-brand" href="{% url 'main:index' %}">
+      <img src="{% static 'main/images/DUNElogo_white.png' %}"
+           alt="DUNE Run Control"
+           width="80"
+           height="50"
+           class="d-inline-block align-top">
+      <h2 class="d-inline-block">Run Control</h2>
+    </a>
     <button class="navbar-toggler"
             type="button"
             data-bs-toggle="collapse"
