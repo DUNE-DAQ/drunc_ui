@@ -7,7 +7,7 @@ RUN apt-get update \
 COPY drunc_docker_service_lite/requirements.txt /
 RUN pip install --no-cache-dir -r /requirements.txt
 
-COPY drunc_docker_service/process-manager-no-kafka.json /
+COPY drunc_docker_service/process-manager-no-kafka.json drunc_docker_service/process-manager-kafka.json /
 
 EXPOSE 22
 RUN mkdir -p /root/.ssh && \

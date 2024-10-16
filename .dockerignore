@@ -3,7 +3,7 @@
 !manage.py
 !pyproject.toml
 !poetry.lock
-!dune_processes
+!drunc_ui
 !db
 db/*
 !drunc_docker_service_lite/requirements.txt

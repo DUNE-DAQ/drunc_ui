@@ -1,12 +1,12 @@
 {% extends "main/base.html" %}
-{% load render_table from django_tables2 %}
-
-{% block title %}Home{% endblock title %}
-
+{% block title %}
+  Home
+{% endblock title %}
 {% block content %}
-<div class="col">
-  <a href="{% url 'main:boot_process' %}" class="btn btn-primary">Boot</a>
-  {% render_table table %}
-</div>
-
+  <div class="row">
+    <div class="col">
+      <a href="{% url 'process_manager:index' %}" class="btn btn-secondary">Process Manager</a>
+      <a href="{% url 'controller:index' %}" class="btn btn-secondary">Controller</a>
+    </div>
+  </div>
 {% endblock content %}
