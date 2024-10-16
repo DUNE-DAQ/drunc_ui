@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 from uuid import uuid4
 
 import pytest
+from django.test import Client
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
@@ -16,57 +17,40 @@ class TestProcessTableView(LoginRequiredTest):
 
     endpoint = reverse("process_manager:process_table")
 
-    @pytest.mark.parametrize("method", ("get", "post"))
-    def test_method(self, method, auth_client, mocker):
+    def test_get(self, auth_client, mocker):
         """Tests basic calls of view method."""
-        self._mock_session_info(mocker, [])
-        response = getattr(auth_client, method)(self.endpoint)
+        uuids = [str(uuid4()) for _ in range(5)]
+        self._mock_session_info(mocker, uuids)
+        response = auth_client.get(self.endpoint)
         assert response.status_code == HTTPStatus.OK
-        assert isinstance(response.context["table"], ProcessTable)
+        table = response.context["table"]
+        assert isinstance(table, ProcessTable)
+        assert all(row["uuid"] == uuid for row, uuid in zip(table.data.data, uuids))
 
-    def _mock_session_info(self, mocker, uuids):
+    def _mock_session_info(self, mocker, uuids, sessions: list[str] = []):
         """Mocks views.get_session_info with ProcessInstanceList like data."""
         mock = mocker.patch("process_manager.views.partials.get_session_info")
         instance_mocks = [MagicMock() for uuid in uuids]
-        for instance_mock, uuid in zip(instance_mocks, uuids):
+        sessions = sessions or [f"session{i}" for i in range(len(uuids))]
+        for instance_mock, uuid, session in zip(instance_mocks, uuids, sessions):
             instance_mock.uuid.uuid = str(uuid)
+            instance_mock.session = session
             instance_mock.status_code = 0
         mock().data.values.__iter__.return_value = instance_mocks
         return mock
 
-    def test_post_checked_rows(self, mocker, auth_client):
-        """Tests table data is correct when post data is included."""
-        all_uuids = [str(uuid4()) for _ in range(5)]
-        selected_uuids = all_uuids[::2]
-
-        self._mock_session_info(mocker, all_uuids)
-
-        response = auth_client.post(self.endpoint, data=dict(select=selected_uuids))
+    def test_get_with_search(self, auth_client: Client, mocker):
+        """Tests basic calls of view method."""
+        uuids = [str(uuid4()) for _ in range(5)]
+        sessions = ["session1", "session2", "session2", "session2", "session3"]
+        self._mock_session_info(mocker, uuids, sessions)
+        response = auth_client.get(self.endpoint, data={"search": "session2"})
         assert response.status_code == HTTPStatus.OK
         table = response.context["table"]
         assert isinstance(table, ProcessTable)
-
-        for row in table.data.data:
-            assert row["checked"] == (row["uuid"] in selected_uuids)
-        assert "checked" not in table.columns["select"].attrs["th__input"]
-
-    def test_post_header_checked(self, mocker, auth_client):
-        """Tests header checkbox is checked if all rows are checked."""
-        all_uuids = [str(uuid4()) for _ in range(5)]
-        selected_uuids = all_uuids
-
-        self._mock_session_info(mocker, all_uuids)
-
-        response = auth_client.post(self.endpoint, data=dict(select=selected_uuids))
-        assert response.status_code == HTTPStatus.OK
-        table = response.context["table"]
-        assert isinstance(table, ProcessTable)
-
-        # All rows should be checked
-        assert all(row["checked"] for row in table.data.data)
-
-        # So header should be checked as well
-        assert table.columns["select"].attrs["th__input"]["checked"] == "checked"
+        for row, uuid in zip(table.data.data, uuids):
+            assert row["uuid"] == uuid
+            assert row["session"] == "session2"
 
 
 class TestMessagesView(LoginRequiredTest):
@@ -98,3 +82,69 @@ class TestMessagesView(LoginRequiredTest):
         assert response.context["messages"][1] == f"{t1_str}: message 0"
         t2_str = t2.strftime("%Y-%m-%d %H:%M:%S")
         assert response.context["messages"][0] == f"{t2_str}: message 1"
+
+
+process_1 = {
+    "uuid": "1",
+    "name": "Process1",
+    "user": "user1",
+    "session": "session1",
+    "status_code": "running",
+    "exit_code": 0,
+}
+process_2 = {
+    "uuid": "2",
+    "name": "Process2",
+    "user": "user2",
+    "session": "session2",
+    "status_code": "completed",
+    "exit_code": 0,
+}
+
+
+@pytest.mark.parametrize(
+    "search,table,expected",
+    [
+        pytest.param(
+            "",
+            [process_1, process_2],
+            [process_1, process_2],
+            id="no search",
+        ),
+        pytest.param(
+            "Process1",
+            [process_1, process_2],
+            [process_1],
+            id="search all columns",
+        ),
+        pytest.param(
+            "name:Process1",
+            [process_1, process_2],
+            [process_1],
+            id="search specific column",
+        ),
+        pytest.param(
+            "nonexistent:Process1",
+            [process_1, process_2],
+            [process_1],
+            id="search non-existent column",
+        ),
+        pytest.param(
+            "Process1",
+            [],
+            [],
+            id="filter empty table",
+        ),
+        pytest.param(
+            "process1",
+            [process_1, process_2],
+            [process_1],
+            id="search case insensitive",
+        ),
+    ],
+)
+def test_filter_table(search, table, expected):
+    """Test filter_table function."""
+    from process_manager.views.partials import filter_table
+
+    assert filter_table(search, table) == expected
