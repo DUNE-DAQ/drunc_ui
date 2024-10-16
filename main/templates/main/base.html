@@ -1,9 +1,5 @@
 {% load static %}
 {% load django_bootstrap5 %}
-<link rel="shortcut icon"
-      type="image/png"
-      href="{% static 'main/images/Favicon.png' %}">
-<!DOCTYPE html>
 <html lang="en">
   <head>
     <title>
@@ -22,6 +18,10 @@
     {% endblock extra_js %}
     <script src="{% static 'main/js/htmx.min.js' %}"></script>
     <script src="{% static 'main/js/_hyperscript.min.js' %}"></script>
+    <link rel="shortcut icon"
+          type="image/png"
+          href="{% static 'main/images/Favicon.png' %}">
+    <!DOCTYPE html>
   </head>
   <body>
     {% include "main/navbar.html" %}
