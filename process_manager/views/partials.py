@@ -2,12 +2,12 @@
 
 import django_tables2
 from django.contrib.auth.decorators import login_required
-from django.db import transaction
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
-from druncschema.process_manager_pb2 import (
-    ProcessInstance,
-)
+from django.utils.timezone import localtime
+from druncschema.process_manager_pb2 import ProcessInstance
+
+from main.models import DruncMessage
 
 from ..process_manager_interface import get_session_info
 from ..tables import ProcessTable
@@ -95,12 +95,12 @@ def process_table(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def messages(request: HttpRequest) -> HttpResponse:
-    """Renders and pops Kafka messages from the user's session."""
-    with transaction.atomic():
-        # atomic to avoid race condition with kafka consumer
-        messages = request.session.load().get("messages", [])
-        request.session.pop("messages", [])
-        request.session.save()
+    """Renders Kafka messages from the database."""
+    messages = []
+    for msg in DruncMessage.objects.all():
+        # Time is stored as UTC. localtime(t) converts this to our configured timezone.
+        timestamp = localtime(msg.timestamp).strftime("%Y-%m-%d %H:%M:%S")
+        messages.append(f"{timestamp}: {msg.message}")
 
     return render(
         request=request,

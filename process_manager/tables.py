@@ -3,26 +3,6 @@
 import django_tables2 as tables
 from django.utils.safestring import mark_safe
 
-restart_column_template = (
-    "<a href={href} onclick=\"return confirm('{message}')\">{text}</a>".format(
-        href="\"{% url 'process_manager:restart' record.uuid%}\"",
-        message="You are about to restart process {{record.uuid}}. Are you sure?",
-        text="RESTART",
-    )
-)
-
-kill_column_template = (
-    "<a href={href} onclick=\"return confirm('{message}')\">{text}</a>".format(
-        href="\"{% url 'process_manager:kill' record.uuid%}\"",
-        message="You are about to kill process {{record.uuid}}. Are you sure?",
-        text="KILL",
-    )
-)
-
-flush_column_template = (
-    "<a href=\"{% url 'process_manager:flush' record.uuid %}\">FLUSH</a>"
-)
-
 logs_column_template = (
     "<a href=\"{% url 'process_manager:logs' record.uuid %}\">LOGS</a>"
 )
