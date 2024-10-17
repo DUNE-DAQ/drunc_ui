@@ -27,6 +27,11 @@ ADD ssh-setup.sh /
 RUN bash /ssh-setup.sh
 
 RUN mkdir -p /usr/src/app
-ENTRYPOINT []
+ADD entrypoint.sh /
+RUN chmod a+x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
 
 ADD wibeth_output_all_zeros.bin /cvmfs/dunedaq.opensciencegrid.org/assets/files/d/d/1/wibeth_output_all_zeros.bin
+
+ADD boot_test_session.sh /
+RUN chmod a+x /boot_test_session.sh

@@ -40,7 +40,7 @@ docker compose exec app python scripts/talk_to_process_manager.py
 To boot a more realistic test session:
 
 ```bash
-docker compose exec drunc bash -c "source env.sh && drunc-process-manager-shell grpc://localhost:10054 boot test/config/test-session.data.xml test-session"
+docker compose exec drunc /boot_test_session.sh
 ```
 
 _Note that the above consumes several Gb of memory._
@@ -48,7 +48,7 @@ _Note that the above consumes several Gb of memory._
 Once booted you can interact with the root controller via:
 
 ```bash
-docker compose exec drunc bash -c "source env.sh && drunc-controller-shell grpc://localhost:3333"
+docker compose exec drunc /entrypoint.sh drunc-controller-shell grpc://localhost:3333
 ```
 
 For details of working with the controller see the [drunc wiki].

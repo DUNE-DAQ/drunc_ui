@@ -23,7 +23,6 @@ services:
       - -c
       - |
         /usr/sbin/sshd &&
-        source env.sh &&
         drunc-process-manager --log-level debug file:///process-manager-kafka.json
     expose:
       - 10054
