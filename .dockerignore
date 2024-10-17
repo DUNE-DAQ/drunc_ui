@@ -7,4 +7,4 @@
 !db
 db/*
 !drunc_docker_service_lite/requirements.txt
-!drunc_docker_service/process-manager-no-kafka.json
+!drunc_docker_service/process-manager-kafka.json
