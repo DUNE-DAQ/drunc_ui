@@ -7,7 +7,9 @@ SHELL ["/bin/bash", "-c"]
 
 WORKDIR /basedir
 
-# for frozen release
+# setup for the the dune development environment that provides the full set of
+# dependencies required for booting of the controller test session
+# See https://github.com/DUNE-DAQ/drunc/wiki/Setup-drunc-with-DUNE-DAQ for explanation
 RUN source /cvmfs/dunedaq.opensciencegrid.org/setup_dunedaq.sh && \
         setup_dbt latest_v5 && \
         dbt-create fddaq-v5.1.0-a9 fddaq-v5.1.0-a9 && \
@@ -20,14 +22,9 @@ WORKDIR /basedir/fddaq-v5.1.0-a9/
 
 COPY process-manager-kafka.json /
 
-RUN mkdir -p /root/.ssh && \
-    ssh-keygen -b 2048 -t rsa -f /root/.ssh/id_rsa -q -N "" && \
-    cp /root/.ssh/id_rsa.pub /root/.ssh/authorized_keys
-
-RUN echo "PermitRootLogin without-password" >> /etc/ssh/sshd_config && \
-    echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config && \
-    echo "UserKnownHostsFile /dev/null" >> /etc/ssh/ssh_config && \
-    ssh-keygen -A
+# setup ssh server config and keys
+ADD ssh-setup.sh /
+RUN bash /ssh-setup.sh
 
 RUN mkdir -p /usr/src/app
 ENTRYPOINT []

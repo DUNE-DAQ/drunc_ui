@@ -32,8 +32,8 @@ services:
         condition: service_healthy
   drunc-lite:
     build:
-      context: .
-      dockerfile: ./drunc_docker_service_lite/Dockerfile
+      context: ./drunc_docker_service/
+      dockerfile: ./Dockerfile_lite
     container_name: drunc
     profiles:
       - drunc-lite
