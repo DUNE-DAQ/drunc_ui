@@ -1,3 +1,4 @@
+from datetime import UTC, datetime, timedelta
 from http import HTTPStatus
 from unittest.mock import MagicMock
 from uuid import uuid4
@@ -7,6 +8,7 @@ from django.test import Client
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
+from main.models import DruncMessage
 from process_manager.tables import ProcessTable
 
 from ...utils import LoginRequiredTest
@@ -60,10 +62,6 @@ class TestMessagesView(LoginRequiredTest):
 
     def test_get(self, auth_client):
         """Tests basic calls of view method."""
-        from datetime import UTC, datetime, timedelta
-
-        from main.models import DruncMessage
-
         t1 = datetime.now(tz=UTC)
         t2 = t1 + timedelta(minutes=10)
         DruncMessage.objects.bulk_create(
@@ -85,10 +83,6 @@ class TestMessagesView(LoginRequiredTest):
 
     def test_get_with_search(self, auth_client):
         """Tests message filtering of view method."""
-        from datetime import UTC, datetime
-
-        from main.models import DruncMessage
-
         t = datetime.now(tz=UTC)
         t_str = t.strftime("%Y-%m-%d %H:%M:%S")
         her_msg = "her message"
