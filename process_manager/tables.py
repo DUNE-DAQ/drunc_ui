@@ -21,44 +21,56 @@ class ProcessTable(tables.Table):
     """Defines a Process Table for the data from the Process Manager."""
 
     uuid = tables.Column(verbose_name="UUID", attrs={
-        "td": {"class": "fw-bold text-break", "style": "max-width: 300px; white-space: normal;"}
-    })  # Increased max-width for UUID to make it wider
-    name = tables.Column(verbose_name="Name", attrs={
+        "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); font-weight: bold; font-size: 1.1rem; color: white;"},
+        "td": {"class": "fw-bold text-break", "style": "max-width: 400px; white-space: normal;"}
+    })  # Darker grey with transparency
+    name = tables.Column(verbose_name="Process Name", attrs={
+        "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); font-weight: bold; font-size: 1.1rem; color: white;"},
         "td": {"class": "fw-bold text-primary", "style": "white-space: nowrap;"}
     })
     user = tables.Column(verbose_name="User", attrs={
+        "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); font-weight: bold; font-size: 1.1rem; color: white;"},
         "td": {"class": "text-secondary"}
     })
     session = tables.Column(verbose_name="Session", attrs={
+        "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); font-weight: bold; font-size: 1.1rem; color: white;"},
         "td": {"class": "text-secondary"}
     })
-    status_code = tables.Column(verbose_name="Status Code", attrs={
+    status_code = tables.Column(verbose_name="Status", attrs={
+        "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); font-weight: bold; font-size: 1.1rem; color: white;"},
         "td": {"class": "fw-bold"}
     })
     exit_code = tables.Column(verbose_name="Exit Code", attrs={
+        "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); font-weight: bold; font-size: 1.1rem; color: white;"},
         "td": {"class": "text-center"}
     })
-    logs = tables.TemplateColumn(logs_column_template, verbose_name="Logs")
+    logs = tables.TemplateColumn(logs_column_template, verbose_name="Logs", attrs={
+        "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); font-weight: bold; font-size: 1.1rem; color: white;"}
+    })
     select = tables.CheckBoxColumn(
         accessor="uuid",
         verbose_name="Select",
         attrs={
+            "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); font-weight: bold; font-size: 1.1rem; color: white;"},
             "th__input": {
                 "id": "header-checkbox",
                 "hx-preserve": "true",
                 "_": header_checkbox_hyperscript,
-                "class": "form-check-input form-check-lg"  # Makes the checkbox bigger
+                "class": "form-check-input form-check-lg"
             },
             "td__input": {
-                "class": "form-check-input form-check-lg",  # Makes the checkbox bigger in rows
-                "style": "transform: scale(1.5);",  # Further increase checkbox size
+                "class": "form-check-input form-check-lg",
+                "style": "transform: scale(1.5);",
             }
         },
     )
 
     class Meta:
         orderable = False
-        attrs = {"class": "table table-striped table-hover"}
+        attrs = {
+            "class": "table table-striped table-hover table-responsive",
+            "style": "width: 100%;"  # Make the table occupy full width
+        }
 
     def render_status_code(self, value):
         """Render the status_code with larger, more visible badges."""
