@@ -3,8 +3,21 @@
   Logs
 {% endblock title %}
 {% block content %}
-  <!-- djlint:off H021 -->
-  <div style="white-space: pre-wrap;">{{ log_text }}</div>
-  <!-- djlint:on -->
-  <a href="{% url 'process_manager:index' %}">Return to table</a>
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white rounded-top">
+      <h5>Log Output</h5>
+    </div>
+    <div class="card-body p-0">
+      <div class="list-group">
+        {% for line in log_lines %}
+          <div class="list-group-item {% if forloop.counter0|divisibleby:2 %}bg-primary-subtle{% else %}bg-white{% endif %} border-0" 
+               style="font-family: 'Courier New', Courier, monospace; font-size: 0.875rem; line-height: 1.2; 
+               {% if forloop.first %}border-top-left-radius: 0; border-top-right-radius: 0;{% else %}border-radius: 0.25rem;{% endif %}">
+            <span class="d-block py-0 px-2">{{ line }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <a href="{% url 'process_manager:index' %}" class="btn btn-primary mt-3">Return to table</a>
 {% endblock content %}
