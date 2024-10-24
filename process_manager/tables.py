@@ -2,7 +2,8 @@ import django_tables2 as tables
 from django.utils.safestring import mark_safe
 
 logs_column_template = (
-    "<a href=\"{% url 'process_manager:logs' record.uuid %}\">LOGS</a>"
+    "<a href=\"{% url 'process_manager:logs' record.uuid %}\" "
+    "class=\"btn btn-sm btn-primary text-white\">LOGS</a>"
 )
 
 header_checkbox_hyperscript = "on click set .row-checkbox.checked to my.checked"
@@ -45,6 +46,18 @@ class ProcessTable(tables.Table):
         """Render the status_code with conditional formatting."""
         if value == "DEAD":
             return mark_safe(f'<span class="bg-danger text-white px-2 py-1 rounded">DEAD</span>')
-        elif value == "ALIVE":
-            return mark_safe(f'<span class="bg-success text-white px-2 py-1 rounded">ALIVE</span>')
+        elif value == "RUNNING":
+            return mark_safe(f'<span class="bg-success text-white px-2 py-1 rounded">RUNNING</span>')
         return value
+
+    def render_select(self, value: str) -> str:
+        """Customise behaviour of checkboxes in the select column.
+
+        This method is overriding the default render behavior for the CheckBoxColumn. 
+        We use `mark_safe` to ensure that the generated HTML for the checkbox, 
+        including the required `hx-preserve` and hyperscript logic, is rendered safely.
+        """
+        return mark_safe(
+            f'<input type="checkbox" name="select" value="{value}" id="{value}-input" '
+            f'hx-preserve="true" class="row-checkbox" _="{row_checkbox_hyperscript}">'
+        )
