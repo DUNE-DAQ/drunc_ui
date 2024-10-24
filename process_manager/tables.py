@@ -1,5 +1,3 @@
-"""Tables for the process_manager app."""
-
 import django_tables2 as tables
 from django.utils.safestring import mark_safe
 
@@ -19,10 +17,7 @@ else
 
 
 class ProcessTable(tables.Table):
-    """Defines and Process Table for the data from the Process Manager."""
-
-    class Meta:  # noqa: D106
-        orderable = False
+    """Defines a Process Table for the data from the Process Manager."""
 
     uuid = tables.Column(verbose_name="UUID")
     name = tables.Column(verbose_name="Name")
@@ -43,19 +38,13 @@ class ProcessTable(tables.Table):
         },
     )
 
-    def render_select(self, value: str) -> str:
-        """Customise behaviour of checkboxes in the select column.
+    class Meta:
+        orderable = False
 
-        Overriding the default render method for this column is required as the
-        hx-preserve attitribute requires all elements to have unique id values. We also
-        need to add the hyperscript required for the header checkbox behaviour.
-
-        Called during table rendering.
-
-        Args:
-          value: uuid from the table row data
-        """
-        return mark_safe(
-            f'<input type="checkbox" name="select" value="{value}" id="{value}-input" '
-            f'hx-preserve="true" class="row-checkbox" _="{row_checkbox_hyperscript}"'
-        )
+    def render_status_code(self, value):
+        """Render the status_code with conditional formatting."""
+        if value == "DEAD":
+            return mark_safe(f'<span class="bg-danger text-white px-2 py-1 rounded">DEAD</span>')
+        elif value == "ALIVE":
+            return mark_safe(f'<span class="bg-success text-white px-2 py-1 rounded">ALIVE</span>')
+        return value
