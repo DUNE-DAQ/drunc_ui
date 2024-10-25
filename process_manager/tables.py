@@ -16,42 +16,42 @@ else
   set #header-checkbox.checked to false
 """
 
-
 class ProcessTable(tables.Table):
     """Defines a Process Table for the data from the Process Manager."""
 
     uuid = tables.Column(verbose_name="UUID", attrs={
-        "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.7); font-weight: bold; font-size: 1.1rem; color: white;"},
-        "td": {"class": "fw-bold text-break", "style": "max-width: 400px; white-space: normal;"}
-    })  # Darker grey with transparency
+        "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); font-weight: bold; font-size: 1.1rem; color: white;"},
+        "td": {"class": "fw-bold text-break text-start", "style": "max-width: 400px; white-space: normal;"}
+    })
     name = tables.Column(verbose_name="Process Name", attrs={
-        "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.7); font-weight: bold; font-size: 1.1rem; color: white;"},
-        "td": {"class": "fw-bold text-primary", "style": "white-space: nowrap;"}
+        "th": {"class": "text-center", "style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); font-weight: bold; font-size: 1.1rem; color: white;"},
+        "td": {"class": "fw-bold text-primary text-center", "style": "white-space: nowrap;"}
     })
     user = tables.Column(verbose_name="User", attrs={
-        "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.7); font-weight: bold; font-size: 1.1rem; color: white;"},
-        "td": {"class": "text-secondary"}
+        "th": {"class": "text-center", "style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); font-weight: bold; font-size: 1.1rem; color: white;"},
+        "td": {"class": "text-secondary text-center"}
     })
     session = tables.Column(verbose_name="Session", attrs={
-        "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.7); font-weight: bold; font-size: 1.1rem; color: white;"},
-        "td": {"class": "text-secondary"}
+        "th": {"class": "text-center", "style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); font-weight: bold; font-size: 1.1rem; color: white;"},
+        "td": {"class": "text-secondary text-center"}
     })
     status_code = tables.Column(verbose_name="Status", attrs={
-        "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.7); font-weight: bold; font-size: 1.1rem; color: white;"},
-        "td": {"class": "fw-bold"}
+        "th": {"class": "text-center", "style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); font-weight: bold; font-size: 1.1rem; color: white;"},
+        "td": {"class": "fw-bold text-center"}
     })
     exit_code = tables.Column(verbose_name="Exit Code", attrs={
-        "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.7); font-weight: bold; font-size: 1.1rem; color: white;"},
+        "th": {"class": "text-center", "style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); font-weight: bold; font-size: 1.1rem; color: white;"},
         "td": {"class": "text-center"}
     })
     logs = tables.TemplateColumn(logs_column_template, verbose_name="Logs", attrs={
-        "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.7); font-weight: bold; font-size: 1.1rem; color: white;"}
+        "th": {"class": "text-center", "style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); font-weight: bold; font-size: 1.1rem; color: white;"},
+        "td": {"class": "text-center"}
     })
     select = tables.CheckBoxColumn(
         accessor="uuid",
         verbose_name="Select",
         attrs={
-            "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.7); font-weight: bold; font-size: 1.1rem; color: white;"},
+            "th": {"class": "text-center", "style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); font-weight: bold; font-size: 1.1rem; color: white;"},
             "th__input": {
                 "id": "header-checkbox",
                 "hx-preserve": "true",
@@ -59,7 +59,7 @@ class ProcessTable(tables.Table):
                 "class": "form-check-input form-check-lg"
             },
             "td__input": {
-                "class": "form-check-input form-check-lg",
+                "class": "form-check-input form-check-lg text-center",
                 "style": "transform: scale(1.5);",
             }
         },

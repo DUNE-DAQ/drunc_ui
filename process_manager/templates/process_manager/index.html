@@ -11,22 +11,18 @@
       max-height: 60vh; /* Adjusted height for better space distribution */
       overflow-y: auto;
     }
+    /* Container for the table, without scroll settings */
     .table-container {
-      max-height: 60vh; /* Scrollable table to avoid page overflow */
-      overflow-y: auto;
-      border-radius: 10px; /* Adds rounded corners to the table container */
-      overflow: hidden; /* Ensures rounded corners apply correctly */
+      border-radius: 10px; /* Keeps the rounded corners for table container */
     }
-    .rounded-table {
-      border-radius: 10px; /* Custom rounded corners for the table */
+    /* Table styling */
+    .table-container table {
+      width: 100%;
+      border-collapse: collapse;
     }
-    .no-padding {
-      padding-left: 0;
-      padding-right: 0;
-    }
-    .no-margin {
-      margin-left: 0;
-      margin-right: 0;
+    .table-container th, .table-container td {
+      padding: 8px;
+      white-space: nowrap;
     }
   </style>
 {% endblock extra_css %}
@@ -58,10 +54,9 @@
                 <input type="submit" value="Kill" class="btn btn-danger w-100 ms-2" name="action" onclick="return confirm('Kill selected processes?')">
               </div>
               <input class="form-control mb-3" type="search" name="search" placeholder="Search processes..." hx-get="{% url 'process_manager:process_table' %}" hx-trigger="input changed delay:500ms, every 1s" hx-target="div.table-container">
-              <div id="table-container" class="table-container rounded">
-                <table class="table table-striped table-hover rounded-table">
-                  <!-- Table content dynamically loaded -->
-                </table>
+              <div id="table-container" class="table-container">
+                <!-- Directly renders all table rows without pagination -->
+                {{ table.as_html }}
               </div>
             </form>
           </div>
