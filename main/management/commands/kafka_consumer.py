@@ -23,8 +23,10 @@ class Command(BaseCommand):
 
     def handle(self, debug: bool = False, **kwargs: Any) -> None:  # type: ignore[misc]
         """Command business logic."""
+        topic_pm = "control.*.process_manager"
+        topic_ers = "erskafka-reporting"
         consumer = KafkaConsumer(bootstrap_servers=[settings.KAFKA_ADDRESS])
-        consumer.subscribe(pattern="^(control.*.process_manager|erskafka-reporting)")
+        consumer.subscribe(pattern=f"^({topic_pm}|{topic_ers})$")
         # TODO: determine why the below doesn't work
         # consumer.subscribe(pattern="control.no_session.process_manager")
 
@@ -32,6 +34,9 @@ class Command(BaseCommand):
         while True:
             for messages in consumer.poll(timeout_ms=500).values():
                 message_records = []
+
+                # HACK: for testing ERS messages. Remove when ERS endpoint is live.
+                message_records_ers = []
 
                 for message in messages:
                     if debug:
@@ -49,8 +54,17 @@ class Command(BaseCommand):
                         DruncMessage(topic=message.topic, timestamp=time, message=body)
                     )
 
+                    # HACK: for testing ERS messages. Remove when ERS endpoint is live.
+                    message_records_ers.append(
+                        DruncMessage(topic=topic_ers, timestamp=time, message=body)
+                    )
+
                 if message_records:
                     DruncMessage.objects.bulk_create(message_records)
+
+                # HACK: for testing ERS messages. Remove when ERS endpoint is live.
+                if message_records_ers:
+                    DruncMessage.objects.bulk_create(message_records_ers)
 
             # Remove expired messages from the database.
             message_timeout = timedelta(seconds=settings.MESSAGE_EXPIRE_SECS)
