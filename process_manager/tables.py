@@ -21,37 +21,37 @@ class ProcessTable(tables.Table):
     """Defines a Process Table for the data from the Process Manager."""
 
     uuid = tables.Column(verbose_name="UUID", attrs={
-        "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); font-weight: bold; font-size: 1.1rem; color: white;"},
+        "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.7); font-weight: bold; font-size: 1.1rem; color: white;"},
         "td": {"class": "fw-bold text-break", "style": "max-width: 400px; white-space: normal;"}
     })  # Darker grey with transparency
     name = tables.Column(verbose_name="Process Name", attrs={
-        "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); font-weight: bold; font-size: 1.1rem; color: white;"},
+        "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.7); font-weight: bold; font-size: 1.1rem; color: white;"},
         "td": {"class": "fw-bold text-primary", "style": "white-space: nowrap;"}
     })
     user = tables.Column(verbose_name="User", attrs={
-        "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); font-weight: bold; font-size: 1.1rem; color: white;"},
+        "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.7); font-weight: bold; font-size: 1.1rem; color: white;"},
         "td": {"class": "text-secondary"}
     })
     session = tables.Column(verbose_name="Session", attrs={
-        "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); font-weight: bold; font-size: 1.1rem; color: white;"},
+        "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.7); font-weight: bold; font-size: 1.1rem; color: white;"},
         "td": {"class": "text-secondary"}
     })
     status_code = tables.Column(verbose_name="Status", attrs={
-        "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); font-weight: bold; font-size: 1.1rem; color: white;"},
+        "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.7); font-weight: bold; font-size: 1.1rem; color: white;"},
         "td": {"class": "fw-bold"}
     })
     exit_code = tables.Column(verbose_name="Exit Code", attrs={
-        "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); font-weight: bold; font-size: 1.1rem; color: white;"},
+        "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.7); font-weight: bold; font-size: 1.1rem; color: white;"},
         "td": {"class": "text-center"}
     })
     logs = tables.TemplateColumn(logs_column_template, verbose_name="Logs", attrs={
-        "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); font-weight: bold; font-size: 1.1rem; color: white;"}
+        "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.7); font-weight: bold; font-size: 1.1rem; color: white;"}
     })
     select = tables.CheckBoxColumn(
         accessor="uuid",
         verbose_name="Select",
         attrs={
-            "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); font-weight: bold; font-size: 1.1rem; color: white;"},
+            "th": {"style": "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.7); font-weight: bold; font-size: 1.1rem; color: white;"},
             "th__input": {
                 "id": "header-checkbox",
                 "hx-preserve": "true",
@@ -73,11 +73,11 @@ class ProcessTable(tables.Table):
         }
 
     def render_status_code(self, value):
-        """Render the status_code with larger, more visible badges."""
+        """Render the status_code with softer, transparent backgrounds."""
         if value == "DEAD":
-            return mark_safe(f'<span class="badge bg-danger px-3 py-2 rounded" style="font-size: 1.1rem;">DEAD</span>')
+            return mark_safe(f'<span class="badge px-3 py-2 rounded" style="background-color: rgba(255, 0, 0, 0.1); color: #d9534f; font-size: 1.1rem;">DEAD</span>')
         elif value == "RUNNING":
-            return mark_safe(f'<span class="badge bg-success px-3 py-2 rounded" style="font-size: 1.1rem;">RUNNING</span>')
+            return mark_safe(f'<span class="badge px-3 py-2 rounded" style="background-color: rgba(0, 255, 0, 0.1); color: #5cb85c; font-size: 1.1rem;">RUNNING</span>')
         return mark_safe(f'<span class="badge bg-secondary px-3 py-2 rounded" style="font-size: 1.1rem;">{value}</span>')
 
     def render_select(self, value: str) -> str:

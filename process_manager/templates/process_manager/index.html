@@ -14,6 +14,11 @@
     .table-container {
       max-height: 60vh; /* Scrollable table to avoid page overflow */
       overflow-y: auto;
+      border-radius: 10px; /* Adds rounded corners to the table container */
+      overflow: hidden; /* Ensures rounded corners apply correctly */
+    }
+    .rounded-table {
+      border-radius: 10px; /* Custom rounded corners for the table */
     }
     .no-padding {
       padding-left: 0;
@@ -39,8 +44,8 @@
     <div class="row no-margin">
       <!-- Process Control Panel (Expands to take the remaining width) -->
       <div class="col-lg-9 no-padding">
-        <div class="card shadow-sm">
-          <div class="card-header bg-primary text-white">
+        <div class="card shadow-sm rounded">
+          <div class="card-header bg-primary text-white rounded-top">
             <h5>Process Control</h5>
           </div>
           <div class="card-body">
@@ -53,7 +58,11 @@
                 <input type="submit" value="Kill" class="btn btn-danger w-100 ms-2" name="action" onclick="return confirm('Kill selected processes?')">
               </div>
               <input class="form-control mb-3" type="search" name="search" placeholder="Search processes..." hx-get="{% url 'process_manager:process_table' %}" hx-trigger="input changed delay:500ms, every 1s" hx-target="div.table-container">
-              <div id="table-container" class="table-container" hx-get="{% url 'process_manager:process_table' %}" hx-trigger="load"></div>
+              <div id="table-container" class="table-container rounded">
+                <table class="table table-striped table-hover rounded-table">
+                  <!-- Table content dynamically loaded -->
+                </table>
+              </div>
             </form>
           </div>
         </div>
