@@ -25,7 +25,7 @@ class Command(BaseCommand):
         """Command business logic."""
         consumer = KafkaConsumer(bootstrap_servers=[settings.KAFKA_ADDRESS])
         consumer.subscribe(
-            pattern=f"({settings.KAFKA_TOPIC_PROCMAN}|{settings.KAFKA_TOPIC_ERS})"
+            pattern=f"({settings.KAFKA_TOPIC_REGEX_PROCMAN}|{settings.KAFKA_TOPIC_REGEX_ERS})"
         )
 
         self.stdout.write("Listening for messages from Kafka.")

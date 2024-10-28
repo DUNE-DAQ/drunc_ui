@@ -153,8 +153,8 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 KAFKA_ADDRESS = os.getenv("KAFKA_ADDRESS", "kafka:9092")
-KAFKA_TOPIC_PROCMAN = "^control..*.process_manager$"
-KAFKA_TOPIC_ERS = "^erskafka-reporting$"
+KAFKA_TOPIC_REGEX_PROCMAN = "^control\..+\.process_manager$"
+KAFKA_TOPIC_REGEX_ERS = "^erskafka-reporting$"
 # TODO: determine why the below doesn't work
 # consumer.subscribe(pattern="control.no_session.process_manager")
 
