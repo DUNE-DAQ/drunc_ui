@@ -5,6 +5,8 @@
 {% block extra_css %}
   <style>
     #hide-messages-button {
+      /* Certain themes invert the colour, so we invert back. */
+      filter: invert(1);
       float: right;
     }
     #message-list {
