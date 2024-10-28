@@ -99,7 +99,7 @@ def messages(request: HttpRequest) -> HttpResponse:
     """Search and render Kafka messages from the database."""
     search = request.GET.get("search", "")
     records = DruncMessage.objects.filter(
-        topic__regex=settings.KAFKA_TOPIC_REGEX_PROCMAN, message__icontains=search
+        topic__regex=settings.KAFKA_TOPIC_REGEX["PROCMAN"], message__icontains=search
     )
 
     messages = []
