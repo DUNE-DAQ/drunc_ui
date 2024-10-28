@@ -23,12 +23,10 @@ class Command(BaseCommand):
 
     def handle(self, debug: bool = False, **kwargs: Any) -> None:  # type: ignore[misc]
         """Command business logic."""
-        topic_pm = "control.*.process_manager"
-        topic_ers = "erskafka-reporting"
         consumer = KafkaConsumer(bootstrap_servers=[settings.KAFKA_ADDRESS])
-        consumer.subscribe(pattern=f"^({topic_pm}|{topic_ers})$")
-        # TODO: determine why the below doesn't work
-        # consumer.subscribe(pattern="control.no_session.process_manager")
+        consumer.subscribe(
+            pattern=f"^({settings.KAFKA_TOPIC_PROCMAN}|{settings.KAFKA_TOPIC_ERS})$"
+        )
 
         self.stdout.write("Listening for messages from Kafka.")
         while True:
