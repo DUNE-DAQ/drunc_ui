@@ -10,7 +10,7 @@ from ...models import DruncMessage
 
 
 class Command(BaseCommand):
-    """Store messages in the database."""
+    """Store Kafka messages in the database."""
 
     help = __doc__
 
