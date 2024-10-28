@@ -9,14 +9,6 @@ logs_column_template = (
 
 header_checkbox_hyperscript = """
 on click set .row-checkbox.checked to my.checked
-if my.checked
-    set #killButton.disabled to false
-    set #restartButton.disabled to false
-    set #flushButton.disabled to false
-else
-    set #killButton.disabled to true
-    set #restartButton.disabled to true
-    set #flushButton.disabled to true
 """
 
 row_checkbox_hyperscript = """
@@ -67,5 +59,5 @@ class ProcessTable(tables.Table):
         """
         return mark_safe(
             f'<input type="checkbox" name="select" value="{value}" id="{value}-input" '
-            f'hx-preserve="true" class="row-checkbox" _="{row_checkbox_hyperscript}" '
+            f'hx-preserve="true" class="row-checkbox" _="{row_checkbox_hyperscript}"'
         )

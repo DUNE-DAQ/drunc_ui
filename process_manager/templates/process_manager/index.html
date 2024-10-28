@@ -18,13 +18,13 @@
 {% block extra_js %}
   <script type="text/hyperscript">
   behavior disableActionButton
-    on click[target.matches('.row-checkbox')] from elsewhere
+    on click[target.matches('.row-checkbox')] from elsewhere or click[target.matches('#header-checkbox')] from elsewhere
       if <.row-checkbox:checked /> is empty
         set me.disabled to true
       else
         set me.disabled to false
     end
-    end
+  end
   </script>
 {% endblock extra_js %}
 {% block content %}
@@ -32,9 +32,9 @@
     <div class="col">
       <form method="post" action="{% url 'process_manager:process_action' %}">
         {% csrf_token %}
-        <a href="{% url 'process_manager:boot_process' %}"
-           class="btn btn-primary">Boot</a>
         {% if perms.main.can_modify_processes %}
+          <a href="{% url 'process_manager:boot_process' %}"
+             class="btn btn-primary">Boot</a>
           <input type="submit"
                  value="Restart"
                  class="btn btn-success"
