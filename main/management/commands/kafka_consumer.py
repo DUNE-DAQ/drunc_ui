@@ -35,9 +35,6 @@ class Command(BaseCommand):
             for messages in consumer.poll(timeout_ms=500).values():
                 message_records = []
 
-                # HACK: for testing ERS messages. Remove when ERS endpoint is live.
-                message_records_ers = []
-
                 for message in messages:
                     if debug:
                         self.stdout.write(f"Message received: {message}")
@@ -54,17 +51,8 @@ class Command(BaseCommand):
                         DruncMessage(topic=message.topic, timestamp=time, message=body)
                     )
 
-                    # HACK: for testing ERS messages. Remove when ERS endpoint is live.
-                    message_records_ers.append(
-                        DruncMessage(topic=topic_ers, timestamp=time, message=body)
-                    )
-
                 if message_records:
                     DruncMessage.objects.bulk_create(message_records)
-
-                # HACK: for testing ERS messages. Remove when ERS endpoint is live.
-                if message_records_ers:
-                    DruncMessage.objects.bulk_create(message_records_ers)
 
             # Remove expired messages from the database.
             message_timeout = timedelta(seconds=settings.MESSAGE_EXPIRE_SECS)
