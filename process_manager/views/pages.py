@@ -13,6 +13,7 @@ from ..forms import BootProcessForm
 from ..process_manager_interface import boot_process, get_process_logs
 from ..tables import ProcessTable  # Import ProcessTable for table rendering
 
+
 @login_required
 def index(request: HttpRequest) -> HttpResponse:
     """View that renders the index/home page with process table."""
@@ -44,7 +45,7 @@ def logs(request: HttpRequest, uuid: uuid.UUID) -> HttpResponse:
     # Include both log_lines for line-by-line display and log_text for full text if needed
     context = {
         "log_lines": log_lines,
-        "log_text": "\n".join(log_lines)  # Optional if 'log_text' is expected
+        "log_text": "\n".join(log_lines),  # Optional if 'log_text' is expected
     }
     return render(request, "process_manager/logs.html", context)
 

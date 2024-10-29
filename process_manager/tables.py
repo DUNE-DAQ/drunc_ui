@@ -16,6 +16,7 @@ else
   set #header-checkbox.checked to false
 """
 
+
 class ProcessTable(tables.Table):
     """Defines a Process Table for the data from the Process Manager."""
 
