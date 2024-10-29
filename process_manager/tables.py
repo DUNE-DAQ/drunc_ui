@@ -1,6 +1,7 @@
+from typing import Any
+
 import django_tables2 as tables
 from django.utils.safestring import mark_safe
-from typing import Any
 
 logs_column_template = (
     "<a href=\"{% url 'process_manager:logs' record.uuid %}\" "
