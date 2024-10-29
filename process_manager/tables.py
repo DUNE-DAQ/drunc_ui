@@ -22,6 +22,7 @@ badge_style_running = (
     "background-color: rgba(0, 255, 0, 0.1); color: #5cb85c; font-size: 1.1rem;"
 )
 
+
 class ProcessTable(tables.Table):
     """Defines a Process Table for the data from the Process Manager."""
 
@@ -39,7 +40,10 @@ class ProcessTable(tables.Table):
         verbose_name="Process Name",
         attrs={
             "th": {"class": "text-center", "style": header_style},
-            "td": {"class": "fw-bold text-primary text-center", "style": "white-space: nowrap;"},
+            "td": {
+                "class": "fw-bold text-primary text-center",
+                "style": "white-space: nowrap;",
+            },
         },
     )
     user = tables.Column(
