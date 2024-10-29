@@ -7,7 +7,9 @@ logs_column_template = (
     "<a href=\"{% url 'process_manager:logs' record.uuid %}\">LOGS</a>"
 )
 
-header_checkbox_hyperscript = "on click set .row-checkbox.checked to my.checked"
+header_checkbox_hyperscript = """
+on click set .row-checkbox.checked to my.checked
+"""
 
 row_checkbox_hyperscript = """
 on click
