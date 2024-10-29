@@ -1,11 +1,13 @@
+from typing import ClassVar
+
 import django_tables2 as tables
 from django.utils.safestring import mark_safe
-from typing import ClassVar, Dict
 
 logs_column_template = (
     "<a href=\"{% url 'process_manager:logs' record.uuid %}\" "
     'class="btn btn-sm btn-primary text-white" title="View logs">LOGS</a>'
 )
+
 
 class ProcessTable(tables.Table):
     """Defines a Process Table for the data from the Process Manager."""
@@ -35,7 +37,10 @@ class ProcessTable(tables.Table):
                     "font-weight: bold; font-size: 1.1rem; color: white;"
                 ),
             },
-            "td": {"class": "fw-bold text-primary text-center", "style": "white-space: nowrap;"},
+            "td": {
+                "class": "fw-bold text-primary text-center",
+                "style": "white-space: nowrap;",
+            },
         },
     )
     user = tables.Column(
@@ -131,7 +136,7 @@ class ProcessTable(tables.Table):
         """Meta options for ProcessTable."""
 
         orderable: ClassVar[bool] = False
-        attrs: ClassVar[Dict[str, str]] = {
+        attrs: ClassVar[dict[str, str]] = {
             "class": "table table-striped table-hover table-responsive"
         }
 
