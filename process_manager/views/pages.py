@@ -32,15 +32,16 @@ def logs(request: HttpRequest, uuid: uuid.UUID) -> HttpResponse:
       The rendered page.
     """
     logs_response = get_process_logs(str(uuid))
-    
+
     # Process the log text to exclude empty lines
-    log_lines = [val.data.line for val in logs_response if val.data.line.strip()]  # Exclude empty lines
-    
+    log_lines = [
+        val.data.line for val in logs_response if val.data.line.strip()
+    ]  # Exclude empty lines
+
     context = dict(log_lines=log_lines)  # Send the lines as a list
     return render(
         request=request, context=context, template_name="process_manager/logs.html"
     )
-
 
 
 class BootProcessView(PermissionRequiredMixin, FormView[BootProcessForm]):

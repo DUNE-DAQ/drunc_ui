@@ -1,6 +1,9 @@
 <ul class="list-group list-group-flush">
   {% for message in messages %}
-    <li class="list-group-item py-2 {% if forloop.counter0|divisibleby:2 %}bg-light{% else %}bg-white{% endif %}" style="font-family: 'Arial', sans-serif; font-size: 0.875rem; line-height: 1.4;">
+    <li class="list-group-item py-2 {% if forloop.counter0|divisibleby:2 %}bg-light{% else %}bg-white{% endif %}"
+        style="font-family: 'Arial', sans-serif;
+               font-size: 0.875rem;
+               line-height: 1.4">
       <span>{{ message }}</span>
     </li>
   {% endfor %}
