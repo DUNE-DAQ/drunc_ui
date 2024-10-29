@@ -157,7 +157,7 @@ KAFKA_ADDRESS = os.getenv("KAFKA_ADDRESS", "kafka:9092")
 KAFKA_TOPIC_REGEX = {
     # PROCMAN matches topics of the form "control.<session>.process_manager".
     "PROCMAN": "^control\..+\.process_manager$",
-    # ERS matches topics of the form "erskafka-reporting".
+    # ERS matches only the topic "erskafka-reporting".
     "ERS": "^erskafka-reporting$",
 }
 
