@@ -6,6 +6,7 @@ logs_column_template = (
     'class="btn btn-sm btn-primary text-white" title="View logs">LOGS</a>'
 )
 
+
 class ProcessTable(tables.Table):
     """Defines a Process Table for the data from the Process Manager."""
 
@@ -18,7 +19,10 @@ class ProcessTable(tables.Table):
                     "font-weight: bold; font-size: 1.1rem; color: white;"
                 )
             },
-            "td": {"class": "fw-bold text-break text-start", "style": "max-width: 400px; white-space: normal;"},
+            "td": {
+                "class": "fw-bold text-break text-start",
+                "style": "max-width: 400px; white-space: normal;",
+            },
         },
     )
     name = tables.Column(
@@ -31,7 +35,10 @@ class ProcessTable(tables.Table):
                     "font-weight: bold; font-size: 1.1rem; color: white;"
                 ),
             },
-            "td": {"class": "fw-bold text-primary text-center", "style": "white-space: nowrap;"},
+            "td": {
+                "class": "fw-bold text-primary text-center",
+                "style": "white-space: nowrap;",
+            },
         },
     )
     user = tables.Column(
@@ -130,10 +137,16 @@ class ProcessTable(tables.Table):
     def render_status_code(self, value: str) -> str:
         """Render the status_code with softer, transparent backgrounds."""
         if value == "DEAD":
-            return mark_safe(f'<span class="badge px-3 py-2 rounded" style="background-color: rgba(255, 0, 0, 0.1); color: #d9534f; font-size: 1.1rem;">DEAD</span>')
+            return mark_safe(
+                '<span class="badge px-3 py-2 rounded" style="background-color: rgba(255, 0, 0, 0.1); color: #d9534f; font-size: 1.1rem;">DEAD</span>'
+            )
         elif value == "RUNNING":
-            return mark_safe(f'<span class="badge px-3 py-2 rounded" style="background-color: rgba(0, 255, 0, 0.1); color: #5cb85c; font-size: 1.1rem;">RUNNING</span>')
-        return mark_safe(f'<span class="badge bg-secondary px-3 py-2 rounded" style="font-size: 1.1rem;">{value}</span>')
+            return mark_safe(
+                '<span class="badge px-3 py-2 rounded" style="background-color: rgba(0, 255, 0, 0.1); color: #5cb85c; font-size: 1.1rem;">RUNNING</span>'
+            )
+        return mark_safe(
+            f'<span class="badge bg-secondary px-3 py-2 rounded" style="font-size: 1.1rem;">{value}</span>'
+        )
 
     def render_select(self, value: str) -> str:
         """Customise behaviour of checkboxes in the select column."""
