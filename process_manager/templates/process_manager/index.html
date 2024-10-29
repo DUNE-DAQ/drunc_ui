@@ -27,49 +27,18 @@
       white-space: nowrap;
       vertical-align: middle;
     }
-    /* Header style */
-    .table-header {
-      font-family: Arial, sans-serif;
-      background-color: rgba(60, 60, 60, 0.8);
-      font-weight: bold;
-      font-size: 1.1rem;
-      color: white;
-      text-align: center;
-    }
-    /* Cell styling */
-    .uuid-cell {
-      max-width: 400px;
-      white-space: normal;
-    }
-    .name-cell, .user-cell, .session-cell, .status-cell, .exit-code-cell, .logs-cell {
-      text-align: center;
-    }
-    .name-cell { font-weight: bold; color: #0d6efd; white-space: nowrap; }
-    .user-cell, .session-cell { color: #6c757d; }
-    .status-cell { font-weight: bold; }
-    /* Badge styling */
-    .badge-dead {
-      color: #fff;
-      background-color: #dc3545;
-      padding: 0.5em 0.75em;
-      border-radius: 0.25em;
-    }
-    .badge-running {
-      color: #fff;
-      background-color: #28a745;
-      padding: 0.5em 0.75em;
-      border-radius: 0.25em;
-    }
+    /* Flex layout to control column widths */
     .flex-container {
       display: flex;
       gap: 15px;
     }
     .flex-container .process-panel {
-      flex: 1;
+      flex: 1; /* Takes up remaining space */
     }
     .flex-container .message-panel {
-      width: 30%;
+      width: 30%; /* Fixed width for message panel */
     }
+    /* When the message panel is hidden, expand the process panel */
     .flex-container.hide-messages .process-panel {
       width: 100%;
     }
@@ -120,6 +89,7 @@
                        class="btn btn-danger w-100 ms-2"
                        name="action"
                        onclick="return confirm('Kill selected processes?')">
+                <!-- Consistent Show Messages Button -->
                 <button id="show-messages-button"
                         type="button"
                         class="btn btn-info w-100 ms-2"
@@ -144,6 +114,7 @@
         <div class="card shadow-sm">
           <div class="card-header bg-info text-white">
             <h5 class="d-inline">Messages</h5>
+            <!-- Updated Hide Messages Button as a close icon -->
             <button id="hide-messages-button"
                     type="button"
                     class="btn-close"
