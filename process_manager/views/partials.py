@@ -102,11 +102,11 @@ def messages(request: HttpRequest) -> HttpResponse:
         topic__regex=settings.KAFKA_TOPIC_REGEX["PROCMAN"], message__icontains=search
     )
 
-    messages = []
-    for record in records:
-        # Time is stored as UTC. localtime(t) converts this to our configured timezone.
-        timestamp = localtime(record.timestamp).strftime("%Y-%m-%d %H:%M:%S")
-        messages.append(f"{timestamp}: {record.message}")
+    # Time is stored as UTC. localtime(t) converts this to our configured timezone.
+    messages = [
+        f"{localtime(record.timestamp).strftime('%Y-%m-%d %H:%M:%S')}: {record.message}"
+        for record in records
+    ]
 
     return render(
         request=request,
