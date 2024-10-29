@@ -1,5 +1,8 @@
+"""Defines tables for displaying process data in the Process Manager application."""
+
 import django_tables2 as tables
 from django.utils.safestring import mark_safe
+from typing import ClassVar
 
 header_style = (
     "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); "
@@ -12,9 +15,8 @@ status_running_style = (
     "background-color: rgba(0, 255, 0, 0.1); color: #5cb85c; font-size: 1.1rem;"
 )
 
-
 class ProcessTable(tables.Table):
-    """Defines a Process Table for the data from the Process Manager."""
+    """Defines a table structure for displaying process data with custom styles."""
 
     uuid = tables.Column(
         verbose_name="UUID",
@@ -86,8 +88,12 @@ class ProcessTable(tables.Table):
     )
 
     class Meta:
-        orderable = False
-        attrs = {"class": "table table-striped table-hover table-responsive"}
+        """Metadata options for configuring table behavior and appearance."""
+        
+        orderable: ClassVar[bool] = False
+        attrs: ClassVar[dict] = {
+            "class": "table table-striped table-hover table-responsive"
+        }
 
     def render_status_code(self, value: str) -> str:
         """Render the status_code with softer, transparent backgrounds."""
@@ -102,14 +108,14 @@ class ProcessTable(tables.Table):
                 "RUNNING</span>"
             )
         return mark_safe(
-            f'<span class="badge bg-secondary px-3 py-2 rounded" style="font-size: 1.1rem;">'
-            f"{value}</span>"
+            f'<span class="badge bg-secondary px-3 py-2 rounded" '
+            f'style="font-size: 1.1rem;">{value}</span>'
         )
 
     def render_select(self, value: str) -> str:
         """Customize behavior of checkboxes in the select column."""
         return mark_safe(
             f'<input type="checkbox" name="select" value="{value}" id="{value}-input" '
-            f'hx-preserve="true" class="form-check-input form-check-lg row-checkbox" '
+            'hx-preserve="true" class="form-check-input form-check-lg row-checkbox" '
             'style="transform: scale(1.5);" _="on click set .row-checkbox.checked to my.checked">'
         )
