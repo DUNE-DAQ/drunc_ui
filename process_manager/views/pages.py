@@ -1,7 +1,6 @@
 """View functions for pages."""
 
 import uuid
-from typing import Union
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
@@ -14,10 +13,11 @@ from ..forms import BootProcessForm
 from ..process_manager_interface import boot_process, get_process_logs
 from ..tables import ProcessTable
 
+
 @login_required
 def index(request: HttpRequest) -> HttpResponse:
     """View that renders the index/home page with process table."""
-    table_data: list[dict[str, Union[str, int]]] = []  # Placeholder for actual data retrieval
+    table_data: list[dict[str, str | int]] = []  # Placeholder for actual data retrieval
     table = ProcessTable(table_data)  # Instantiate table with data
     return render(request, "process_manager/index.html", {"table": table})
 
@@ -37,14 +37,9 @@ def logs(request: HttpRequest, uuid: uuid.UUID) -> HttpResponse:
     logs_response = get_process_logs(str(uuid))
 
     # Process the log text to exclude empty lines
-    log_lines = [
-        val.data.line for val in logs_response if val.data.line.strip()
-    ]
+    log_lines = [val.data.line for val in logs_response if val.data.line.strip()]
 
-    context = {
-        "log_lines": log_lines,
-        "log_text": "\n".join(log_lines)
-    }
+    context = {"log_lines": log_lines, "log_text": "\n".join(log_lines)}
     return render(request, "process_manager/logs.html", context)
 
 

@@ -1,5 +1,3 @@
-from typing import Any
-
 import django_tables2 as tables
 from django.utils.safestring import mark_safe
 
@@ -17,6 +15,7 @@ if <.row-checkbox:not(:checked)/> is empty
 else
   set #header-checkbox.checked to false
 """
+
 
 class ProcessTable(tables.Table):
     """Defines a Process Table for the data from the Process Manager."""
