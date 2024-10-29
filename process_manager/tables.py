@@ -98,13 +98,9 @@ class ProcessTable(tables.Table):
     def render_status_code(self, value: str) -> str:
         """Render the status_code with softer, transparent backgrounds."""
         if value == "DEAD":
-            return mark_safe(
-                '<span class="badge dead-badge">DEAD</span>'
-            )
+            return mark_safe('<span class="badge dead-badge">DEAD</span>')
         elif value == "RUNNING":
-            return mark_safe(
-                '<span class="badge running-badge">RUNNING</span>'
-            )
+            return mark_safe('<span class="badge running-badge">RUNNING</span>')
         return mark_safe(
             f'<span class="badge bg-secondary rounded" style="font-size: 1.1rem;">{value}</span>'
         )
