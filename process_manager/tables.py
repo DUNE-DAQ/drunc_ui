@@ -1,8 +1,9 @@
 """Defines the ProcessTable for displaying process data in a structured table format."""
 
+from typing import ClassVar
+
 import django_tables2 as tables
 from django.utils.safestring import mark_safe
-from typing import ClassVar
 
 # Define shared style as a variable for consistency and line length compliance
 header_style = (
@@ -30,6 +31,7 @@ else
   set #header-checkbox.checked to false
 """
 
+
 class ProcessTable(tables.Table):
     """Defines a Process Table for the data from the Process Manager."""
 
@@ -47,7 +49,10 @@ class ProcessTable(tables.Table):
         verbose_name="Process Name",
         attrs={
             "th": {"class": "text-center", "style": header_style},
-            "td": {"class": "fw-bold text-primary text-center", "style": "white-space: nowrap;"},
+            "td": {
+                "class": "fw-bold text-primary text-center",
+                "style": "white-space: nowrap;",
+            },
         },
     )
     user = tables.Column(
@@ -106,6 +111,7 @@ class ProcessTable(tables.Table):
 
     class Meta:
         """Table meta options for rendering behavior and styling."""
+
         orderable: ClassVar[bool] = False
         attrs: ClassVar[dict[str, str]] = {
             "class": "table table-striped table-hover table-responsive",
