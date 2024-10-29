@@ -51,3 +51,10 @@ def grpc_mock(mocker):
     yield mocker.patch(
         "process_manager.process_manager_interface.ProcessManagerDriver.send_command_aio"
     )
+
+
+@pytest.fixture(autouse=True)
+def kafka_topic_regex(settings):
+    """Set Kafka topic regex patterns for tests."""
+    settings.KAFKA_TOPIC_REGEX["PROCMAN"] = "^control\..+\.process_manager$"
+    settings.KAFKA_TOPIC_REGEX["ERS"] = "^erskafka-reporting$"
