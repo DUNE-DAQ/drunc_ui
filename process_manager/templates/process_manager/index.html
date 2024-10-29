@@ -5,19 +5,20 @@
 {% block extra_css %}
   <style>
     #hide-messages-button {
-      /* Certain themes invert the colour, so we invert back. */
       filter: invert(1);
       float: right;
     }
+    #show-messages-button {
+      margin-top: 15px;
+      display: none; /* Hide on load */
+    }
     #message-list {
-      max-height: 60vh; /* Adjusted height for better space distribution */
+      max-height: 80vh;
       overflow-y: auto;
     }
-    /* Container for the table, without scroll settings */
     .table-container {
-      border-radius: 10px; /* Keeps the rounded corners for table container */
+      border-radius: 10px;
     }
-    /* Table styling */
     .table-container table {
       width: 100%;
       border-collapse: collapse;
@@ -25,6 +26,28 @@
     .table-container th, .table-container td {
       padding: 8px;
       white-space: nowrap;
+      vertical-align: middle;
+    }
+    /* Flex layout to control column widths */
+    .flex-container {
+      display: flex;
+      gap: 15px;
+    }
+    .flex-container .process-panel {
+      flex: 1; /* Takes up remaining space */
+    }
+    .flex-container .message-panel {
+      width: 30%; /* Fixed width for message panel */
+    }
+    /* When the message panel is hidden, expand the process panel */
+    .flex-container.hide-messages .process-panel {
+      width: 100%;
+    }
+    .flex-container.hide-messages .message-panel {
+      display: none;
+    }
+    .flex-container.hide-messages #show-messages-button {
+      display: inline-block;
     }
   </style>
 {% endblock extra_css %}
@@ -39,9 +62,9 @@
 {% endblock extra_js %}
 {% block content %}
   <div class="container-fluid no-padding no-margin">
-    <div class="row no-margin">
-      <!-- Process Control Panel (Expands to take the remaining width) -->
-      <div class="col-lg-9 no-padding">
+    <div class="flex-container" id="main-content">
+      <!-- Process Control Panel -->
+      <div class="process-panel">
         <div class="card shadow-sm rounded">
           <div class="card-header bg-primary text-white rounded-top">
             <h5>Process Control</h5>
@@ -54,25 +77,28 @@
                 <input type="submit" value="Restart" class="btn btn-success w-100 mx-2" name="action" onclick="return confirm('Restart selected processes?')">
                 <input type="submit" value="Flush" class="btn btn-warning w-100 mx-2" name="action" onclick="return confirm('Flush selected processes?')">
                 <input type="submit" value="Kill" class="btn btn-danger w-100 ms-2" name="action" onclick="return confirm('Kill selected processes?')">
+                <!-- Show Messages Button -->
+                <button id="show-messages-button" type="button" class="btn btn-info ms-2" _="on click hide me toggle .hide-messages on #main-content">Show Messages</button>
               </div>
               <input class="form-control mb-3" type="search" name="search" placeholder="Search processes..." hx-get="{% url 'process_manager:process_table' %}" hx-trigger="input changed delay:500ms, every 1s" hx-target="div.table-container">
               <div id="table-container" class="table-container">
-                <!-- Directly renders all table rows without pagination -->
-                {{ table.as_html }}
+                <div style="max-height: 60vh; overflow-y: auto;">
+                  {{ table.as_html }}
+                </div>
               </div>
             </form>
           </div>
         </div>
       </div>
 
-      <!-- Messages Panel (Sticks to the right) -->
-      <div class="col-lg-3 no-padding">
+      <!-- Messages Panel with toggle -->
+      <div class="message-panel" id="message-panel">
         <div class="card shadow-sm">
           <div class="card-header bg-info text-white">
             <h5 class="d-inline">Messages</h5>
-            <button id="hide-messages-button" type="button" class="btn-close" aria-label="Hide Messages" _="on click hide #message-panel show #show-messages-button"></button>
+            <button id="hide-messages-button" type="button" class="btn-close" aria-label="Hide Messages" _="on click add .hide-messages to #main-content show #show-messages-button">Hide</button>
           </div>
-          <div id="message-panel" class="card-body">
+          <div class="card-body">
             <input class="form-control mb-2" type="search" name="search" placeholder="Search messages..." hx-get="{% url 'process_manager:messages' %}" hx-trigger="input changed delay:500ms, every 1s" hx-target="#message-list">
             <div id="message-list" class="list-group" hx-get="{% url 'process_manager:messages' %}" hx-trigger="load"></div>
           </div>
