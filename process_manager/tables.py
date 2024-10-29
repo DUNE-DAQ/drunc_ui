@@ -1,8 +1,9 @@
 """Defines the ProcessTable for displaying process data in a structured table format."""
 
+from typing import ClassVar
+
 import django_tables2 as tables
 from django.utils.safestring import mark_safe
-from typing import ClassVar
 
 logs_column_template = (
     "<a href=\"{% url 'process_manager:logs' record.uuid %}\" "
@@ -17,6 +18,7 @@ if <.row-checkbox:not(:checked)/> is empty
 else
   set #header-checkbox.checked to false
 """
+
 
 class ProcessTable(tables.Table):
     """Defines a Process Table for the data from the Process Manager."""
@@ -68,6 +70,7 @@ class ProcessTable(tables.Table):
 
     class Meta:
         """Table meta options for rendering behavior and styling."""
+
         orderable: ClassVar[bool] = False
         attrs: ClassVar[dict[str, str]] = {
             "class": "table table-striped table-hover table-responsive",
