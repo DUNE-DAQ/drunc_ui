@@ -1,5 +1,6 @@
 import django_tables2 as tables
 from django.utils.safestring import mark_safe
+from typing import Any
 
 logs_column_template = (
     "<a href=\"{% url 'process_manager:logs' record.uuid %}\" "
@@ -123,7 +124,7 @@ class ProcessTable(tables.Table):
             "style": "width: 100%;",  # Make the table occupy full width
         }
 
-    def render_status_code(self, value):
+    def render_status_code(self, value) -> str:
         """Render the status_code with softer, transparent backgrounds."""
         if value == "DEAD":
             return mark_safe(
@@ -137,7 +138,7 @@ class ProcessTable(tables.Table):
             f'<span class="badge bg-secondary px-3 py-2 rounded" style="font-size: 1.1rem;">{value}</span>'
         )
 
-    def render_select(self, value: str) -> str:
+    def render_select(self, value: str) -> Any:
         """Customise behaviour of checkboxes in the select column.
 
         This method is overriding the default render behavior for the CheckBoxColumn.
