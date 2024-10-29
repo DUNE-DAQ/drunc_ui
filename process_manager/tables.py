@@ -10,6 +10,17 @@ logs_column_template = (
     'class="btn btn-sm btn-primary text-white" title="View logs">LOGS</a>'
 )
 
+# Define repeated style strings for consistency and brevity
+header_style = (
+    "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); "
+    "font-weight: bold; font-size: 1.1rem; color: white;"
+)
+badge_style_dead = (
+    "background-color: rgba(255, 0, 0, 0.1); color: #d9534f; font-size: 1.1rem;"
+)
+badge_style_running = (
+    "background-color: rgba(0, 255, 0, 0.1); color: #5cb85c; font-size: 1.1rem;"
+)
 
 class ProcessTable(tables.Table):
     """Defines a Process Table for the data from the Process Manager."""
@@ -17,12 +28,7 @@ class ProcessTable(tables.Table):
     uuid = tables.Column(
         verbose_name="UUID",
         attrs={
-            "th": {
-                "style": (
-                    "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); "
-                    "font-weight: bold; font-size: 1.1rem; color: white;"
-                )
-            },
+            "th": {"style": header_style},
             "td": {
                 "class": "fw-bold text-break text-start",
                 "style": "max-width: 400px; white-space: normal;",
@@ -32,68 +38,35 @@ class ProcessTable(tables.Table):
     name = tables.Column(
         verbose_name="Process Name",
         attrs={
-            "th": {
-                "class": "text-center",
-                "style": (
-                    "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); "
-                    "font-weight: bold; font-size: 1.1rem; color: white;"
-                ),
-            },
-            "td": {
-                "class": "fw-bold text-primary text-center",
-                "style": "white-space: nowrap;",
-            },
+            "th": {"class": "text-center", "style": header_style},
+            "td": {"class": "fw-bold text-primary text-center", "style": "white-space: nowrap;"},
         },
     )
     user = tables.Column(
         verbose_name="User",
         attrs={
-            "th": {
-                "class": "text-center",
-                "style": (
-                    "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); "
-                    "font-weight: bold; font-size: 1.1rem; color: white;"
-                ),
-            },
+            "th": {"class": "text-center", "style": header_style},
             "td": {"class": "text-secondary text-center"},
         },
     )
     session = tables.Column(
         verbose_name="Session",
         attrs={
-            "th": {
-                "class": "text-center",
-                "style": (
-                    "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); "
-                    "font-weight: bold; font-size: 1.1rem; color: white;"
-                ),
-            },
+            "th": {"class": "text-center", "style": header_style},
             "td": {"class": "text-secondary text-center"},
         },
     )
     status_code = tables.Column(
         verbose_name="Status",
         attrs={
-            "th": {
-                "class": "text-center",
-                "style": (
-                    "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); "
-                    "font-weight: bold; font-size: 1.1rem; color: white;"
-                ),
-            },
+            "th": {"class": "text-center", "style": header_style},
             "td": {"class": "fw-bold text-center"},
         },
     )
     exit_code = tables.Column(
         verbose_name="Exit Code",
         attrs={
-            "th": {
-                "class": "text-center",
-                "style": (
-                    "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); "
-                    "font-weight: bold; font-size: 1.1rem; color: white;"
-                ),
-            },
+            "th": {"class": "text-center", "style": header_style},
             "td": {"class": "text-center"},
         },
     )
@@ -101,13 +74,7 @@ class ProcessTable(tables.Table):
         logs_column_template,
         verbose_name="Logs",
         attrs={
-            "th": {
-                "class": "text-center",
-                "style": (
-                    "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); "
-                    "font-weight: bold; font-size: 1.1rem; color: white;"
-                ),
-            },
+            "th": {"class": "text-center", "style": header_style},
             "td": {"class": "text-center"},
         },
     )
@@ -115,13 +82,7 @@ class ProcessTable(tables.Table):
         accessor="uuid",
         verbose_name="Select",
         attrs={
-            "th": {
-                "class": "text-center",
-                "style": (
-                    "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); "
-                    "font-weight: bold; font-size: 1.1rem; color: white;"
-                ),
-            },
+            "th": {"class": "text-center", "style": header_style},
             "th__input": {
                 "id": "header-checkbox",
                 "hx-preserve": "true",
@@ -146,13 +107,11 @@ class ProcessTable(tables.Table):
         """Render the status_code with softer, transparent backgrounds."""
         if value == "DEAD":
             return mark_safe(
-                '<span class="badge px-3 py-2 rounded" '
-                'style="background-color: rgba(255, 0, 0, 0.1); color: #d9534f; font-size: 1.1rem;">DEAD</span>'
+                f'<span class="badge px-3 py-2 rounded" style="{badge_style_dead}">DEAD</span>'
             )
         elif value == "RUNNING":
             return mark_safe(
-                '<span class="badge px-3 py-2 rounded" '
-                'style="background-color: rgba(0, 255, 0, 0.1); color: #5cb85c; font-size: 1.1rem;">RUNNING</span>'
+                f'<span class="badge px-3 py-2 rounded" style="{badge_style_running}">RUNNING</span>'
             )
         return mark_safe(
             f'<span class="badge bg-secondary px-3 py-2 rounded" style="font-size: 1.1rem;">{value}</span>'
