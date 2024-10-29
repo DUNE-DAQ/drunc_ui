@@ -61,6 +61,11 @@ class TestMessagesView(LoginRequiredTest):
     endpoint = reverse("process_manager:messages")
     topic = "control.test.process_manager"
 
+    @pytest.fixture(autouse=True)
+    def kafka_topic_regex(self, settings):
+        """Set Kafka topic regex patterns for tests."""
+        settings.KAFKA_TOPIC_REGEX["PROCMAN"] = "^control\..+\.process_manager$"
+
     def test_get(self, auth_client, settings):
         """Tests basic calls of view method."""
         t1 = datetime.now(tz=UTC)
