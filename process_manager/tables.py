@@ -1,8 +1,9 @@
 """Defines tables for displaying process data in the Process Manager application."""
 
+from typing import ClassVar
+
 import django_tables2 as tables
 from django.utils.safestring import mark_safe
-from typing import ClassVar
 
 header_style = (
     "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); "
@@ -14,6 +15,7 @@ status_dead_style = (
 status_running_style = (
     "background-color: rgba(0, 255, 0, 0.1); color: #5cb85c; font-size: 1.1rem;"
 )
+
 
 class ProcessTable(tables.Table):
     """Defines a table structure for displaying process data with custom styles."""
@@ -89,7 +91,7 @@ class ProcessTable(tables.Table):
 
     class Meta:
         """Metadata options for configuring table behavior and appearance."""
-        
+
         orderable: ClassVar[bool] = False
         attrs: ClassVar[dict] = {
             "class": "table table-striped table-hover table-responsive"
