@@ -1,11 +1,7 @@
-"""Defines the ProcessTable for displaying process data in a structured table format."""
-
-from typing import ClassVar
-
 import django_tables2 as tables
 from django.utils.safestring import mark_safe
+from typing import ClassVar
 
-# Define shared style as a variable for consistency and line length compliance
 header_style = (
     "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); "
     "font-weight: bold; font-size: 1.1rem; color: white;"
@@ -17,21 +13,6 @@ status_running_style = (
     "background-color: rgba(0, 255, 0, 0.1); color: #5cb85c; font-size: 1.1rem;"
 )
 
-logs_column_template = (
-    "<a href=\"{% url 'process_manager:logs' record.uuid %}\" "
-    'class="btn btn-sm btn-primary text-white" title="View logs">LOGS</a>'
-)
-
-header_checkbox_hyperscript = "on click set .row-checkbox.checked to my.checked"
-row_checkbox_hyperscript = """
-on click
-if <.row-checkbox:not(:checked)/> is empty
-  set #header-checkbox.checked to true
-else
-  set #header-checkbox.checked to false
-"""
-
-
 class ProcessTable(tables.Table):
     """Defines a Process Table for the data from the Process Manager."""
 
@@ -39,20 +20,14 @@ class ProcessTable(tables.Table):
         verbose_name="UUID",
         attrs={
             "th": {"style": header_style},
-            "td": {
-                "class": "fw-bold text-break text-start",
-                "style": "max-width: 400px; white-space: normal;",
-            },
+            "td": {"class": "fw-bold text-break text-start"},
         },
     )
     name = tables.Column(
         verbose_name="Process Name",
         attrs={
             "th": {"class": "text-center", "style": header_style},
-            "td": {
-                "class": "fw-bold text-primary text-center",
-                "style": "white-space: nowrap;",
-            },
+            "td": {"class": "fw-bold text-primary text-center"},
         },
     )
     user = tables.Column(
@@ -84,7 +59,8 @@ class ProcessTable(tables.Table):
         },
     )
     logs = tables.TemplateColumn(
-        logs_column_template,
+        "<a href=\"{% url 'process_manager:logs' record.uuid %}\" "
+        'class="btn btn-sm btn-primary text-white" title="View logs">LOGS</a>',
         verbose_name="Logs",
         attrs={
             "th": {"class": "text-center", "style": header_style},
@@ -99,7 +75,7 @@ class ProcessTable(tables.Table):
             "th__input": {
                 "id": "header-checkbox",
                 "hx-preserve": "true",
-                "_": header_checkbox_hyperscript,
+                "_": "on click set .row-checkbox.checked to my.checked",
                 "class": "form-check-input form-check-lg",
             },
             "td__input": {
@@ -110,26 +86,24 @@ class ProcessTable(tables.Table):
     )
 
     class Meta:
-        """Table meta options for rendering behavior and styling."""
-
-        orderable: ClassVar[bool] = False
-        attrs: ClassVar[dict[str, str]] = {
-            "class": "table table-striped table-hover table-responsive",
-            "style": "width: 100%;",
-        }
+        orderable = False
+        attrs = {"class": "table table-striped table-hover table-responsive"}
 
     def render_status_code(self, value: str) -> str:
         """Render the status_code with softer, transparent backgrounds."""
         if value == "DEAD":
             return mark_safe(
-                f'<span class="badge px-3 py-2 rounded" style="{status_dead_style}">DEAD</span>'
+                f'<span class="badge px-3 py-2 rounded" style="{status_dead_style}">'
+                "DEAD</span>"
             )
         elif value == "RUNNING":
             return mark_safe(
-                f'<span class="badge px-3 py-2 rounded" style="{status_running_style}">RUNNING</span>'
+                f'<span class="badge px-3 py-2 rounded" style="{status_running_style}">'
+                "RUNNING</span>"
             )
         return mark_safe(
-            f'<span class="badge bg-secondary px-3 py-2 rounded" style="font-size: 1.1rem;">{value}</span>'
+            f'<span class="badge bg-secondary px-3 py-2 rounded" style="font-size: 1.1rem;">'
+            f"{value}</span>"
         )
 
     def render_select(self, value: str) -> str:
@@ -137,5 +111,5 @@ class ProcessTable(tables.Table):
         return mark_safe(
             f'<input type="checkbox" name="select" value="{value}" id="{value}-input" '
             f'hx-preserve="true" class="form-check-input form-check-lg row-checkbox" '
-            f'style="transform: scale(1.5);" _="{row_checkbox_hyperscript}">'
+            'style="transform: scale(1.5);" _="on click set .row-checkbox.checked to my.checked">'
         )
