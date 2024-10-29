@@ -10,7 +10,10 @@ logs_column_template = (
     'class="btn btn-sm btn-primary text-white" title="View logs">LOGS</a>'
 )
 
-header_checkbox_hyperscript = "on click set .row-checkbox.checked to my.checked"
+header_checkbox_hyperscript = """
+on click set .row-checkbox.checked to my.checked
+"""
+
 row_checkbox_hyperscript = """
 on click
 if <.row-checkbox:not(:checked)/> is empty
