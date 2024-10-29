@@ -1,6 +1,5 @@
 import django_tables2 as tables
 from django.utils.safestring import mark_safe
-from typing import ClassVar
 
 header_style = (
     "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); "
@@ -12,6 +11,7 @@ status_dead_style = (
 status_running_style = (
     "background-color: rgba(0, 255, 0, 0.1); color: #5cb85c; font-size: 1.1rem;"
 )
+
 
 class ProcessTable(tables.Table):
     """Defines a Process Table for the data from the Process Manager."""
