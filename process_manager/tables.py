@@ -1,6 +1,5 @@
 import django_tables2 as tables
 from django.utils.safestring import mark_safe
-from typing import Any
 
 logs_column_template = (
     "<a href=\"{% url 'process_manager:logs' record.uuid %}\" "
@@ -16,7 +15,6 @@ if <.row-checkbox:not(:checked)/> is empty
 else
   set #header-checkbox.checked to false
 """
-
 
 class ProcessTable(tables.Table):
     """Defines a Process Table for the data from the Process Manager."""
@@ -125,7 +123,7 @@ class ProcessTable(tables.Table):
             "style": "width: 100%;",  # Make the table occupy full width
         }
 
-    def render_status_code(self, value) -> str:
+    def render_status_code(self, value: str) -> str:
         """Render the status_code with softer, transparent backgrounds."""
         if value == "DEAD":
             return mark_safe(
@@ -139,13 +137,8 @@ class ProcessTable(tables.Table):
             f'<span class="badge bg-secondary px-3 py-2 rounded" style="font-size: 1.1rem;">{value}</span>'
         )
 
-    def render_select(self, value: str) -> Any:
-        """Customise behaviour of checkboxes in the select column.
-
-        This method is overriding the default render behavior for the CheckBoxColumn.
-        We use `mark_safe` to ensure that the generated HTML for the checkbox,
-        including the required `hx-preserve` and hyperscript logic, is rendered safely.
-        """
+    def render_select(self, value: str) -> str:
+        """Customize behavior of checkboxes in the select column."""
         return mark_safe(
             f'<input type="checkbox" name="select" value="{value}" id="{value}-input" '
             f'hx-preserve="true" class="form-check-input form-check-lg row-checkbox" style="transform: scale(1.5);" _="{row_checkbox_hyperscript}">'
