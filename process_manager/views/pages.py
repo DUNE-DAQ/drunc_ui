@@ -11,12 +11,15 @@ from django.views.generic.edit import FormView
 
 from ..forms import BootProcessForm
 from ..process_manager_interface import boot_process, get_process_logs
-
+from ..tables import ProcessTable  # Import ProcessTable for table rendering
 
 @login_required
 def index(request: HttpRequest) -> HttpResponse:
-    """View that renders the index/home page."""
-    return render(request=request, template_name="process_manager/index.html")
+    """View that renders the index/home page with process table."""
+    # Populate table data (replace this with actual data retrieval logic)
+    table_data = []  # Example placeholder; should be replaced with real data source
+    table = ProcessTable(table_data)  # Instantiate table with data
+    return render(request, "process_manager/index.html", {"table": table})
 
 
 @login_required
@@ -38,10 +41,12 @@ def logs(request: HttpRequest, uuid: uuid.UUID) -> HttpResponse:
         val.data.line for val in logs_response if val.data.line.strip()
     ]  # Exclude empty lines
 
-    context = dict(log_lines=log_lines)  # Send the lines as a list
-    return render(
-        request=request, context=context, template_name="process_manager/logs.html"
-    )
+    # Include both log_lines for line-by-line display and log_text for full text if needed
+    context = {
+        "log_lines": log_lines,
+        "log_text": "\n".join(log_lines)  # Optional if 'log_text' is expected
+    }
+    return render(request, "process_manager/logs.html", context)
 
 
 class BootProcessView(PermissionRequiredMixin, FormView[BootProcessForm]):
