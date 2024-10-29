@@ -4,18 +4,6 @@ import django_tables2 as tables
 from django.utils.safestring import mark_safe
 from typing import ClassVar
 
-# Define shared style as a variable for consistency and line length compliance
-header_style = (
-    "font-family: Arial, sans-serif; background-color: rgba(60, 60, 60, 0.8); "
-    "font-weight: bold; font-size: 1.1rem; color: white;"
-)
-status_dead_style = (
-    "background-color: rgba(255, 0, 0, 0.1); color: #d9534f; font-size: 1.1rem;"
-)
-status_running_style = (
-    "background-color: rgba(0, 255, 0, 0.1); color: #5cb85c; font-size: 1.1rem;"
-)
-
 logs_column_template = (
     "<a href=\"{% url 'process_manager:logs' record.uuid %}\" "
     'class="btn btn-sm btn-primary text-white" title="View logs">LOGS</a>'
@@ -35,71 +23,45 @@ class ProcessTable(tables.Table):
 
     uuid = tables.Column(
         verbose_name="UUID",
-        attrs={
-            "th": {"style": header_style},
-            "td": {
-                "class": "fw-bold text-break text-start",
-                "style": "max-width: 400px; white-space: normal;",
-            },
-        },
+        attrs={"td": {"class": "fw-bold text-break text-start"}},
     )
     name = tables.Column(
         verbose_name="Process Name",
-        attrs={
-            "th": {"class": "text-center", "style": header_style},
-            "td": {"class": "fw-bold text-primary text-center", "style": "white-space: nowrap;"},
-        },
+        attrs={"td": {"class": "fw-bold text-primary text-center"}},
     )
     user = tables.Column(
         verbose_name="User",
-        attrs={
-            "th": {"class": "text-center", "style": header_style},
-            "td": {"class": "text-secondary text-center"},
-        },
+        attrs={"td": {"class": "text-secondary text-center"}},
     )
     session = tables.Column(
         verbose_name="Session",
-        attrs={
-            "th": {"class": "text-center", "style": header_style},
-            "td": {"class": "text-secondary text-center"},
-        },
+        attrs={"td": {"class": "text-secondary text-center"}},
     )
     status_code = tables.Column(
         verbose_name="Status",
-        attrs={
-            "th": {"class": "text-center", "style": header_style},
-            "td": {"class": "fw-bold text-center"},
-        },
+        attrs={"td": {"class": "fw-bold text-center"}},
     )
     exit_code = tables.Column(
         verbose_name="Exit Code",
-        attrs={
-            "th": {"class": "text-center", "style": header_style},
-            "td": {"class": "text-center"},
-        },
+        attrs={"td": {"class": "text-center"}},
     )
     logs = tables.TemplateColumn(
         logs_column_template,
         verbose_name="Logs",
-        attrs={
-            "th": {"class": "text-center", "style": header_style},
-            "td": {"class": "text-center"},
-        },
+        attrs={"td": {"class": "text-center"}},
     )
     select = tables.CheckBoxColumn(
         accessor="uuid",
         verbose_name="Select",
         attrs={
-            "th": {"class": "text-center", "style": header_style},
             "th__input": {
                 "id": "header-checkbox",
                 "hx-preserve": "true",
                 "_": header_checkbox_hyperscript,
-                "class": "form-check-input form-check-lg",
+                "class": "form-check-input form-check-input-lg",
             },
             "td__input": {
-                "class": "form-check-input form-check-lg text-center",
-                "style": "transform: scale(1.5);",
+                "class": "form-check-input form-check-input-lg text-center",
             },
         },
     )
@@ -109,19 +71,14 @@ class ProcessTable(tables.Table):
         orderable: ClassVar[bool] = False
         attrs: ClassVar[dict[str, str]] = {
             "class": "table table-striped table-hover table-responsive",
-            "style": "width: 100%;",
         }
 
     def render_status_code(self, value: str) -> str:
-        """Render the status_code with softer, transparent backgrounds."""
+        """Render the status_code with custom badge classes."""
         if value == "DEAD":
-            return mark_safe(
-                f'<span class="badge px-3 py-2 rounded" style="{status_dead_style}">DEAD</span>'
-            )
+            return mark_safe('<span class="badge badge-dead">DEAD</span>')
         elif value == "RUNNING":
-            return mark_safe(
-                f'<span class="badge px-3 py-2 rounded" style="{status_running_style}">RUNNING</span>'
-            )
+            return mark_safe('<span class="badge badge-running">RUNNING</span>')
         return mark_safe(
             f'<span class="badge bg-secondary px-3 py-2 rounded" style="font-size: 1.1rem;">{value}</span>'
         )
@@ -130,6 +87,6 @@ class ProcessTable(tables.Table):
         """Customize behavior of checkboxes in the select column."""
         return mark_safe(
             f'<input type="checkbox" name="select" value="{value}" id="{value}-input" '
-            f'hx-preserve="true" class="form-check-input form-check-lg row-checkbox" '
-            f'style="transform: scale(1.5);" _="{row_checkbox_hyperscript}">'
+            'hx-preserve="true" class="form-check-input form-check-input-lg row-checkbox" '
+            f'_="{row_checkbox_hyperscript}">'
         )

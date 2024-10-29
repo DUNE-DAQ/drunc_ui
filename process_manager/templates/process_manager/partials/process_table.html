@@ -1,4 +1,5 @@
 {% load render_table from django_tables2 %}
+
 <!-- Custom CSS styles for ProcessTable -->
 <style>
   /* Table Header Styling */
@@ -11,7 +12,7 @@
   }
 
   /* Badge Styles for Status Codes */
-  .badge.dead-badge {
+  .badge-dead {
     background-color: rgba(255, 0, 0, 0.1);
     color: #d9534f;
     font-size: 1.1rem;
@@ -19,7 +20,7 @@
     border-radius: 0.25rem;
   }
 
-  .badge.running-badge {
+  .badge-running {
     background-color: rgba(0, 255, 0, 0.1);
     color: #5cb85c;
     font-size: 1.1rem;
@@ -27,7 +28,7 @@
     border-radius: 0.25rem;
   }
 
-  /* Other Table Cell Styling */
+  /* Table Cell Styling */
   .fw-bold {
     font-weight: bold;
   }
@@ -57,4 +58,5 @@
     transform: scale(1.5);
   }
 </style>
+
 {% render_table table %}
