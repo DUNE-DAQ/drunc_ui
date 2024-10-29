@@ -10,9 +10,10 @@
     <div class="card-body p-0">
       <div class="list-group">
         {% for line in log_lines %}
-          <div class="list-group-item {% if forloop.counter0|divisibleby:2 %}bg-primary-subtle{% else %}bg-white{% endif %} border-0" 
+          <div class="list-group-item border-0"
                style="font-family: 'Courier New', Courier, monospace; font-size: 0.875rem; line-height: 1.2; 
-               {% if forloop.first %}border-top-left-radius: 0; border-top-right-radius: 0;{% else %}border-radius: 0.25rem;{% endif %}">
+                      {% if forloop.first %}border-top-left-radius: 0; border-top-right-radius: 0;{% elif forloop.last %}border-bottom-left-radius: 0; border-bottom-right-radius: 0;{% else %}border-radius: 0;{% endif %}
+                      background-color: rgba(240, 240, 240, 0.9);">
             <span class="d-block py-0 px-2">{{ line }}</span>
           </div>
         {% endfor %}
