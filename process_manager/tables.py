@@ -93,8 +93,9 @@ class ProcessTable(tables.Table):
     def render_select(self, value: str) -> str:
         """Customize behavior of checkboxes in the select column."""
         return mark_safe(
-            f'<input type="checkbox" name="select" value="{value}" id="{value}-input" '
-            'hx-preserve="true" class="form-check-input form-check-input-lg row-checkbox" '
-            f'style="transform: scale(1.5);" '
+            f'<input type="checkbox" name="select" value="{value}" '
+            f'id="{value}-input" hx-preserve="true" '
+            'class="form-check-input form-check-input-lg row-checkbox" '
+            'style="transform: scale(1.5);" '
             f'_="{row_checkbox_hyperscript}">'
         )
