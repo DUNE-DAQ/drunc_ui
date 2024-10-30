@@ -59,6 +59,12 @@ class TestMessagesView(LoginRequiredTest):
     """Test the process_manager.views.messages view function."""
 
     endpoint = reverse("process_manager:messages")
+    topic = "control.test.process_manager"
+
+    @pytest.fixture(autouse=True)
+    def kafka_topic_regex(self, settings):
+        """Set Kafka topic regex patterns for tests."""
+        settings.KAFKA_TOPIC_REGEX["PROCMAN"] = "^control\..+\.process_manager$"
 
     def test_get(self, auth_client):
         """Tests basic calls of view method."""
@@ -66,8 +72,8 @@ class TestMessagesView(LoginRequiredTest):
         t2 = t1 + timedelta(minutes=10)
         DruncMessage.objects.bulk_create(
             [
-                DruncMessage(timestamp=t1, message="message 0"),
-                DruncMessage(timestamp=t2, message="message 1"),
+                DruncMessage(topic=self.topic, timestamp=t1, message="message 0"),
+                DruncMessage(topic=self.topic, timestamp=t2, message="message 1"),
             ]
         )
 
@@ -89,8 +95,8 @@ class TestMessagesView(LoginRequiredTest):
         his_msg = "HIs meSsaGe"
         DruncMessage.objects.bulk_create(
             [
-                DruncMessage(timestamp=t, message=her_msg),
-                DruncMessage(timestamp=t, message=his_msg),
+                DruncMessage(topic=self.topic, timestamp=t, message=her_msg),
+                DruncMessage(topic=self.topic, timestamp=t, message=his_msg),
             ]
         )
 
@@ -109,6 +115,16 @@ class TestMessagesView(LoginRequiredTest):
 
         # search for "not there"
         response = auth_client.get(self.endpoint, data={"search": "not there"})
+        assert response.status_code == HTTPStatus.OK
+        assert len(response.context["messages"]) == 0
+
+    def test_get_wrong_topic(self, auth_client):
+        """Test view method plays nice with other Kafka topics."""
+        DruncMessage.objects.create(
+            topic="the.wrong.topic", timestamp=datetime.now(tz=UTC), message="message"
+        )
+
+        response = auth_client.get(self.endpoint)
         assert response.status_code == HTTPStatus.OK
         assert len(response.context["messages"]) == 0
 
