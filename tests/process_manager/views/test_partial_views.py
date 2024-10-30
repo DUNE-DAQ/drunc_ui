@@ -66,7 +66,7 @@ class TestMessagesView(LoginRequiredTest):
         """Set Kafka topic regex patterns for tests."""
         settings.KAFKA_TOPIC_REGEX["PROCMAN"] = "^control\..+\.process_manager$"
 
-    def test_get(self, auth_client, settings):
+    def test_get(self, auth_client):
         """Tests basic calls of view method."""
         t1 = datetime.now(tz=UTC)
         t2 = t1 + timedelta(minutes=10)
@@ -87,7 +87,7 @@ class TestMessagesView(LoginRequiredTest):
         t2_str = t2.strftime("%Y-%m-%d %H:%M:%S")
         assert response.context["messages"][0] == f"{t2_str}: message 1"
 
-    def test_get_with_search(self, auth_client, settings):
+    def test_get_with_search(self, auth_client):
         """Tests message filtering of view method."""
         t = datetime.now(tz=UTC)
         t_str = t.strftime("%Y-%m-%d %H:%M:%S")
@@ -118,7 +118,7 @@ class TestMessagesView(LoginRequiredTest):
         assert response.status_code == HTTPStatus.OK
         assert len(response.context["messages"]) == 0
 
-    def test_get_wrong_topic(self, auth_client, settings):
+    def test_get_wrong_topic(self, auth_client):
         """Test view method plays nice with other Kafka topics."""
         DruncMessage.objects.create(
             topic="the.wrong.topic", timestamp=datetime.now(tz=UTC), message="message"
