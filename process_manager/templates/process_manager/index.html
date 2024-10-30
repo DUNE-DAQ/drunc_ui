@@ -1,4 +1,5 @@
 {% extends "main/base.html" %}
+{% load tz %}
 {% block title %}
   Home
 {% endblock title %}
@@ -64,18 +65,6 @@
     end
   end
   </script>
-  <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var timezoneElement = document.getElementById('timezone');
-    var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    var offset = new Date().getTimezoneOffset();
-    var offsetHours = Math.floor(Math.abs(offset / 60)); // Ensure whole number
-    var offsetMinutes = Math.abs(offset % 60);
-    var offsetSign = offset <= 0 ? '+' : '-';
-    var offsetString = offsetSign + String(offsetHours).padStart(2, '0') + ':' + String(offsetMinutes).padStart(2, '0');
-    timezoneElement.textContent = timezone + ' (UTC' + offsetString + ')';
-  });
-  </script>
 {% endblock extra_js %}
 {% block content %}
   <div class="container-fluid no-padding no-margin">
@@ -138,29 +127,32 @@
         <div class="card shadow-sm">
           <div class="card-header bg-info text-white">
             <h5 class="d-inline">Messages</h5>
-            <span class="d-inline"id="timezone"></span>
-            <!-- Updated Hide Messages Button as a close icon -->
-            <button id="hide-messages-button"
-                    type="button"
-                    class="btn-close"
-                    aria-label="Close"
-                    _="on click add .hide-messages to #main-content show #show-messages-button"></button>
-          </div>
-          <div class="card-body">
-            <input class="form-control mb-2"
-                   type="search"
-                   name="search"
-                   placeholder="Search messages..."
-                   hx-get="{% url 'process_manager:messages' %}"
-                   hx-trigger="input changed delay:500ms, every 1s"
-                   hx-target="#message-list">
-            <div id="message-list"
-                 class="list-group"
+            {% timezone None %}
+            {% now "e (O)" as server_time %}
+          {% endtimezone %}
+          <span id="timezone" class="d-line">{{ server_time }}</span>
+          <!-- Updated Hide Messages Button as a close icon -->
+          <button id="hide-messages-button"
+                  type="button"
+                  class="btn-close"
+                  aria-label="Close"
+                  _="on click add .hide-messages to #main-content show #show-messages-button"></button>
+        </div>
+        <div class="card-body">
+          <input class="form-control mb-2"
+                 type="search"
+                 name="search"
+                 placeholder="Search messages..."
                  hx-get="{% url 'process_manager:messages' %}"
-                 hx-trigger="load"></div>
-          </div>
+                 hx-trigger="input changed delay:500ms, every 1s"
+                 hx-target="#message-list">
+          <div id="message-list"
+               class="list-group"
+               hx-get="{% url 'process_manager:messages' %}"
+               hx-trigger="load"></div>
         </div>
       </div>
     </div>
   </div>
+</div>
 {% endblock content %}
