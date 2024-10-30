@@ -86,7 +86,8 @@ class ProcessTable(tables.Table):
         elif value == "RUNNING":
             return mark_safe('<span class="badge badge-running">RUNNING</span>')
         return mark_safe(
-            f'<span class="badge bg-secondary px-3 py-2 rounded" style="font-size: 1.1rem;">{value}</span>'
+            f'<span class="badge bg-secondary px-3 py-2 rounded" '
+            f'style="font-size: 1.1rem;">{value}</span>'
         )
 
     def render_select(self, value: str) -> str:
@@ -94,5 +95,6 @@ class ProcessTable(tables.Table):
         return mark_safe(
             f'<input type="checkbox" name="select" value="{value}" id="{value}-input" '
             'hx-preserve="true" class="form-check-input form-check-input-lg row-checkbox" '
+            f'style="transform: scale(1.5);" '
             f'_="{row_checkbox_hyperscript}">'
         )
