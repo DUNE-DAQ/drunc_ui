@@ -1,13 +1,14 @@
 """View functions for partials."""
 
 import django_tables2
+from django_tables2 import RequestConfig
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.utils.timezone import localtime
 from druncschema.process_manager_pb2 import ProcessInstance
-
+from operator import itemgetter
 from main.models import DruncMessage
 
 from ..process_manager_interface import get_session_info
@@ -51,47 +52,46 @@ def filter_table(
     search = search.lower()
     return [row for row in table if any(search in str(row[k]).lower() for k in columns)]
 
+def sort_table(table: list[dict[str, str | int]], sort: str, direction: str) -> list[dict[str, str | int]]:
+    """Sort table data based on the sort parameter."""
+    if not sort:
+        return table
 
+    reverse = direction == "desc"
+    return sorted(table, key=itemgetter(sort), reverse=reverse)
 @login_required
 def process_table(request: HttpRequest) -> HttpResponse:
-    """Renders the process table.
-
-    This view may be called using either GET or POST methods. GET renders the table with
-    no check boxes selected. POST renders the table with checked boxes for any table row
-    with a uuid provided in the select key of the request data.
-    """
+    """Renders the process table with sorting and filtering."""
     session_info = get_session_info()
 
     status_enum_lookup = dict(item[::-1] for item in ProcessInstance.StatusCode.items())
 
-    table_data = []
-    process_instances = session_info.data.values
-    for process_instance in process_instances:
-        metadata = process_instance.process_description.metadata
-        uuid = process_instance.uuid.uuid
-        table_data.append(
-            {
-                "uuid": uuid,
-                "name": metadata.name,
-                "user": metadata.user,
-                "session": metadata.session,
-                "status_code": status_enum_lookup[process_instance.status_code],
-                "exit_code": process_instance.return_code,
-            }
-        )
-    # Filter table data based on search parameter
+    # Gather the table data
+    table_data = [
+        {
+            "uuid": process_instance.uuid.uuid,
+            "name": process_instance.process_description.metadata.name,
+            "user": process_instance.process_description.metadata.user,
+            "session": process_instance.process_description.metadata.session,
+            "status_code": status_enum_lookup[process_instance.status_code],
+            "exit_code": process_instance.return_code,
+        }
+        for process_instance in session_info.data.values
+    ]
+
+    # Filter and sort the table data
     table_data = filter_table(request.GET.get("search", ""), table_data)
     table = ProcessTable(table_data)
 
-    # sort table data based on request parameters
-    table_configurator = django_tables2.RequestConfig(request)
-    table_configurator.configure(table)
+    # Configure sorting with django_tables2
+    table.order_by = request.GET.get("sort", "name")
 
     return render(
         request=request,
-        context=dict(table=table),
+        context={"table": table},
         template_name="process_manager/partials/process_table.html",
     )
+
 
 
 @login_required
