@@ -15,7 +15,6 @@ from drunc.utils.shell_utils import create_dummy_token_from_uname
 
 if __name__ == "__main__":
     token = create_dummy_token_from_uname()
-    controller = ControllerDriver("localhost:3333", token=token, aio_channel=True)
-
+    controller = ControllerDriver("drunc:3333", token=token, aio_channel=True)
     val = controller.get_status()
     print(val)
