@@ -32,28 +32,28 @@ class ProcessTable(tables.Table):
     )
     name = tables.Column(
         verbose_name="Process Name",
-        attrs={"td": {"class": "fw-bold text-primary text-center"}},
+        attrs={"td": {"class": "fw-bold text-primary text-left"}},
     )
     user = tables.Column(
         verbose_name="User",
-        attrs={"td": {"class": "text-secondary text-center"}},
+        attrs={"td": {"class": "text-secondary text-left"}},
     )
     session = tables.Column(
         verbose_name="Session",
-        attrs={"td": {"class": "text-secondary text-center"}},
+        attrs={"td": {"class": "text-secondary text-left"}},
     )
     status_code = tables.Column(
         verbose_name="Status",
-        attrs={"td": {"class": "fw-bold text-center"}},
+        attrs={"td": {"class": "fw-bold text-left"}},
     )
     exit_code = tables.Column(
         verbose_name="Exit Code",
-        attrs={"td": {"class": "text-center"}},
+        attrs={"td": {"class": "text-left"}},
     )
     logs = tables.TemplateColumn(
         logs_column_template,
         verbose_name="Logs",
-        attrs={"td": {"class": "text-center"}},
+        attrs={"td": {"class": "text-left"}},
     )
     select = tables.CheckBoxColumn(
         accessor="uuid",
