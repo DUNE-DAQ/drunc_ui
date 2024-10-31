@@ -36,7 +36,10 @@ def logs(request: HttpRequest, uuid: uuid.UUID) -> HttpResponse:
     # Process the log text to exclude empty lines
     log_lines = [val.data.line for val in logs_response if val.data.line.strip()]
 
-    context = {"log_lines": log_lines}
+    context = {
+        "log_lines": log_lines,
+        "log_text": "\n".join(log_lines),
+    }
     return render(request, "process_manager/logs.html", context)
 
 
