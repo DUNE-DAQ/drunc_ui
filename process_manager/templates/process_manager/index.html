@@ -1,4 +1,5 @@
 {% extends "main/base.html" %}
+{% load tz %}
 {% block title %}
   Home
 {% endblock title %}
@@ -50,6 +51,9 @@
     .scrollable-div {
       max-height: 60vh;
       overflow-y: auto;
+    }
+    #timezone {
+      font-size: 10pt;
     }
     .message-item {
       font-family: 'Arial', sans-serif;
@@ -112,7 +116,6 @@
     /* Checkbox Styling */
     .form-check-input-lg {
       transform: scale(1.5);
-    }
   </style>
 {% endblock extra_css %}
 {% block extra_js %}
@@ -194,6 +197,8 @@
                     _="on click add .hide-messages to #main-content show #show-messages-button"></button>
           </div>
           <div class="card-body">
+            {% now "e (O)" as server_time %}
+            <span id="timezone" class="d-line text-body-tertiary">All timestamps are displayed in {{ server_time }}</span>
             <input class="form-control mb-2"
                    type="search"
                    name="search"
