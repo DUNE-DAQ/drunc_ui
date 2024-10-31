@@ -34,44 +34,44 @@ class ProcessTable(tables.Table):
         verbose_name="Process Name",
         attrs={
             "td": {"class": "fw-bold text-primary text-center"},
-            "th": {"class": "text-center header-style"}
-            },
+            "th": {"class": "text-center header-style"},
+        },
     )
     user = tables.Column(
         verbose_name="User",
         attrs={
             "td": {"class": "text-secondary text-center"},
             "th": {"class": "text-center header-style"},
-            },
+        },
     )
     session = tables.Column(
         verbose_name="Session",
         attrs={
             "td": {"class": "text-secondary text-center"},
-            "th": {"class": "text-center header-style"}
-            },
+            "th": {"class": "text-center header-style"},
+        },
     )
     status_code = tables.Column(
         verbose_name="Status",
         attrs={
             "td": {"class": "fw-bold text-center"},
-            "th": {"class": "text-center header-style"}
-            },
+            "th": {"class": "text-center header-style"},
+        },
     )
     exit_code = tables.Column(
         verbose_name="Exit Code",
         attrs={
             "td": {"class": "text-center"},
             "th": {"class": "text-center header-style"},
-            },
+        },
     )
     logs = tables.TemplateColumn(
         logs_column_template,
         verbose_name="Logs",
         attrs={
             "td": {"class": "text-center"},
-            "th": {"class": "text-center header-style"}
-            },
+            "th": {"class": "text-center header-style"},
+        },
     )
     select = tables.CheckBoxColumn(
         accessor="uuid",
