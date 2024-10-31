@@ -108,13 +108,13 @@ def handle_errors(
     Returns:
         The wrapped view function.
     """
-    logger = logging.getLogger(__name__)
+    logger = logging.getLogger("django")
 
     def wrapped_view(request, *args, **kwargs) -> HttpResponse:  # type: ignore
         try:
             return view_func(request, *args, **kwargs)
         except Exception as e:
-            logger.error(f"Error in view {view_func.__name__}: {e}")
+            logger.exception(f"Error in view {view_func.__name__}: {e}")
             return render(
                 request,
                 "process_manager/partials/error_message.html",
