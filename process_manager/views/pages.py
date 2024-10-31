@@ -15,7 +15,7 @@ from ..process_manager_interface import boot_process, get_process_logs
 
 @login_required
 def index(request: HttpRequest) -> HttpResponse:
-    """View that renders the index/home page."""
+    """View that renders the index/home page with process table."""
     return render(request=request, template_name="process_manager/index.html")
 
 
@@ -32,10 +32,12 @@ def logs(request: HttpRequest, uuid: uuid.UUID) -> HttpResponse:
       The rendered page.
     """
     logs_response = get_process_logs(str(uuid))
-    context = dict(log_text="\n".join(val.data.line for val in logs_response))
-    return render(
-        request=request, context=context, template_name="process_manager/logs.html"
-    )
+
+    # Process the log text to exclude empty lines
+    log_lines = [val.data.line for val in logs_response if val.data.line.strip()]
+
+    context = {"log_lines": log_lines}
+    return render(request, "process_manager/logs.html", context)
 
 
 class BootProcessView(PermissionRequiredMixin, FormView[BootProcessForm]):
