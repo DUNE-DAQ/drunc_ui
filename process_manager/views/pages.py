@@ -11,7 +11,6 @@ from django.views.generic.edit import FormView
 
 from ..forms import BootProcessForm
 from ..process_manager_interface import boot_process, get_process_logs
-from ..tables import ProcessTable
 
 
 @login_required
