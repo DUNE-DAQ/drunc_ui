@@ -43,7 +43,6 @@ def logs(request: HttpRequest, uuid: uuid.UUID) -> HttpResponse:
     return render(request, "process_manager/logs.html", context)
 
 
-
 class BootProcessView(PermissionRequiredMixin, FormView[BootProcessForm]):
     """View for the BootProcess form."""
 
