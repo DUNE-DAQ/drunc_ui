@@ -1,5 +1,8 @@
 """View functions for partials."""
 
+import logging
+from collections.abc import Callable
+
 import django_tables2
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -94,7 +97,35 @@ def process_table(request: HttpRequest) -> HttpResponse:
     )
 
 
+def handle_errors(
+    view_func: Callable[[HttpRequest], HttpResponse],
+) -> Callable[[HttpRequest], HttpResponse]:
+    """Decorator to handle errors.
+
+    Args:
+        view_func: The view function to be wrapped.
+
+    Returns:
+        The wrapped view function.
+    """
+    logger = logging.getLogger(__name__)
+
+    def wrapped_view(request, *args, **kwargs) -> HttpResponse:  # type: ignore
+        try:
+            return view_func(request, *args, **kwargs)
+        except Exception as e:
+            logger.error(f"Error in view {view_func.__name__}: {e}")
+            return render(
+                request,
+                "process_manager/partials/error_message.html",
+                {"error_message": "An error occurred while processing your request."},
+            )
+
+    return wrapped_view
+
+
 @login_required
+@handle_errors
 def messages(request: HttpRequest) -> HttpResponse:
     """Search and render Kafka messages from the database."""
     search = request.GET.get("search", "")
