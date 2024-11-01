@@ -1,14 +1,12 @@
 """View functions for partials."""
 
 import django_tables2
-from django_tables2 import RequestConfig
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.utils.timezone import localtime
 from druncschema.process_manager_pb2 import ProcessInstance
-from operator import itemgetter
 from main.models import DruncMessage
 
 from ..process_manager_interface import get_session_info
@@ -52,21 +50,14 @@ def filter_table(
     search = search.lower()
     return [row for row in table if any(search in str(row[k]).lower() for k in columns)]
 
-def sort_table(table: list[dict[str, str | int]], sort: str, direction: str) -> list[dict[str, str | int]]:
-    """Sort table data based on the sort parameter."""
-    if not sort:
-        return table
 
-    reverse = direction == "desc"
-    return sorted(table, key=itemgetter(sort), reverse=reverse)
 @login_required
 def process_table(request: HttpRequest) -> HttpResponse:
     """Renders the process table with sorting and filtering."""
     session_info = get_session_info()
-
     status_enum_lookup = dict(item[::-1] for item in ProcessInstance.StatusCode.items())
 
-    # Gather the table data
+    # Build the table data
     table_data = [
         {
             "uuid": process_instance.uuid.uuid,
@@ -79,19 +70,20 @@ def process_table(request: HttpRequest) -> HttpResponse:
         for process_instance in session_info.data.values
     ]
 
-    # Filter and sort the table data
+    # Apply search filtering
     table_data = filter_table(request.GET.get("search", ""), table_data)
     table = ProcessTable(table_data)
 
-    # Configure sorting with django_tables2
-    table.order_by = request.GET.get("sort", "name")
+    # Set the order based on the 'sort' parameter in the GET request, defaulting to 'uuid'
+    sort_param = request.GET.get("sort", "")
+    table.order_by = sort_param
+    sort_param = request.GET
 
     return render(
         request=request,
-        context={"table": table},
+        context={"table": table, "sort_param": sort_param},
         template_name="process_manager/partials/process_table.html",
     )
-
 
 
 @login_required
