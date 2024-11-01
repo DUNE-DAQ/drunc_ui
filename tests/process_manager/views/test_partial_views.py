@@ -5,6 +5,7 @@ from unittest.mock import MagicMock
 from uuid import uuid4
 
 import pytest
+from django.template.loader import render_to_string
 from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
@@ -216,7 +217,10 @@ class HandleErrorsTest(TestCase):
         request = self.factory.get("/")
         response = exception_view(request)
 
-        self.assertTemplateUsed(response, "process_manager/partials/error_message.html")
+        expected_content = render_to_string(
+            "process_manager/partials/error_message.html", request=request
+        )
+        self.assertEqual(response.content.decode(), expected_content)
 
         mock_logger.exception.assert_called_once()
 
