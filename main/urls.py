@@ -2,11 +2,17 @@
 
 from django.urls import include, path
 
-from . import views
+from .views import pages, partials
 
 app_name = "main"
+
+partial_urlpatterns = [
+    path("messages/", partials.messages, name="messages"),
+]
+
 urlpatterns = [
-    path("", views.index, name="index"),
+    path("", pages.index, name="index"),
     path("accounts/", include("django.contrib.auth.urls")),
-    path("help/", views.HelpView.as_view(), name="help"),
+    path("help/", pages.HelpView.as_view(), name="help"),
+    path("partials/", include(partial_urlpatterns)),
 ]

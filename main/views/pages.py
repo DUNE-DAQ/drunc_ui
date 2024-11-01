@@ -1,4 +1,4 @@
-"""Views for the main app."""
+"""View functions for pages."""
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
