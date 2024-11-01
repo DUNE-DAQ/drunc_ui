@@ -7,7 +7,7 @@ from .views import pages, partials
 app_name = "main"
 
 partial_urlpatterns = [
-    path("messages/", partials.messages, name="messages"),
+    path("messages/<str:topic>", partials.messages, name="messages"),
 ]
 
 urlpatterns = [

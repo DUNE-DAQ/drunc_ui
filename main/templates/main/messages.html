@@ -18,12 +18,12 @@
              type="search"
              name="search"
              placeholder="Search messages..."
-             hx-get="{% url 'main:messages' %}"
+             hx-get="{% url 'main:messages' topic|default:"ALL" %}"
              hx-trigger="input changed delay:500ms, every 1s"
              hx-target="#message-list">
       <div id="message-list"
            class="list-group"
-           hx-get="{% url 'main:messages' %}"
+           hx-get="{% url 'main:messages' topic|default:"ALL" %}"
            hx-trigger="load"></div>
     </div>
   </div>

@@ -10,11 +10,11 @@ from main.models import DruncMessage
 
 
 @login_required
-def messages(request: HttpRequest) -> HttpResponse:
+def messages(request: HttpRequest, topic: str) -> HttpResponse:
     """Search and render Kafka messages from the database."""
     search = request.GET.get("search", "")
     records = DruncMessage.objects.filter(
-        topic__regex=settings.KAFKA_TOPIC_REGEX["PROCMAN"], message__icontains=search
+        topic__regex=settings.KAFKA_TOPIC_REGEX[topic], message__icontains=search
     )
 
     # Time is stored as UTC. localtime(t) converts this to our configured timezone.
