@@ -35,11 +35,7 @@ def handle_errors(
             return view_func(request, *args, **kwargs)
         except Exception as e:
             logger.exception(e)
-            return render(
-                request,
-                "process_manager/partials/error_message.html",
-                {"error_message": "An error occurred while processing your request."},
-            )
+            return render(request, "process_manager/partials/error_message.html")
 
     return wrapped_view
 
