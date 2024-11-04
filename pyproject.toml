@@ -22,7 +22,7 @@ django-stubs-ext = "^5.1.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3"
-pytest-cov = "^5.0.0"
+pytest-cov = "^6.0.0"
 pytest-mypy = "^0.10.0"
 pytest-mock = "^3.7.0"
 pre-commit = "^4.0.1"
