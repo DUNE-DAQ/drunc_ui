@@ -1,3 +1,38 @@
+{% extends "django_tables2/table.html" %}
 {% load render_table from django_tables2 %}
+{% load querystring from django_tables2 %}
 <p>Sort parameter: {{ sort_param }}</p>
+
+{% block table.thead %}
+    {% if table.show_header %}
+        <thead {{ table.attrs.thead.as_html }}>
+        <tr>
+            {% for column in table.columns %}
+                <th {{ column.attrs.th.as_html }}>
+                    {% if column.orderable %}
+                        <a 
+                           hx-get="{% url 'process_manager:process_table' %}?sort=" 
+                           hx-target="div.table-container"
+                           href="#"
+                           onclick="
+                               let sortField = document.getElementById('sort-field');
+                               let currentSort = sortField.value;
+                               let newSort = currentSort === '{{ column.name }}' ? '-{{ column.name }}' : '{{ column.name }}';
+                               sortField.value = newSort;
+                               document.getElementById('sort-field').value = newSort;
+                               this.setAttribute('hx-get', `{% url 'process_manager:process_table' %}?sort=${newSort}`);
+                           ">
+                           {{ column.header }} ⇅
+                        </a>
+                    {% else %}
+                        {{ column.header }}
+                    {% endif %}
+                </th>
+            {% endfor %}
+        </tr>
+        </thead>
+    {% endif %}
+{% endblock table.thead %}
+
+
 {% render_table table %}

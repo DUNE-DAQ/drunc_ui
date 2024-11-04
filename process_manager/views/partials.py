@@ -74,10 +74,9 @@ def process_table(request: HttpRequest) -> HttpResponse:
     table_data = filter_table(request.GET.get("search", ""), table_data)
     table = ProcessTable(table_data)
 
-    # Set the order based on the 'sort' parameter in the GET request, defaulting to 'uuid'
+    # Set the order based on the 'sort' parameter in the GET request, defaulting to ''
     sort_param = request.GET.get("sort", "")
     table.order_by = sort_param
-    sort_param = request.GET
 
     return render(
         request=request,
