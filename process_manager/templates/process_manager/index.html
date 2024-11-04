@@ -172,15 +172,28 @@
                         class="btn btn-info w-100 ms-2"
                         _="on click hide me toggle .hide-messages on #main-content">Show Messages</button>
               </div>
-              <input class="form-control mb-3"
-                     type="search"
-                     name="search"
-                     placeholder="Search processes..."
-                     hx-get="{% url 'process_manager:process_table' %}?sort={{ request.GET.sort }}"
-                     hx-trigger="input changed delay:500ms, every 1s"
-                     hx-target="div.table-container"
-                     hx-include="#sort-field"
-                     >
+              <div class="d-flex align-items-center mb-3">
+                <select id="search-dropdown"
+                        class="form-control me-2" 
+                        style="width: auto; padding: 0.375rem 0.75rem; font-size: 1rem; border: 1px solid #ced4da; border-radius: 0.25rem;">
+                  <option value="">Search By</option>
+                  <option value="uuid">UUID</option>
+                  <option value="name">Process Name</option>
+                  <option value="user">User</option>
+                  <option value="session">Session</option>
+                  <option value="status_code">Status</option>
+                  <option value="exit_code">Exit Code</option>
+                </select>
+                <input class="form-control" 
+                      type="search"
+                      name="search"
+                      placeholder="Search processes..."
+                      style="flex: 1;"
+                      hx-get="{% url 'process_manager:process_table' %}?sort={{ request.GET.sort }}"
+                      hx-trigger="input changed delay:500ms, every 1s"
+                      hx-target="div.table-container"
+                      hx-include="#sort-field">
+              </div>
               <input type="hidden" id="sort-field" name="sort" value="">
               <div class="table-container">
             </div>
