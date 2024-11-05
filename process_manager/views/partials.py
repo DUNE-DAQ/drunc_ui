@@ -3,13 +3,13 @@
 import logging
 from collections.abc import Callable
 
-import django_tables2
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.utils.timezone import localtime
 from druncschema.process_manager_pb2 import ProcessInstance
+
 from main.models import DruncMessage
 
 from ..process_manager_interface import get_session_info
