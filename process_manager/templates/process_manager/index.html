@@ -165,25 +165,24 @@
   end
   </script>
   <script>
-  // Function to update hx-get dynamically based on dropdown and input
-  function updateSearchParam() {
-    const dropdownValue = document.getElementById('search-dropdown').value;
-    const searchValue = document.getElementById('search-input').value;
-    const combinedParam = dropdownValue ? `${dropdownValue}:${searchValue}` : searchValue;
+    // Function to update combined search parameter dynamically
+    function updateSearchParam() {
+      const dropdownValue = document.getElementById('search-dropdown').value;
+      const searchValue = document.getElementById('search-input').value;
 
-    // Set the combined search hidden field’s value
-    document.getElementById('combined-search').value = combinedParam;
-}
+      // Set combined parameter only if searchValue is not empty
+      const combinedParam = searchValue ? `${dropdownValue}:${searchValue}` : '';
 
+      // Update the combined search hidden field’s value
+      document.getElementById('combined-search').value = combinedParam;
+    }
 
-
-  // Run after DOM loads to ensure elements are accessible
-  document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('search-dropdown').addEventListener('change', updateSearchParam);
-    document.getElementById('search-input').addEventListener('input', updateSearchParam);
-});
-
-  </script>
+    // Run after DOM loads to ensure elements are accessible
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('search-dropdown').addEventListener('change', updateSearchParam);
+      document.getElementById('search-input').addEventListener('input', updateSearchParam);
+    });
+</script>
 {% endblock extra_js %}
 {% block content %}
   <div class="container-fluid no-padding no-margin">
