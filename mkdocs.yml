@@ -3,6 +3,16 @@ site_name: Drunc UI
 theme:
   name: material
 
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+
 plugins:
   - search
   - gen-files:
@@ -24,4 +34,8 @@ plugins:
 
 nav:
   - Home: index.md
+  - Code Overview: code_overview.md
+  - Process Manager UI: process_manager.md
+  - Controller UI: controller.md
+  - Development: development.md
   - Code Reference: reference/
