@@ -35,18 +35,17 @@ class TestProcessTableView(LoginRequiredTest):
     def _mock_session_info(self, mocker, uuids, sessions: list[str] = []):
         """Mocks views.get_session_info with ProcessInstanceList like data."""
         mock = mocker.patch("process_manager.views.partials.get_session_info")
-        instance_mocks = [MagicMock() for _ in uuids]
+        instance_mocks = [MagicMock() for uuid in uuids]
         sessions = sessions or [f"session{i}" for i in range(len(uuids))]
-
+        
         for instance_mock, uuid, session in zip(instance_mocks, uuids, sessions):
-            # Set up the uuid and nested metadata.session correctly
             instance_mock.uuid.uuid = str(uuid)
             instance_mock.process_description.metadata.session = session
-            instance_mock.status_code = 0  # Mock status code as needed
-
-        # Mock the return value to use our instance_mocks
+            instance_mock.status_code = 0
+        
         mock().data.values.__iter__.return_value = instance_mocks
         return mock
+
 
     def test_get_with_search(self, auth_client: Client, mocker):
         """Tests basic calls of view method."""
@@ -64,9 +63,8 @@ class TestProcessTableView(LoginRequiredTest):
 
         # Check that each row in the table contains "session2" as the session value
         for row in table.data.data:
-            assert (
-                row["session"] == "session2"
-            ), f"Expected 'session2', got '{row['session']}'"
+            assert row["session"] == "session2", f"Expected 'session2', got '{row['session']}'"
+
 
 
 class TestMessagesView(LoginRequiredTest):
