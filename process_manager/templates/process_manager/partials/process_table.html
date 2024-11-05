@@ -2,7 +2,7 @@
 {% load render_table from django_tables2 %}
 {% load querystring from django_tables2 %}
 {% block table.thead %}
-  <div style="margin-bottom: 10px;">
+  <div>
     <button style="padding: 5px 12px;
                    background-color: #f8f9fa;
                    color: #495057;
@@ -28,7 +28,7 @@
             {% if column.orderable %}
               <a hx-get="{% url 'process_manager:process_table' %}?sort="
                  hx-target="div.table-container"
-                 href="javascript:void(0);"
+                 href="#"
                  onclick=" let sortField = document.getElementById('sort-field'); let currentSort = sortField.value; let newSort = currentSort === '{{ column.name }}' ? '-{{ column.name }}' : '{{ column.name }}'; sortField.value = newSort; this.setAttribute('hx-get', `{% url 'process_manager:process_table' %}?sort=${newSort}`); "
                  class="sort-link">
                 {{ column.header }}
