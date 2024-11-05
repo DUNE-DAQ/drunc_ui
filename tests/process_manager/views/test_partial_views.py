@@ -66,7 +66,6 @@ class TestProcessTableView(LoginRequiredTest):
             assert row["session"] == "session2", f"Expected 'session2', got '{row['session']}'"
 
 
-
 class TestMessagesView(LoginRequiredTest):
     """Test the process_manager.views.messages view function."""
 
@@ -232,5 +231,4 @@ class HandleErrorsTest(TestCase):
         self.assertEqual(response.content.decode(), expected_content)
 
         mock_logger.exception.assert_called_once()
-
         self.assertEqual(response.status_code, 200)
