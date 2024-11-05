@@ -21,10 +21,10 @@
     </button>
   </div>
   {% if table.show_header %}
-  <thead class="custom-thead" {{ table.attrs.thead.as_html }}>
+    <thead class="custom-thead" {{ table.attrs.thead.as_html }}>
       <tr>
         {% for column in table.columns %}
-            <th class="custom-th" {{ column.attrs.th.as_html }}>
+          <th class="custom-th" {{ column.attrs.th.as_html }}>
             {% if column.orderable %}
               <a hx-get="{% url 'process_manager:process_table' %}?sort="
                  hx-target="div.table-container"
@@ -35,7 +35,7 @@
                 <span class="sort-icon">⇅</span>
               </a>
             {% else %}
-                <span class="table-header">{{ column.header }}</span>
+              <span class="table-header">{{ column.header }}</span>
             {% endif %}
           </th>
         {% endfor %}

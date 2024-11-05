@@ -57,15 +57,16 @@ class TestProcessTableView(LoginRequiredTest):
         # Perform the search request
         response = auth_client.get(self.endpoint, data={"search": "session2"})
         assert response.status_code == HTTPStatus.OK
-        
+
         # Retrieve the filtered table data
         table = response.context["table"]
         assert isinstance(table, ProcessTable)
-        
+
         # Check that each row in the table contains "session2" as the session value
         for row in table.data.data:
-            assert row["session"] == "session2", f"Expected 'session2', got '{row['session']}'"
-
+            assert (
+                row["session"] == "session2"
+            ), f"Expected 'session2', got '{row['session']}'"
 
 
 class TestMessagesView(LoginRequiredTest):
