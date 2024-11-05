@@ -21,25 +21,21 @@
     </button>
   </div>
   {% if table.show_header %}
-    <thead {{ table.attrs.thead.as_html }} style="background-color: #f8f9fa; border-radius: 8px;">
+  <thead class="custom-thead" {{ table.attrs.thead.as_html }}>
       <tr>
         {% for column in table.columns %}
-          <th {{ column.attrs.th.as_html }} style="padding: 10px; text-align: center; font-weight: 600; color: #495057;">
+            <th class="custom-th" {{ column.attrs.th.as_html }}>
             {% if column.orderable %}
               <a hx-get="{% url 'process_manager:process_table' %}?sort="
                  hx-target="div.table-container"
                  href="javascript:void(0);"
                  onclick=" let sortField = document.getElementById('sort-field'); let currentSort = sortField.value; let newSort = currentSort === '{{ column.name }}' ? '-{{ column.name }}' : '{{ column.name }}'; sortField.value = newSort; this.setAttribute('hx-get', `{% url 'process_manager:process_table' %}?sort=${newSort}`); "
-                 style="text-decoration: none;
-                        color: #007bff;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center">
+                 class="sort-link">
                 {{ column.header }}
-                <span style="font-size: 0.9em; margin-left: 5px; opacity: 0.6;">⇅</span>
+                <span class="sort-icon">⇅</span>
               </a>
             {% else %}
-              <span style="font-weight: bold; color: #6c757d;">{{ column.header }}</span>
+                <span class="table-header">{{ column.header }}</span>
             {% endif %}
           </th>
         {% endfor %}

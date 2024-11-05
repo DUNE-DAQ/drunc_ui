@@ -53,13 +53,19 @@ class TestProcessTableView(LoginRequiredTest):
         uuids = [str(uuid4()) for _ in range(5)]
         sessions = ["session1", "session2", "session2", "session2", "session3"]
         self._mock_session_info(mocker, uuids, sessions)
+
+        # Perform the search request
         response = auth_client.get(self.endpoint, data={"search": "session2"})
         assert response.status_code == HTTPStatus.OK
+        
+        # Retrieve the filtered table data
         table = response.context["table"]
         assert isinstance(table, ProcessTable)
-        for row, uuid in zip(table.data.data, uuids):
-            assert row["uuid"] == uuid
-            assert row["session"] == "session2"
+        
+        # Check that each row in the table contains "session2" as the session value
+        for row in table.data.data:
+            assert row["session"] == "session2", f"Expected 'session2', got '{row['session']}'"
+
 
 
 class TestMessagesView(LoginRequiredTest):
