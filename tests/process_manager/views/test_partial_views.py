@@ -37,15 +37,14 @@ class TestProcessTableView(LoginRequiredTest):
         mock = mocker.patch("process_manager.views.partials.get_session_info")
         instance_mocks = [MagicMock() for uuid in uuids]
         sessions = sessions or [f"session{i}" for i in range(len(uuids))]
-        
+
         for instance_mock, uuid, session in zip(instance_mocks, uuids, sessions):
             instance_mock.uuid.uuid = str(uuid)
             instance_mock.process_description.metadata.session = session
             instance_mock.status_code = 0
-        
+
         mock().data.values.__iter__.return_value = instance_mocks
         return mock
-
 
     def test_get_with_search(self, auth_client: Client, mocker):
         """Tests basic calls of view method."""
@@ -63,8 +62,9 @@ class TestProcessTableView(LoginRequiredTest):
 
         # Check that each row in the table contains "session2" as the session value
         for row in table.data.data:
-            assert row["session"] == "session2", f"Expected 'session2', got '{row['session']}'"
-
+            assert (
+                row["session"] == "session2"
+            ), f"Expected 'session2', got '{row['session']}'"
 
 class TestMessagesView(LoginRequiredTest):
     """Test the process_manager.views.messages view function."""
