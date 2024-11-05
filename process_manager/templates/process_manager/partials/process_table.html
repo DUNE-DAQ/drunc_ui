@@ -1,61 +1,50 @@
 {% extends "django_tables2/table.html" %}
 {% load render_table from django_tables2 %}
 {% load querystring from django_tables2 %}
-
 {% block table.thead %}
-<div style="margin-bottom: 10px;">
-    <button 
-        style="
-            padding: 5px 12px;
-            background-color: #f8f9fa;
-            color: #495057;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 0.9em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        "
-        onmouseover="this.style.backgroundColor='#e2e6ea'"
-        onmouseout="this.style.backgroundColor='#f8f9fa'"
-        hx-get="{% url 'process_manager:process_table' %}?sort=" 
-        hx-target="div.table-container"
-        onclick="document.getElementById('sort-field').value = ''; document.getElementById('sort-param-display').textContent = 'None';">
-        Clear Sorting
+  <div style="margin-bottom: 10px;">
+    <button style="padding: 5px 12px;
+                   background-color: #f8f9fa;
+                   color: #495057;
+                   border: 1px solid #ddd;
+                   border-radius: 8px;
+                   font-size: 0.9em;
+                   font-weight: 600;
+                   cursor: pointer;
+                   transition: background-color 0.3s ease"
+            onmouseover="this.style.backgroundColor='#e2e6ea'"
+            onmouseout="this.style.backgroundColor='#f8f9fa'"
+            hx-get="{% url 'process_manager:process_table' %}?sort="
+            hx-target="div.table-container"
+            onclick="document.getElementById('sort-field').value = ''; document.getElementById('sort-param-display').textContent = 'None';">
+      Clear Sorting
     </button>
-</div>
-    {% if table.show_header %}
+  </div>
+  {% if table.show_header %}
     <thead {{ table.attrs.thead.as_html }} style="background-color: #f8f9fa; border-radius: 8px;">
-        <tr>
-            {% for column in table.columns %}
-                <th {{ column.attrs.th.as_html }} style="padding: 10px; text-align: center; font-weight: 600; color: #495057;">
-                    {% if column.orderable %}
-                        <a 
-                           hx-get="{% url 'process_manager:process_table' %}?sort="
-                           hx-target="div.table-container"
-                           href="javascript:void(0);"
-                           onclick="
-                               let sortField = document.getElementById('sort-field');
-                               let currentSort = sortField.value;
-                               let newSort = currentSort === '{{ column.name }}' ? '-{{ column.name }}' : '{{ column.name }}';
-                               sortField.value = newSort;
-                               this.setAttribute('hx-get', `{% url 'process_manager:process_table' %}?sort=${newSort}`);
-                           "
-                           style="text-decoration: none; color: #007bff; display: flex; align-items: center; justify-content: center;">
-                           {{ column.header }}
-                           <span style="font-size: 0.9em; margin-left: 5px; opacity: 0.6;">⇅</span>
-                        </a>
-                    {% else %}
-                        <span style="font-weight: bold; color: #6c757d;">{{ column.header }}</span>
-                    {% endif %}
-                </th>
-            {% endfor %}
-        </tr>
+      <tr>
+        {% for column in table.columns %}
+          <th {{ column.attrs.th.as_html }} style="padding: 10px; text-align: center; font-weight: 600; color: #495057;">
+            {% if column.orderable %}
+              <a hx-get="{% url 'process_manager:process_table' %}?sort="
+                 hx-target="div.table-container"
+                 href="javascript:void(0);"
+                 onclick=" let sortField = document.getElementById('sort-field'); let currentSort = sortField.value; let newSort = currentSort === '{{ column.name }}' ? '-{{ column.name }}' : '{{ column.name }}'; sortField.value = newSort; this.setAttribute('hx-get', `{% url 'process_manager:process_table' %}?sort=${newSort}`); "
+                 style="text-decoration: none;
+                        color: #007bff;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center">
+                {{ column.header }}
+                <span style="font-size: 0.9em; margin-left: 5px; opacity: 0.6;">⇅</span>
+              </a>
+            {% else %}
+              <span style="font-weight: bold; color: #6c757d;">{{ column.header }}</span>
+            {% endif %}
+          </th>
+        {% endfor %}
+      </tr>
     </thead>
-    
-    
-    {% endif %}
+  {% endif %}
 {% endblock table.thead %}
-
-
 {% render_table table %}
