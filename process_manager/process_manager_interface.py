@@ -6,32 +6,33 @@ from enum import Enum
 
 from django.conf import settings
 from drunc.process_manager.process_manager_driver import ProcessManagerDriver
-from drunc.utils.shell_utils import DecodedResponse, create_dummy_token_from_uname
+from drunc.utils.shell_utils import DecodedResponse
 from druncschema.process_manager_pb2 import (
     LogRequest,
     ProcessInstanceList,
     ProcessQuery,
     ProcessUUID,
 )
+from druncschema.token_pb2 import Token
 
 
-def get_process_manager_driver() -> ProcessManagerDriver:
+def get_process_manager_driver(username: str) -> ProcessManagerDriver:
     """Get a ProcessManagerDriver instance."""
-    token = create_dummy_token_from_uname()
+    token = Token(token=f"{username}-token", user_name=username)
     return ProcessManagerDriver(
         settings.PROCESS_MANAGER_URL, token=token, aio_channel=True
     )
 
 
-async def _get_session_info() -> ProcessInstanceList:
-    pmd = get_process_manager_driver()
+async def _get_session_info(username: str) -> ProcessInstanceList:
+    pmd = get_process_manager_driver(username)
     query = ProcessQuery(names=[".*"])
     return await pmd.ps(query)
 
 
-def get_session_info() -> ProcessInstanceList:
+def get_session_info(username: str) -> ProcessInstanceList:
     """Get info about all sessions from process manager."""
-    return asyncio.run(_get_session_info())
+    return asyncio.run(_get_session_info(username))
 
 
 class ProcessAction(Enum):
@@ -42,8 +43,10 @@ class ProcessAction(Enum):
     FLUSH = "flush"
 
 
-async def _process_call(uuids: Iterable[str], action: ProcessAction) -> None:
-    pmd = get_process_manager_driver()
+async def _process_call(
+    uuids: Iterable[str], action: ProcessAction, username: str
+) -> None:
+    pmd = get_process_manager_driver(username)
     uuids_ = [ProcessUUID(uuid=u) for u in uuids]
 
     match action:
@@ -59,37 +62,39 @@ async def _process_call(uuids: Iterable[str], action: ProcessAction) -> None:
             await pmd.flush(query)
 
 
-def process_call(uuids: Iterable[str], action: ProcessAction) -> None:
+def process_call(uuids: Iterable[str], action: ProcessAction, username: str) -> None:
     """Perform an action on a process with a given UUID.
 
     Args:
         uuids: List of UUIDs of the process to be actioned.
         action: Action to be performed {restart,flush,kill}.
+        username: Username of the user performing the action
     """
-    return asyncio.run(_process_call(uuids, action))
+    return asyncio.run(_process_call(uuids, action, username))
 
 
-async def _get_process_logs(uuid: str) -> list[DecodedResponse]:
-    pmd = get_process_manager_driver()
+async def _get_process_logs(uuid: str, username: str) -> list[DecodedResponse]:
+    pmd = get_process_manager_driver(username)
     query = ProcessQuery(uuids=[ProcessUUID(uuid=uuid)])
     request = LogRequest(query=query, how_far=100)
     return [item async for item in pmd.logs(request)]
 
 
-def get_process_logs(uuid: str) -> list[DecodedResponse]:
+def get_process_logs(uuid: str, username: str) -> list[DecodedResponse]:
     """Retrieve logs for a process from the process manager.
 
     Args:
       uuid: UUID of the process.
+      username: Username of the user requesting the logs
 
     Returns:
       The process logs.
     """
-    return asyncio.run(_get_process_logs(uuid))
+    return asyncio.run(_get_process_logs(uuid, username))
 
 
 async def _boot_process(user: str, data: dict[str, str | int]) -> None:
-    pmd = get_process_manager_driver()
+    pmd = get_process_manager_driver(user)
     async for item in pmd.dummy_boot(user=user, **data):
         pass
 

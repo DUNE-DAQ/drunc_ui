@@ -39,4 +39,4 @@ class TestProcessActionView(PermissionRequiredTest):
         assert response.status_code == HTTPStatus.FOUND
         assert response.url == reverse("process_manager:index")
 
-        mock.assert_called_once_with(uuids_, ProcessAction(action))
+        mock.assert_called_once_with(uuids_, ProcessAction(action), "process_user")

@@ -31,7 +31,7 @@ def logs(request: HttpRequest, uuid: uuid.UUID) -> HttpResponse:
     Returns:
       The rendered page.
     """
-    logs_response = get_process_logs(str(uuid))
+    logs_response = get_process_logs(str(uuid), request.user.username)
 
     # Process the log text to exclude empty lines
     log_lines = [val.data.line for val in logs_response if val.data.line.strip()]
@@ -57,5 +57,5 @@ class BootProcessView(PermissionRequiredMixin, FormView[BootProcessForm]):
         Returns:
             A redirect to the index page.
         """
-        boot_process("root", form.cleaned_data)
+        boot_process(self.request.user.username, form.cleaned_data)
         return super().form_valid(form)
