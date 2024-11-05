@@ -136,13 +136,9 @@
     const dropdownValue = document.getElementById('search-dropdown').value;
     const searchValue = document.getElementById('search-input').value;
     const combinedParam = dropdownValue ? `${dropdownValue}:${searchValue}` : searchValue;
-    console.log("Updated combined search param:", combinedParam);
 
     // Set the combined search hidden field’s value
     document.getElementById('combined-search').value = combinedParam;
-
-    // Log to verify
-    console.log("Updated combined search param:", combinedParam);
 }
 
 

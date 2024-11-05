@@ -77,11 +77,10 @@ def process_table(request: HttpRequest) -> HttpResponse:
     # Set the order based on the 'sort' parameter in the GET request, defaulting to ''
     sort_param = request.GET.get("sort", "")
     table.order_by = sort_param
-    getpara = request.GET
 
     return render(
         request=request,
-        context={"table": table, "getpara": getpara},
+        context={"table": table},
         template_name="process_manager/partials/process_table.html",
     )
 
