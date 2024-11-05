@@ -66,6 +66,7 @@ class TestProcessTableView(LoginRequiredTest):
                 row["session"] == "session2"
             ), f"Expected 'session2', got '{row['session']}'"
 
+
 class TestMessagesView(LoginRequiredTest):
     """Test the process_manager.views.messages view function."""
 
