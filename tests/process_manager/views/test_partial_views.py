@@ -55,7 +55,9 @@ class TestProcessTableView(LoginRequiredTest):
         self._mock_session_info(mocker, uuids, sessions)
 
         # Perform the search request using 'combined_search' instead of 'search'
-        response = auth_client.get(self.endpoint, data={"combined_search": "session:session2"})
+        response = auth_client.get(
+            self.endpoint, data={"combined_search": "session:session2"}
+        )
         assert response.status_code == HTTPStatus.OK
 
         # Retrieve the filtered table data
@@ -64,8 +66,9 @@ class TestProcessTableView(LoginRequiredTest):
 
         # Check that each row in the table contains "session2" as the session value
         for row in table.data.data:
-            assert row["session"] == "session2", f"Expected 'session2', got '{row['session']}'"
-
+            assert (
+                row["session"] == "session2"
+            ), f"Expected 'session2', got '{row['session']}'"
 
 
 class TestMessagesView(LoginRequiredTest):
