@@ -130,28 +130,34 @@
   end
   </script>
 
-  <<script>
-  // Function to update hx-get dynamically based on dropdown and input values
+  <script>
+  // Function to update hx-get dynamically based on dropdown and input
   function updateSearchParam() {
     const dropdownValue = document.getElementById('search-dropdown').value;
     const searchValue = document.getElementById('search-input').value;
-    
-    // Combine dropdown and search values with ":" only if dropdown has a selected value
-    const searchParam = dropdownValue ? `${dropdownValue}:${searchValue}` : searchValue;
+    const combinedParam = dropdownValue ? `${dropdownValue}:${searchValue}` : searchValue;
+    console.log("Updated combined search param:", combinedParam);
 
-    const searchInput = document.getElementById('search-input');
-    // Construct and set the updated hx-get attribute
-    console.log("Ryba")
-    searchInput.setAttribute('hx-get', "{% url 'process_manager:process_table' %}?search=" + encodeURIComponent(searchParam));
-  }
+    // Set the combined search hidden field’s value
+    document.getElementById('combined-search').value = combinedParam;
+
+    // Log to verify
+    console.log("Updated combined search param:", combinedParam);
+}
+
+
 
   // Run after DOM loads to ensure elements are accessible
-  document.addEventListener('DOMContentLoaded', function() {
-    // Attach event listeners to update the hx-get when dropdown or input changes
+  document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('search-dropdown').addEventListener('change', updateSearchParam);
     document.getElementById('search-input').addEventListener('input', updateSearchParam);
-  });
+});
+
 </script>
+
+
+
+
 
 {% endblock extra_js %}
 {% block content %}
@@ -209,16 +215,17 @@
                   <option value="exit_code">Exit Code</option>
                 </select>
                 <input id="search-input" class="form-control" 
-                      type="search"
-                      name="search"
-                      placeholder="Search processes..."
-                      style="flex: 1;"
-                      hx-get="{% url 'process_manager:process_table' %}"
-                      hx-trigger="input changed delay:500ms, every 1s"
-                      hx-target="div.table-container"
-                      hx-include="#sort-field">
+                  type="search"
+                  name="search"
+                  placeholder="Search processes..."
+                  style="flex: 1;"
+                  hx-get="{% url 'process_manager:process_table' %}"
+                  hx-trigger="input changed delay:500ms, every 1s"
+                  hx-target="div.table-container"
+                  hx-include="#sort-field, #combined-search">
               </div>
               <input type="hidden" id="sort-field" name="sort" value="">
+              <input type="hidden" id="combined-search" name="combined_search" value="">
               <div class="table-container">
             </div>
             </form>

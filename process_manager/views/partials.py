@@ -71,7 +71,7 @@ def process_table(request: HttpRequest) -> HttpResponse:
     ]
 
     # Apply search filtering
-    table_data = filter_table(request.GET.get("search", ""), table_data)
+    table_data = filter_table(request.GET.get("combined_search", ""), table_data)
     table = ProcessTable(table_data)
 
     # Set the order based on the 'sort' parameter in the GET request, defaulting to ''
