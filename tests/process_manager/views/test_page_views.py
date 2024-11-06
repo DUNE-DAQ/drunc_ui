@@ -33,7 +33,7 @@ class TestLogsView(PermissionRequiredTest):
         assert response.status_code == HTTPStatus.OK
 
         mock.assert_called_once_with(str(self.uuid))
-        assert "log_text" in response.context
+        assert "log_lines" in response.context
 
 
 class TestBootProcess(PermissionRequiredTest):

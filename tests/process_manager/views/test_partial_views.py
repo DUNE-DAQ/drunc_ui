@@ -1,15 +1,18 @@
 from datetime import UTC, datetime, timedelta
 from http import HTTPStatus
+from unittest import mock
 from unittest.mock import MagicMock
 from uuid import uuid4
 
 import pytest
-from django.test import Client
+from django.template.loader import render_to_string
+from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
 from main.models import DruncMessage
 from process_manager.tables import ProcessTable
+from process_manager.views.partials import handle_errors
 
 from ...utils import LoginRequiredTest
 
@@ -193,3 +196,32 @@ def test_filter_table(search, table, expected):
     from process_manager.views.partials import filter_table
 
     assert filter_table(search, table) == expected
+
+
+class HandleErrorsTest(TestCase):
+    """Tests for the HandleErrors decorator in the process_manager views."""
+
+    def setUp(self):
+        """SetUp method to create a RequestFactory instance."""
+        self.factory = RequestFactory()
+
+    @mock.patch("logging.getLogger")
+    def test_exception_view(self, mock_get_logger):
+        """Test the exception_view function."""
+        mock_logger = mock_get_logger.return_value
+
+        @handle_errors
+        def exception_view(request):
+            raise Exception("Test exception")
+
+        request = self.factory.get("/")
+        response = exception_view(request)
+
+        expected_content = render_to_string(
+            "process_manager/partials/error_message.html", request=request
+        )
+        self.assertEqual(response.content.decode(), expected_content)
+
+        mock_logger.exception.assert_called_once()
+
+        self.assertEqual(response.status_code, 200)

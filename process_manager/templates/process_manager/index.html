@@ -1,18 +1,121 @@
 {% extends "main/base.html" %}
+{% load tz %}
 {% block title %}
   Home
 {% endblock title %}
 {% block extra_css %}
   <style>
     #hide-messages-button {
-      /* Certain themes invert the colour, so we invert back. */
       filter: invert(1);
       float: right;
+    }
+    #show-messages-button {
+      display: none; /* Hide on load */
     }
     #message-list {
       max-height: 80vh;
       overflow-y: auto;
     }
+    .table-container {
+      border-radius: 10px;
+    }
+    .table-container table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .table-container th, .table-container td {
+      padding: 8px;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+    /* Flex layout to control column widths */
+    .flex-container {
+      display: flex;
+      gap: 15px;
+    }
+    .flex-container .process-panel {
+      flex: 1;
+    }
+    .flex-container .message-panel {
+      width: 30%;
+    }
+    .flex-container.hide-messages .process-panel {
+      width: 100%;
+    }
+    .flex-container.hide-messages .message-panel {
+      display: none;
+    }
+    .flex-container.hide-messages #show-messages-button {
+      display: inline-block;
+    }
+    .scrollable-div {
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+    #timezone {
+      font-size: 10pt;
+    }
+    .message-item {
+      font-family: 'Arial', sans-serif;
+      font-size: 0.875rem;
+      line-height: 1.4;
+    }
+    /* Table Header Styling */
+    .header-style {
+      font-family: Arial, sans-serif;
+      background-color: rgba(60, 60, 60, 0.8);
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: white;
+    }
+
+    /* Badge Styles for Status Codes */
+    .process-panel .badge-dead {
+        background-color: rgba(255, 0, 0, 0.2); /* Semi-transparent red */
+        color: #d9534f;
+        font-size: 1.3rem;
+        font-weight: bold;
+        padding: 0.6rem 1rem;
+        border-radius: 0.3rem;
+    }
+
+    .process-panel .badge-running {
+        background-color: rgba(0, 255, 0, 0.2); /* Semi-transparent green */
+        color: #5cb85c;
+        font-size: 1.3rem;
+        font-weight: bold;
+        padding: 0.6rem 1rem;
+        border-radius: 0.3rem;
+    }
+
+    /* Table Cell Styling */
+    .fw-bold {
+      font-weight: bold;
+    }
+
+    .text-break {
+      word-break: break-word;
+    }
+
+    .text-start {
+      text-align: left;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .text-primary {
+      color: #007bff;
+    }
+
+    .text-secondary {
+      color: #6c757d;
+    }
+
+    /* Checkbox Styling */
+    .form-check-input-lg {
+      transform: scale(1.5);
   </style>
 {% endblock extra_css %}
 {% block extra_js %}
@@ -28,76 +131,87 @@
   </script>
 {% endblock extra_js %}
 {% block content %}
-  <div class="row">
-    <div class="col">
-      <form method="post" action="{% url 'process_manager:process_action' %}">
-        {% csrf_token %}
-        {% if perms.main.can_modify_processes %}
-          <a href="{% url 'process_manager:boot_process' %}"
-             class="btn btn-primary">Boot</a>
-          <input type="submit"
-                 value="Restart"
-                 class="btn btn-success"
-                 name="action"
-                 id="restartButton"
-                 onclick="return confirm('Restart selected processes?')"
-                 disabled
-                 _="install disableActionButton">
-          <input type="submit"
-                 value="Flush"
-                 class="btn btn-warning"
-                 name="action"
-                 id="flushButton"
-                 onclick="return confirm('Flush selected processes?')"
-                 disabled
-                 _="install disableActionButton">
-          <input type="submit"
-                 value="Kill"
-                 class="btn btn-danger"
-                 name="action"
-                 id="killButton"
-                 onclick="return confirm('Kill selected processes?')"
-                 disabled
-                 _="install disableActionButton">
-        {% endif %}
-        <button id="show-messages-button"
-                type="button"
-                class="btn btn-info"
-                _="on load hide me on click hide me show #message-panel">Show Messages</button>
-        <p>&nbsp;</p>
-        <input class="form-control"
-               type="search"
-               name="search"
-               placeholder="Search..."
-               hx-get="{% url 'process_manager:process_table' %}"
-               hx-trigger="input changed delay:500ms, every 1s"
-               hx-target="div.table-container">
-        <div id="table-container"
-             hx-get="{% url 'process_manager:process_table' %}"
-             hx-trigger="load"></div>
-      </form>
-    </div>
-    <div class="col" id="message-panel">
-      <div class="card">
-        <div class="card-header">
-          Messages
-          <button id="hide-messages-button"
-                  type="button"
-                  class="btn-close"
-                  aria-label="Hide Messages"
-                  _="on click hide #message-panel show #show-messages-button"></button>
-          <input class="form-control"
-                 type="search"
-                 name="search"
-                 placeholder="Search..."
-                 hx-get="{% url 'process_manager:messages' %}"
-                 hx-trigger="input changed delay:500ms, every 1s"
-                 hx-target="#message-list">
+  <div class="container-fluid no-padding no-margin">
+    <div class="flex-container" id="main-content">
+      <!-- Process Control Panel -->
+      <div class="process-panel">
+        <div class="card shadow-sm rounded">
+          <div class="card-header bg-primary text-white rounded-top">
+            <h5>Process Control</h5>
+          </div>
+          <div class="card-body">
+            <form method="post" action="{% url 'process_manager:process_action' %}">
+              {% csrf_token %}
+              <div class="d-flex justify-content-between mb-3">
+                <a href="{% url 'process_manager:boot_process' %}"
+                   class="btn btn-primary w-100 me-2">Boot</a>
+                <input type="submit"
+                       value="Restart"
+                       class="btn btn-success w-100 mx-2"
+                       name="action"
+                       onclick="return confirm('Restart selected processes?')"
+                       disabled
+                       _="install disableActionButton">
+                <input type="submit"
+                       value="Flush"
+                       class="btn btn-warning w-100 mx-2"
+                       name="action"
+                       onclick="return confirm('Flush selected processes?')"
+                       disabled
+                       _="install disableActionButton">
+                <input type="submit"
+                       value="Kill"
+                       class="btn btn-danger w-100 ms-2"
+                       name="action"
+                       onclick="return confirm('Kill selected processes?')"
+                       disabled
+                       _="install disableActionButton">
+                <!-- Consistent Show Messages Button -->
+                <button id="show-messages-button"
+                        type="button"
+                        class="btn btn-info w-100 ms-2"
+                        _="on click hide me toggle .hide-messages on #main-content">Show Messages</button>
+              </div>
+              <input class="form-control mb-3"
+                     type="search"
+                     name="search"
+                     placeholder="Search processes..."
+                     hx-get="{% url 'process_manager:process_table' %}"
+                     hx-trigger="input changed delay:500ms, every 1s"
+                     hx-target="div.table-container">
+              <div class="table-container"></div>
+            </form>
+          </div>
         </div>
-        <div id="message-list"
-             class="card-body"
-             hx-get="{% url 'process_manager:messages' %}"
-             hx-trigger="load"></div>
+      </div>
+      <!-- Messages Panel with toggle -->
+      <div class="message-panel" id="message-panel">
+        <div class="card shadow-sm">
+          <div class="card-header bg-info text-white">
+            <h5 class="d-inline">Messages</h5>
+            <!-- Updated Hide Messages Button as a close icon -->
+            <button id="hide-messages-button"
+                    type="button"
+                    class="btn-close"
+                    aria-label="Close"
+                    _="on click add .hide-messages to #main-content show #show-messages-button"></button>
+          </div>
+          <div class="card-body">
+            {% now "e (O)" as server_time %}
+            <span id="timezone" class="d-line text-body-tertiary">All timestamps are displayed in {{ server_time }}</span>
+            <input class="form-control mb-2"
+                   type="search"
+                   name="search"
+                   placeholder="Search messages..."
+                   hx-get="{% url 'process_manager:messages' %}"
+                   hx-trigger="input changed delay:500ms, every 1s"
+                   hx-target="#message-list">
+            <div id="message-list"
+                 class="list-group"
+                 hx-get="{% url 'process_manager:messages' %}"
+                 hx-trigger="load"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
