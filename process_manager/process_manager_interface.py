@@ -95,7 +95,7 @@ def get_process_logs(uuid: str, username: str) -> list[DecodedResponse]:
 
 async def _boot_process(user: str, data: dict[str, str | int]) -> None:
     pmd = get_process_manager_driver(user)
-    async for item in pmd.dummy_boot(user=user, **data):
+    async for item in pmd.dummy_boot(user="root", **data):
         pass
 
 
