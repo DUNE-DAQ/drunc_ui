@@ -1570,6 +1570,20 @@ files = [
 six = ">=1.5"
 
 [[package]]
+name = "python-statemachine"
+version = "2.4.0"
+description = "Python Finite State Machines made easy."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "python_statemachine-2.4.0-py3-none-any.whl", hash = "sha256:c9efc4ca9e2627b981ab2b6b41af294fe30ae6e7f0ca927b2cd368ea3f1c896c"},
+    {file = "python_statemachine-2.4.0.tar.gz", hash = "sha256:1f0cce643c9d17b130dbeb369c293c97d6d0dc25931d45bc8ff667cd7cd67747"},
+]
+
+[package.extras]
+diagrams = ["pydot (>=2.0.0)"]
+
+[[package]]
 name = "pyyaml"
 version = "6.0.2"
 description = "YAML parser and emitter for Python"
@@ -2016,4 +2030,4 @@ brotli = ["brotli"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "034e4d8ba0d09ed63124cac6a4144a351942298a50340a5fc0f6ad479eb05652"
+content-hash = "59b03b4a77ecdff860f5cbbc16a6ccf4f64a7a02ac99c01cef7a3e8ba7cf7502"
