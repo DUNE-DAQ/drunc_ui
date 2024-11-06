@@ -1,0 +1,26 @@
+<div id="state-machine">
+  <ul>
+    {% for state, events in states.items %}
+      {% if state == current_state %}
+        <button class="btn btn-primary">{{ state }}</button>
+      {% else %}
+        <button disabled class="btn btn-secondary">{{ state }}</button>
+      {% endif %}
+      <ul>
+        {% for event in events %}
+          <li>
+            <form>
+              {% csrf_token %}
+              <input type="hidden" name="event" value="{{ event }}">
+              <input type="hidden" name="current_state" value="{{ current_state }}">
+              <button hx-post="{% url 'controller:state_machine' %}"
+                      hx-target="#state-machine"
+                      {% if state != current_state %}disabled{% endif %}
+                      class="btn btn-link">{{ event }}</button>
+            </form>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endfor %}
+  </ul>
+</div>

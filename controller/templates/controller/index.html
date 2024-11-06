@@ -2,3 +2,9 @@
 {% block title %}
   Controller
 {% endblock title %}
+{% block content %}
+  <div hx-get="{% url 'controller:state_machine' %}"
+       hx-trigger="load"
+       hx-target="#state-machine"></div>
+  <div id="state-machine"></div>
+{% endblock content %}
