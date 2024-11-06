@@ -1530,10 +1530,14 @@
 
 <h1 id="code-overview">Code Overview</h1>
 <h2 id="high-level-architecture">High-level Architecture</h2>
-<p>The code base covers several user interfaces covering different aspects of the DUNE run
-control system. There are distinct interfaces but also shared infrastructure and
-approaches.</p>
-<p>For this reason the code is organised into three <a href="https://docs.djangoproject.com/en/5.1/ref/applications/">Django apps</a>:</p>
+<p>The web application provides several user interfaces covering different aspects of the
+DUNE run control system. The functionality of the app requires multiple interacting
+components. A simplified summary of the web application and its interactions with
+external components is shown below.</p>
+<p><img alt="System Overview" src="../system_overview.png" /></p>
+<p>The application provides several separate user interfaces but there is also shared
+infrastructure between these. For this reason the code is organised into three <a href="https://docs.djangoproject.com/en/5.1/ref/applications/">Django
+apps</a>:</p>
 <ul>
 <li><code>process_manager</code> - the Process Manager UI.</li>
 <li><code>controller</code> - the Controller UI.</li>
@@ -1560,8 +1564,7 @@ code bases at a later point if desired.</p>
 </ul>
 </li>
 <li><a href="https://htmx.org/">HTMX</a><ul>
-<li>Frontend library that adds dynamic behaviour to html to enable server side
-rendering.</li>
+<li>Frontend library that extends html to enable server side rendering capabilities.</li>
 <li>Easy to learn.</li>
 <li>Declarative approach.</li>
 <li>Popular in the Django community.</li>
