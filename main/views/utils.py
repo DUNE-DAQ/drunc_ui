@@ -6,10 +6,12 @@ from collections.abc import Callable
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
+ViewType = (
+    Callable[[HttpRequest], HttpResponse] | Callable[[HttpRequest, str], HttpResponse]
+)
 
-def handle_errors(
-    view_func: Callable[[HttpRequest], HttpResponse],
-) -> Callable[[HttpRequest], HttpResponse]:
+
+def handle_errors(view_func: ViewType) -> ViewType:
     """Decorator to handle errors.
 
     Args:
