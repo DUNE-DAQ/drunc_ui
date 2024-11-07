@@ -59,7 +59,7 @@ def process_table(request: HttpRequest) -> HttpResponse:
     no check boxes selected. POST renders the table with checked boxes for any table row
     with a uuid provided in the select key of the request data.
     """
-    session_info = get_session_info()
+    session_info = get_session_info(request.user.username)
 
     status_enum_lookup = dict(item[::-1] for item in ProcessInstance.StatusCode.items())
 
