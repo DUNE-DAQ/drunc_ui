@@ -8,17 +8,16 @@
       {% endif %}
       <ul>
         {% for event in events %}
-          <li>
-            <form>
-              {% csrf_token %}
-              <input type="hidden" name="event" value="{{ event }}">
-              <input type="hidden" name="current_state" value="{{ current_state }}">
-              <button hx-post="{% url 'controller:state_machine' %}"
-                      hx-target="#state-machine"
-                      {% if state != current_state %}disabled{% endif %}
-                      class="btn btn-link">{{ event }}</button>
-            </form>
-          </li>
+          <form>
+            {% csrf_token %}
+            <input type="hidden" name="event" value="{{ event.event }}">
+            <input type="hidden" name="current_state" value="{{ current_state }}">
+            <button hx-post="{% url 'controller:state_machine' %}"
+                    hx-target="#state-machine"
+                    {% if state != current_state %}disabled{% endif %}
+                    class="btn btn-link">{{ event.event }}</button>
+            → {{ event.target }}
+          </form>
         {% endfor %}
       </ul>
     {% endfor %}

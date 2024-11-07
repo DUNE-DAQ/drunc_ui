@@ -12,8 +12,8 @@ class DruncFSM(StateMachine):
     configured = State("Configured")
     ready = State("Ready")
     running = State("Running")
-    triggered_sources_stopped = State("Triggered_Sources_Stopped")
     dataflow_drained = State("Dataflow_Drained")
+    triggered_sources_stopped = State("Triggered_Sources_Stopped")
 
     # The transitions between the states
     boot = none.to(initial)
@@ -27,7 +27,7 @@ class DruncFSM(StateMachine):
     stop_triggered_sources = dataflow_drained.to(triggered_sources_stopped)
     stop = triggered_sources_stopped.to(configured)
 
-    def to_dict(self) -> dict[str, list[str]]:
+    def to_dict(self) -> dict[str, list[dict[str, str]]]:
         """Return the FSM states and events as a dictionary.
 
         The states will be the keys and the valid events for each state a list of
@@ -36,7 +36,28 @@ class DruncFSM(StateMachine):
         Returns:
             dict[str, list[str]]: The states and events as a dictionary.
         """
-        return {
-            state.name: [transition.event for transition in state.transitions]
+        states = {
+            state.name: [
+                {"event": transition.event, "target": transition.target.name}
+                for transition in state.transitions
+            ]
             for state in self.states
         }
+        return {state: states[state] for state in self.ordered_states}
+
+    @property
+    def ordered_states(self) -> list[str]:
+        """Return the order of the states.
+
+        Returns:
+            list[str]: The order of the states.
+        """
+        return [
+            "None",
+            "Initial",
+            "Configured",
+            "Ready",
+            "Running",
+            "Dataflow_Drained",
+            "Triggered_Sources_Stopped",
+        ]
