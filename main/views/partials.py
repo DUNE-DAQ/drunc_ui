@@ -7,9 +7,11 @@ from django.shortcuts import render
 from django.utils.timezone import localtime
 
 from main.models import DruncMessage
+from main.views.utils import handle_errors
 
 
 @login_required
+@handle_errors
 def messages(request: HttpRequest, topic: str) -> HttpResponse:
     """Search and render Kafka messages from the database."""
     search = request.GET.get("search", "")
