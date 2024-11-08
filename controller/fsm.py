@@ -2,7 +2,7 @@
 
 from statemachine import State, StateMachine
 
-from .controller_interface import get_controller_status
+from .controller_interface import get_fsm_state
 
 
 class DruncFSM(StateMachine):
@@ -36,7 +36,7 @@ class DruncFSM(StateMachine):
         Returns:
             DruncFSM: The matching DruncFSM object.
         """
-        return cls(start_value=get_controller_status().state)
+        return cls(start_value=get_fsm_state())
 
     def to_dict(self) -> dict[str, list[dict[str, str]]]:
         """Return the FSM states and events as a dictionary.
