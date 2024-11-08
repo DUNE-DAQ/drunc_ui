@@ -2,7 +2,6 @@
 {% block title %}
   Controller
 {% endblock title %}
-
 {% block extra_css %}
   <style>
     #hide-messages-button {
@@ -16,12 +15,10 @@
     }
   </style>
 {% endblock extra_css %}
-
 {% block content %}
   <div hx-get="{% url 'controller:state_machine' %}"
        hx-trigger="load, every 1s"
        hx-target="#state-machine"></div>
   <div id="state-machine"></div>
-
   {% include "main/messages.html" with topic="ERS" %}
 {% endblock content %}
