@@ -18,7 +18,10 @@ def state_machine(request: HttpRequest) -> HttpResponse:
     """Triggers a chan."""
     event = request.POST.get("event", None)
 
-    fsm = DruncFSM.get()
+    # TODO: Remove this once the controller is implemented
+    state = request.POST.get("current_state", "None")
+
+    fsm = DruncFSM.get(state.lower())
     if event:
         fsm.send(event)
 

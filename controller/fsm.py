@@ -2,7 +2,7 @@
 
 from statemachine import State, StateMachine
 
-from .controller_interface import get_fsm_state, send_event
+from .controller_interface import get_fsm_state
 
 
 class DruncFSM(StateMachine):
@@ -30,37 +30,21 @@ class DruncFSM(StateMachine):
     stop = triggered_sources_stopped.to(configured)
 
     @classmethod
-    def get(cls) -> "DruncFSM":
+    def get(cls, state: str | None = None) -> "DruncFSM":
         """Get a DruncFSM object matching the Controller current state.
+
+        TODO: Remove input argument and use the current state from the controller once
+        the controller is implemented
+
+        Args:
+            state (str, optional): The state to start the FSM in. Defaults to None.
 
         Returns:
             DruncFSM: The matching DruncFSM object.
         """
+        if state:
+            return cls(start_value=state)
         return cls(start_value=get_fsm_state())
-
-    def send(self, event: str, **kwargs: dict[str, str]) -> None:
-        """Send an event to the FSM.
-
-        This method sends the event to the FSM and only if the response is
-        successful, the state of this object will change to the one reported by the
-        controller. In practice, this offloads the state change to the controller,
-        avoiding any inconsistencies.
-
-        Args:
-            event (str): The event to send.
-            **kwargs (dict[str, str]): The arguments for the event.
-        """
-        if event not in [t.event for t in self.current_state.transitions]:
-            raise ValueError(
-                f"Event '{event}' is not a valid transition for "
-                f" {self.current_state.name}."
-            )
-
-        result = send_event(event, **kwargs)
-        if result.value == 0:
-            self.current_state_value = get_fsm_state()
-        else:
-            raise ValueError(f"Event '{event}' failed with flag {result.name}.")
 
     def to_dict(self) -> dict[str, list[dict[str, str]]]:
         """Return the FSM states and events as a dictionary.
@@ -82,7 +66,7 @@ class DruncFSM(StateMachine):
 
     @property
     def ordered_states(self) -> list[str]:
-        """Return the order of the states.
+        """Return the order of the states for the visual representation.
 
         Returns:
             list[str]: The order of the states.
@@ -96,3 +80,30 @@ class DruncFSM(StateMachine):
             "Dataflow_Drained",
             "Triggered_Sources_Stopped",
         ]
+
+    def send(self, event: str, **kwargs: dict[str, str]) -> None:
+        """Send an event to the FSM.
+
+        This method sends the event to the FSM and only if the response is
+        successful, the state of this object will change to the one reported by the
+        controller. In practice, this offloads the state change to the controller,
+        avoiding any inconsistencies.
+
+        Args:
+            event (str): The event to send.
+            **kwargs (dict[str, str]): The arguments for the event.
+        """
+        super().send(event, **kwargs)
+
+        # TODO: Remove above and uncomment below once the controller is implemented
+        # if event not in [t.event for t in self.current_state.transitions]:
+        #     raise ValueError(
+        #         f"Event '{event}' is not a valid transition for "
+        #         f" {self.current_state.name}."
+        #     )
+
+        # result = send_event(event, **kwargs)
+        # if result.value == 0:
+        #     self.current_state_value = get_fsm_state()
+        # else:
+        #     raise ValueError(f"Event '{event}' failed with flag {result.name}.")
