@@ -2,6 +2,8 @@
 
 from statemachine import State, StateMachine
 
+from .controller_interface import get_controller_status
+
 
 class DruncFSM(StateMachine):
     """Finite state machine for the `drunc` controller."""
@@ -26,6 +28,15 @@ class DruncFSM(StateMachine):
     drained_dataflow = ready.to(dataflow_drained)
     stop_triggered_sources = dataflow_drained.to(triggered_sources_stopped)
     stop = triggered_sources_stopped.to(configured)
+
+    @classmethod
+    def get(cls) -> "DruncFSM":
+        """Get a DruncFSM object matching the Controller current state.
+
+        Returns:
+            DruncFSM: The matching DruncFSM object.
+        """
+        return cls(start_value=get_controller_status().state)
 
     def to_dict(self) -> dict[str, list[dict[str, str]]]:
         """Return the FSM states and events as a dictionary.

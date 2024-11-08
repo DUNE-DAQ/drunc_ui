@@ -3,7 +3,7 @@
 from django.conf import settings
 from drunc.controller.controller_driver import ControllerDriver
 from drunc.utils.shell_utils import create_dummy_token_from_uname
-from druncschema.request_response_pb2 import Description
+from druncschema.controller_pb2 import Status
 
 
 def get_controller_driver() -> ControllerDriver:
@@ -12,6 +12,6 @@ def get_controller_driver() -> ControllerDriver:
     return ControllerDriver(settings.ROOT_CONTROLLER_URL, token=token, aio_channel=True)
 
 
-def get_controller_status() -> Description:
+def get_controller_status() -> Status:
     """Get the controller status."""
-    return get_controller_driver().get_status()
+    return get_controller_driver().get_status().data
