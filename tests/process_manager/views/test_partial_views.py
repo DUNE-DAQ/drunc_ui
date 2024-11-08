@@ -16,7 +16,7 @@ class TestProcessTableView(LoginRequiredTest):
 
     endpoint = reverse("process_manager:process_table")
 
-    def test_get(self, auth_client, mocker):
+    async def test_get(self, auth_client, mocker):
         """Tests basic calls of view method."""
         uuids = [str(uuid4()) for _ in range(5)]
         self._mock_session_info(mocker, uuids)
@@ -38,7 +38,7 @@ class TestProcessTableView(LoginRequiredTest):
         mock().data.values.__iter__.return_value = instance_mocks
         return mock
 
-    def test_get_with_search(self, auth_client: Client, mocker):
+    async def test_get_with_search(self, auth_client: Client, mocker):
         """Tests basic calls of view method."""
         uuids = [str(uuid4()) for _ in range(5)]
         sessions = ["session1", "session2", "session2", "session2", "session3"]

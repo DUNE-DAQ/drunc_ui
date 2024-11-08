@@ -1,6 +1,7 @@
 """View functions for partials."""
 
 import django_tables2
+from asgiref.sync import async_to_sync, sync_to_async
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
@@ -50,17 +51,18 @@ def filter_table(
     return [row for row in table if any(search in str(row[k]).lower() for k in columns)]
 
 
+@sync_to_async
 @login_required
 @handle_errors
-def process_table(request: HttpRequest) -> HttpResponse:
+@async_to_sync
+async def process_table(request: HttpRequest) -> HttpResponse:
     """Renders the process table.
 
     This view may be called using either GET or POST methods. GET renders the table with
     no check boxes selected. POST renders the table with checked boxes for any table row
     with a uuid provided in the select key of the request data.
     """
-    session_info = get_session_info(request.user.username)
-
+    session_info = await get_session_info(request.user.username)
     status_enum_lookup = dict(item[::-1] for item in ProcessInstance.StatusCode.items())
 
     table_data = []

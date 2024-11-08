@@ -24,15 +24,11 @@ def get_process_manager_driver(username: str) -> ProcessManagerDriver:
     )
 
 
-async def _get_session_info(username: str) -> ProcessInstanceList:
-    pmd = get_process_manager_driver(username)
-    query = ProcessQuery(names=[".*"])
-    return await pmd.ps(query)
-
-
 def get_session_info(username: str) -> ProcessInstanceList:
     """Get info about all sessions from process manager."""
-    return asyncio.run(_get_session_info(username))
+    pmd = get_process_manager_driver(username)
+    query = ProcessQuery(names=[".*"])
+    return pmd.ps(query)
 
 
 class ProcessAction(Enum):
