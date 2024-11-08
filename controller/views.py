@@ -17,9 +17,8 @@ def index(request: HttpRequest) -> HttpResponse:
 def state_machine(request: HttpRequest) -> HttpResponse:
     """Triggers a chan."""
     event = request.POST.get("event", None)
-    state = request.POST.get("current_state", "none")
 
-    fsm = DruncFSM(start_value=state.lower())
+    fsm = DruncFSM.get()
     if event:
         fsm.send(event)
 
