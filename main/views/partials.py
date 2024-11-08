@@ -17,16 +17,21 @@ def messages(request: HttpRequest, topic: str) -> HttpResponse:
     search = request.GET.get("search", "")
     records = DruncMessage.objects.filter(
         topic__regex=settings.KAFKA_TOPIC_REGEX[topic], message__icontains=search
-    )
+    ).order_by("-timestamp")
 
     # Time is stored as UTC. localtime(t) converts this to our configured timezone.
     messages = [
-        f"{localtime(record.timestamp).strftime('%Y-%m-%d %H:%M:%S')}: {record.message}"
+        {
+            "timestamp": localtime(record.timestamp).strftime("%Y-%m-%d %H:%M:%S"),
+            "severity": record.severity,
+            "message": record.message,
+            "topic": record.topic,
+        }
         for record in records
     ]
 
     return render(
         request=request,
-        context=dict(messages=messages[::-1]),
+        context={"messages": messages},
         template_name="main/partials/message_items.html",
     )

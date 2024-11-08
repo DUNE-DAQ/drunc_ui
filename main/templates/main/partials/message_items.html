@@ -1,7 +1,19 @@
-<ul class="list-group list-group-flush">
-  {% for message in messages %}
-    <li class="list-group-item py-2 message-item {% if forloop.counter0|divisibleby:2 %}bg-light{% else %}bg-white{% endif %}">
-      <span>{{ message }}</span>
-    </li>
-  {% endfor %}
-</ul>
+<!-- message_items.html -->
+<table class="table">
+  <thead>
+    <tr>
+      <th>Timestamp</th>
+      <th>Severity</th>
+      <th>Message</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for message in messages %}
+      <tr class="{% cycle 'bg-light' 'bg-white' %}">
+        <td>{{ message.timestamp }}</td>
+        <td>{{ message.severity }}</td>
+        <td>{{ message.message }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>

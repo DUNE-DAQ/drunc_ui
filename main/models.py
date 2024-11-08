@@ -24,3 +24,4 @@ class DruncMessage(models.Model):
     topic = models.CharField(max_length=255)
     timestamp = models.DateTimeField()
     message = models.TextField()
+    severity = models.CharField(max_length=10, default="INFO")
