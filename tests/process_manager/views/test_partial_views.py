@@ -1,18 +1,12 @@
-from datetime import UTC, datetime, timedelta
 from http import HTTPStatus
-from unittest import mock
 from unittest.mock import MagicMock
 from uuid import uuid4
 
 import pytest
-from django.template.loader import render_to_string
-from django.test import Client, RequestFactory, TestCase
+from django.test import Client
 from django.urls import reverse
-from pytest_django.asserts import assertTemplateUsed
 
-from main.models import DruncMessage
 from process_manager.tables import ProcessTable
-from process_manager.views.partials import handle_errors
 
 from ...utils import LoginRequiredTest
 
@@ -69,80 +63,6 @@ class TestProcessTableView(LoginRequiredTest):
             assert (
                 row["session"] == "session2"
             ), f"Expected 'session2', got '{row['session']}'"
-
-
-class TestMessagesView(LoginRequiredTest):
-    """Test the process_manager.views.messages view function."""
-
-    endpoint = reverse("process_manager:messages")
-    topic = "control.test.process_manager"
-
-    @pytest.fixture(autouse=True)
-    def kafka_topic_regex(self, settings):
-        """Set Kafka topic regex patterns for tests."""
-        settings.KAFKA_TOPIC_REGEX["PROCMAN"] = "^control\..+\.process_manager$"
-
-    def test_get(self, auth_client):
-        """Tests basic calls of view method."""
-        t1 = datetime.now(tz=UTC)
-        t2 = t1 + timedelta(minutes=10)
-        DruncMessage.objects.bulk_create(
-            [
-                DruncMessage(topic=self.topic, timestamp=t1, message="message 0"),
-                DruncMessage(topic=self.topic, timestamp=t2, message="message 1"),
-            ]
-        )
-
-        with assertTemplateUsed("process_manager/partials/message_items.html"):
-            response = auth_client.get(self.endpoint)
-        assert response.status_code == HTTPStatus.OK
-
-        # messages have been added to the context in reverse order
-        t1_str = t1.strftime("%Y-%m-%d %H:%M:%S")
-        assert response.context["messages"][1] == f"{t1_str}: message 0"
-        t2_str = t2.strftime("%Y-%m-%d %H:%M:%S")
-        assert response.context["messages"][0] == f"{t2_str}: message 1"
-
-    def test_get_with_search(self, auth_client):
-        """Tests message filtering of view method."""
-        t = datetime.now(tz=UTC)
-        t_str = t.strftime("%Y-%m-%d %H:%M:%S")
-        her_msg = "her message"
-        his_msg = "HIs meSsaGe"
-        DruncMessage.objects.bulk_create(
-            [
-                DruncMessage(topic=self.topic, timestamp=t, message=her_msg),
-                DruncMessage(topic=self.topic, timestamp=t, message=his_msg),
-            ]
-        )
-
-        # search for "his message"
-        response = auth_client.get(self.endpoint, data={"search": "his message"})
-        assert response.status_code == HTTPStatus.OK
-        assert len(response.context["messages"]) == 1
-        assert response.context["messages"][0] == f"{t_str}: {his_msg}"
-
-        # search for "MESS"
-        response = auth_client.get(self.endpoint, data={"search": "MESS"})
-        assert response.status_code == HTTPStatus.OK
-        assert len(response.context["messages"]) == 2
-        assert response.context["messages"][0] == f"{t_str}: {his_msg}"
-        assert response.context["messages"][1] == f"{t_str}: {her_msg}"
-
-        # search for "not there"
-        response = auth_client.get(self.endpoint, data={"search": "not there"})
-        assert response.status_code == HTTPStatus.OK
-        assert len(response.context["messages"]) == 0
-
-    def test_get_wrong_topic(self, auth_client):
-        """Test view method plays nice with other Kafka topics."""
-        DruncMessage.objects.create(
-            topic="the.wrong.topic", timestamp=datetime.now(tz=UTC), message="message"
-        )
-
-        response = auth_client.get(self.endpoint)
-        assert response.status_code == HTTPStatus.OK
-        assert len(response.context["messages"]) == 0
 
 
 process_1 = {
@@ -209,31 +129,3 @@ def test_filter_table(search, table, expected):
     from process_manager.views.partials import filter_table
 
     assert filter_table(search, table) == expected
-
-
-class HandleErrorsTest(TestCase):
-    """Tests for the HandleErrors decorator in the process_manager views."""
-
-    def setUp(self):
-        """SetUp method to create a RequestFactory instance."""
-        self.factory = RequestFactory()
-
-    @mock.patch("logging.getLogger")
-    def test_exception_view(self, mock_get_logger):
-        """Test the exception_view function."""
-        mock_logger = mock_get_logger.return_value
-
-        @handle_errors
-        def exception_view(request):
-            raise Exception("Test exception")
-
-        request = self.factory.get("/")
-        response = exception_view(request)
-
-        expected_content = render_to_string(
-            "process_manager/partials/error_message.html", request=request
-        )
-        self.assertEqual(response.content.decode(), expected_content)
-
-        mock_logger.exception.assert_called_once()
-        self.assertEqual(response.status_code, 200)

@@ -1,1 +1,1 @@
-"""Module for app view functions."""
+"""Module for process manager app view functions."""

@@ -1,5 +1,4 @@
 {% extends "main/base.html" %}
-{% load tz %}
 {% block title %}
   Home
 {% endblock title %}
@@ -254,35 +253,7 @@
           </div>
         </div>
       </div>
-      <!-- Messages Panel with toggle -->
-      <div class="message-panel" id="message-panel">
-        <div class="card shadow-sm">
-          <div class="card-header bg-info text-white">
-            <h5 class="d-inline">Messages</h5>
-            <!-- Updated Hide Messages Button as a close icon -->
-            <button id="hide-messages-button"
-                    type="button"
-                    class="btn-close"
-                    aria-label="Close"
-                    _="on click add .hide-messages to #main-content show #show-messages-button"></button>
-          </div>
-          <div class="card-body">
-            {% now "e (O)" as server_time %}
-            <span id="timezone" class="d-line text-body-tertiary">All timestamps are displayed in {{ server_time }}</span>
-            <input class="form-control mb-2"
-                   type="search"
-                   name="search"
-                   placeholder="Search messages..."
-                   hx-get="{% url 'process_manager:messages' %}"
-                   hx-trigger="input changed delay:500ms, every 1s"
-                   hx-target="#message-list">
-            <div id="message-list"
-                 class="list-group"
-                 hx-get="{% url 'process_manager:messages' %}"
-                 hx-trigger="load"></div>
-          </div>
-        </div>
-      </div>
+      {% include "main/messages.html" with topic="PROCMAN" %}
     </div>
   </div>
 {% endblock content %}
