@@ -7,5 +7,5 @@ class DruncMessageTable(tables.Table):
     """Defines a Drunc Message Table for the data from the Kafka messages."""
 
     timestamp = tables.DateTimeColumn(format="y-m-d , H:i")
-    severity = tables.Column(verbose_name="Severity", orderable=True)
+    severity = tables.Column(verbose_name="Severity", orderable=False)
     message = tables.Column(verbose_name="Message", orderable=False)
