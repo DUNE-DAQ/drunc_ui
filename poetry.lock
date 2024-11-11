@@ -2001,13 +2001,13 @@ watchmedo = ["PyYAML (>=3.10)"]
 
 [[package]]
 name = "whitenoise"
-version = "6.7.0"
+version = "6.8.2"
 description = "Radically simplified static file serving for WSGI applications"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 files = [
-    {file = "whitenoise-6.7.0-py3-none-any.whl", hash = "sha256:a1ae85e01fdc9815d12fa33f17765bc132ed2c54fa76daf9e39e879dd93566f6"},
-    {file = "whitenoise-6.7.0.tar.gz", hash = "sha256:58c7a6cd811e275a6c91af22e96e87da0b1109e9a53bb7464116ef4c963bf636"},
+    {file = "whitenoise-6.8.2-py3-none-any.whl", hash = "sha256:df12dce147a043d1956d81d288c6f0044147c6d2ab9726e5772ac50fb45d2280"},
+    {file = "whitenoise-6.8.2.tar.gz", hash = "sha256:486bd7267a375fa9650b136daaec156ac572971acc8bf99add90817a530dd1d4"},
 ]
 
 [package.extras]
@@ -2016,4 +2016,4 @@ brotli = ["brotli"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "034e4d8ba0d09ed63124cac6a4144a351942298a50340a5fc0f6ad479eb05652"
+content-hash = "b2811a6b3fae128f45dda0d0c0953e8803ba20b900da0571b5ffacab43aabd3f"
