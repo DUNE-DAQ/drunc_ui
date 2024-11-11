@@ -1,10 +1,5 @@
 """View functions for partials."""
 
-import logging
-from collections.abc import Callable
-
-from django.conf import settings
-import django_tables2
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
