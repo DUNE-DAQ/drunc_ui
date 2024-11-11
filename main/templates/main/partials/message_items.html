@@ -1,19 +1,2 @@
-<!-- message_items.html -->
-<table class="table">
-  <thead>
-    <tr>
-      <th>Timestamp</th>
-      <th>Severity</th>
-      <th>Message</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for message in messages %}
-      <tr class="{% cycle 'bg-light' 'bg-white' %}">
-        <td>{{ message.timestamp }}</td>
-        <td>{{ message.severity }}</td>
-        <td>{{ message.message }}</td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
+{% load django_tables2 %}
+{% render_table table %}
