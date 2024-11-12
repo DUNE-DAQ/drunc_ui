@@ -3,7 +3,7 @@ from http import HTTPStatus
 from django.urls import reverse
 from pytest_django.asserts import assertContains, assertNotContains, assertTemplateUsed
 
-from ..utils import LoginRequiredTest
+from ...utils import LoginRequiredTest
 
 
 class TestIndexView(LoginRequiredTest):

@@ -28,5 +28,5 @@ def process_action(request: HttpRequest) -> HttpResponse:
         return HttpResponseRedirect(reverse("process_manager:index"))
 
     if uuids_ := request.POST.getlist("select"):
-        process_call(uuids_, action_enum)
+        process_call(uuids_, action_enum, request.user.username)
     return HttpResponseRedirect(reverse("process_manager:index"))

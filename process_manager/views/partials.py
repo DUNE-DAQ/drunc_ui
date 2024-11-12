@@ -1,43 +1,15 @@
 """View functions for partials."""
 
-import logging
-from collections.abc import Callable
-
 import django_tables2
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
-from django.utils.timezone import localtime
 from druncschema.process_manager_pb2 import ProcessInstance
 
-from main.models import DruncMessage
+from main.views.utils import handle_errors
 
 from ..process_manager_interface import get_session_info
 from ..tables import ProcessTable
-
-
-def handle_errors(
-    view_func: Callable[[HttpRequest], HttpResponse],
-) -> Callable[[HttpRequest], HttpResponse]:
-    """Decorator to handle errors.
-
-    Args:
-        view_func: The view function to be wrapped.
-
-    Returns:
-        The wrapped view function.
-    """
-    logger = logging.getLogger("django")
-
-    def wrapped_view(request, *args, **kwargs) -> HttpResponse:  # type: ignore
-        try:
-            return view_func(request, *args, **kwargs)
-        except Exception as e:
-            logger.exception(e)
-            return render(request, "process_manager/partials/error_message.html")
-
-    return wrapped_view
 
 
 def filter_table(
@@ -87,7 +59,7 @@ def process_table(request: HttpRequest) -> HttpResponse:
     no check boxes selected. POST renders the table with checked boxes for any table row
     with a uuid provided in the select key of the request data.
     """
-    session_info = get_session_info()
+    session_info = get_session_info(request.user.username)
 
     status_enum_lookup = dict(item[::-1] for item in ProcessInstance.StatusCode.items())
 
@@ -118,26 +90,4 @@ def process_table(request: HttpRequest) -> HttpResponse:
         request=request,
         context=dict(table=table),
         template_name="process_manager/partials/process_table.html",
-    )
-
-
-@login_required
-@handle_errors
-def messages(request: HttpRequest) -> HttpResponse:
-    """Search and render Kafka messages from the database."""
-    search = request.GET.get("search", "")
-    records = DruncMessage.objects.filter(
-        topic__regex=settings.KAFKA_TOPIC_REGEX["PROCMAN"], message__icontains=search
-    )
-
-    # Time is stored as UTC. localtime(t) converts this to our configured timezone.
-    messages = [
-        f"{localtime(record.timestamp).strftime('%Y-%m-%d %H:%M:%S')}: {record.message}"
-        for record in records
-    ]
-
-    return render(
-        request=request,
-        context=dict(messages=messages[::-1]),
-        template_name="process_manager/partials/message_items.html",
     )
