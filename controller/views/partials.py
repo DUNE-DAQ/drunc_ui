@@ -1,17 +1,11 @@
-"""Views module for the controller app."""
+"""Partial views module for the controller app."""
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
-from .fsm import DruncFSM
-from .tables import FSMTable
-
-
-@login_required
-def index(request: HttpRequest) -> HttpResponse:
-    """View that renders the index/home page."""
-    return render(request=request, template_name="controller/index.html")
+from ..fsm import DruncFSM
+from ..tables import FSMTable
 
 
 @login_required
@@ -26,15 +20,14 @@ def state_machine(request: HttpRequest) -> HttpResponse:
     if event:
         fsm.send(event)
 
-    states = fsm.to_dict()
-    table = FSMTable.from_dict(states, fsm.current_state.name)
+    table = FSMTable.from_dict(fsm.to_dict(), fsm.current_state.name)
 
     return render(
         request=request,
         context=dict(
-            events=[t["event"] for t in states[fsm.current_state.name]],
+            events=[t.event for t in fsm.current_state.transitions],
             current_state=fsm.current_state.name,
             table=table,
         ),
-        template_name="controller/state_machine.html",
+        template_name="controller/partials/state_machine.html",
     )
