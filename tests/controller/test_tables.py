@@ -34,7 +34,7 @@ def test_toggle_button_current(mocker):
     assert (
         result
         == (
-            "<button hx-post=/mocked_url/ hx-target='#state-machine' hx-include='#event_event' "  # noqa: E501
+            "<button hx-post=/mocked_url/ hx-target='#htmx-dialog-container' hx-include='#event_event' "  # noqa: E501
             "class='btn btn-success w-100 mx-2' >event</button>"
         )
     )

@@ -40,6 +40,7 @@ def state_machine(request: HttpRequest) -> HttpResponse:
     )
 
 
+@login_required
 def dialog(request: HttpRequest) -> HttpResponse:
     """Triggers a chan."""
     event = request.POST.get("event", None)
@@ -47,6 +48,7 @@ def dialog(request: HttpRequest) -> HttpResponse:
     # TODO: Remove this once the controller is implemented
     state = request.POST.get("current_state", "None")
 
+    # TODO: Remove this and pull the arguments from the controller, once implemented
     args = ["arg1", "arg2", "arg3"]
 
     context = dict(
