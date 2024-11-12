@@ -56,7 +56,7 @@ def test_from_dict_single_state_no_events():
     result = FSMTable.from_dict(states, current_state)
     assert isinstance(result, FSMTable)
     assert len(result.rows) == 1
-    assert result.rows[0]["state"] == toggle_text("state1", True)
+    assert result.rows[0].cells["state"] == toggle_text("state1", True)
 
 
 def test_from_dict_single_state_with_events(mocker):
