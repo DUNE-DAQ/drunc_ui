@@ -1,23 +1,10 @@
-<ul>
-  {% for state, events in states.items %}
-    {% if state == current_state %}
-      <button class="btn btn-primary">{{ state }}</button>
-    {% else %}
-      <button disabled class="btn btn-secondary">{{ state }}</button>
-    {% endif %}
-    <ul>
-      {% for event in events %}
-        <form>
-          {% csrf_token %}
-          <input type="hidden" name="event" value="{{ event.event }}">
-          <input type="hidden" name="current_state" value="{{ current_state }}">
-          <button hx-post="{% url 'controller:state_machine' %}"
-                  hx-target="#state-machine"
-                  {% if state != current_state %}disabled{% endif %}
-                  class="btn btn-link">{{ event.event }}</button>
-          → {{ event.target }}
-        </form>
-      {% endfor %}
-    </ul>
-  {% endfor %}
-</ul>
+{% load render_table from django_tables2 %}
+{% for event in events %}<input type="hidden" name="event" id="event_{{ event }}" value="{{ event }}">{% endfor %}
+<form>
+  {% csrf_token %}
+  <input type="hidden"
+         name="current_state"
+         id="current_state"
+         value="{{ current_state }}">
+  {% render_table table %}
+</form>

@@ -5,6 +5,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
 from .fsm import DruncFSM
+from .tables import FSMTable
 
 
 @login_required
@@ -26,12 +27,14 @@ def state_machine(request: HttpRequest) -> HttpResponse:
         fsm.send(event)
 
     states = fsm.to_dict()
+    table = FSMTable.from_dict(states, fsm.current_state.name)
 
     return render(
         request=request,
         context=dict(
-            states=states,
+            events=[t["event"] for t in states[fsm.current_state.name]],
             current_state=fsm.current_state.name,
+            table=table,
         ),
         template_name="controller/state_machine.html",
     )
