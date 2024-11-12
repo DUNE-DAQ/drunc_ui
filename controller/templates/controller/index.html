@@ -45,4 +45,11 @@
       {% include "main/messages.html" with topic="ERS" %}
     </div>
   </div>
+  <div id="htmx-dialog-container"
+       _="on htmx:afterSettle call (first of me).showModal()"></div>
+  <div class="col-2">
+    <button class="btn btn-primary w-100"
+            hx-get="{% url 'controller:dialog' %}"
+            hx-target="#htmx-dialog-container">Show the classical dialog</button>
+  </div>
 {% endblock content %}

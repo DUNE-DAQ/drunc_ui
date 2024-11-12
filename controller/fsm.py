@@ -1,5 +1,7 @@
 """Module that implements `drunc` finite state machine."""
 
+from typing import Any
+
 from statemachine import State, StateMachine
 
 from . import controller_interface as ci
@@ -81,7 +83,7 @@ class DruncFSM(StateMachine):
             "Triggered_Sources_Stopped",
         ]
 
-    def send(self, event: str, **kwargs: dict[str, str]) -> None:
+    def send(self, event: str, **kwargs: dict[str, Any]) -> None:  # type: ignore[misc]
         """Send an event to the FSM.
 
         This method sends the event to the FSM and only if the response is
@@ -91,7 +93,7 @@ class DruncFSM(StateMachine):
 
         Args:
             event (str): The event to send.
-            **kwargs (dict[str, str]): The arguments for the event.
+            **kwargs (dict[str, Any]): The arguments for the event.
         """
         super().send(event, **kwargs)
 

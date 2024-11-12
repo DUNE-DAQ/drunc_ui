@@ -108,7 +108,7 @@ def toggle_button(event: str, current: bool) -> SafeString:
         str: The button as a safe string.
     """
     if current:
-        action = f"hx-post={reverse('controller:state_machine')} hx-target='#state-machine' hx-include='#event_{event}'"  # noqa: E501
+        action = f"hx-post={reverse('controller:dialog')} hx-target='#htmx-dialog-container' hx-include='#event_{event}'"  # noqa: E501
         return mark_safe(
             f"<button {action} class='btn btn-success w-100 mx-2' >{event}</button>"
         )
