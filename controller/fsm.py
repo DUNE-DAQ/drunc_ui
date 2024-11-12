@@ -2,7 +2,7 @@
 
 from statemachine import State, StateMachine
 
-from .controller_interface import get_fsm_state
+from . import controller_interface as ci
 
 
 class DruncFSM(StateMachine):
@@ -43,8 +43,8 @@ class DruncFSM(StateMachine):
             DruncFSM: The matching DruncFSM object.
         """
         if state:
-            return cls(start_value=state)
-        return cls(start_value=get_fsm_state())
+            return cls(start_value=state.lower())
+        return cls(start_value=ci.get_fsm_state().lower())
 
     def to_dict(self) -> dict[str, list[dict[str, str]]]:
         """Return the FSM states and events as a dictionary.
@@ -102,8 +102,8 @@ class DruncFSM(StateMachine):
         #         f" {self.current_state.name}."
         #     )
 
-        # result = send_event(event, **kwargs)
+        # result = ci.send_event(event, **kwargs)
         # if result.value == 0:
-        #     self.current_state_value = get_fsm_state()
+        #     self.current_state_value = ci.get_fsm_state()
         # else:
         #     raise ValueError(f"Event '{event}' failed with flag {result.name}.")

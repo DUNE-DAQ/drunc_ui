@@ -29,7 +29,7 @@ class TestFSMView(LoginRequiredTest):
     @pytest.mark.parametrize("state", DruncFSM.states)
     def test_non_empty_post(self, state, auth_client):
         """Tests basic calls of view method."""
-        event = choice(DruncFSM.get(state.name.lower()).current_state.transitions)
+        event = choice(DruncFSM.get(state.name).current_state.transitions)
         response = auth_client.post(
             self.endpoint, data={"event": event.event, "current_state": state.name}
         )
@@ -38,6 +38,5 @@ class TestFSMView(LoginRequiredTest):
         assert isinstance(table, FSMTable)
         assert response.context["current_state"] == event.target.name
         assert response.context["events"] == [
-            t.event
-            for t in DruncFSM.get(event.target.name.lower()).current_state.transitions
+            t.event for t in DruncFSM.get(event.target.name).current_state.transitions
         ]
