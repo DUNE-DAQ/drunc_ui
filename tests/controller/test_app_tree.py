@@ -70,8 +70,8 @@ def test_to_list_with_children() -> None:
     )
     expected_output = [
         {"name": "root", "host": "localhost", "detector": "neutrinos"},
-        {"name": "    child1", "host": "localhost:8001", "detector": "positrons"},
-        {"name": "    child2", "host": "localhost:8002", "detector": "hadrons"},
+        {"name": "+---- child1", "host": "localhost:8001", "detector": "positrons"},
+        {"name": "+---- child2", "host": "localhost:8002", "detector": "hadrons"},
     ]
     assert tree.to_list() == expected_output
 
@@ -101,17 +101,17 @@ def test_to_list_nested_children() -> None:
     )
     expected_output = [
         {"name": "root", "host": "localhost", "detector": "neutrinos"},
-        {"name": "    child1", "host": "localhost:8001", "detector": "positrons"},
+        {"name": "+---- child1", "host": "localhost:8001", "detector": "positrons"},
         {
-            "name": "        grandchild1",
+            "name": "+----+---- grandchild1",
             "host": "localhost:8003",
             "detector": "photons",
         },
         {
-            "name": "        grandchild2",
+            "name": "+----+---- grandchild2",
             "host": "localhost:8004",
             "detector": "electrons",
         },
-        {"name": "    child2", "host": "localhost:8002", "detector": "hadrons"},
+        {"name": "+---- child2", "host": "localhost:8002", "detector": "hadrons"},
     ]
     assert tree.to_list() == expected_output
