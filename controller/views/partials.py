@@ -8,7 +8,7 @@ from django.shortcuts import render
 
 from ..app_tree import AppTree
 from ..fsm import DruncFSM
-from ..tables import FSMTable
+from ..tables import AppTreeTable, FSMTable
 
 
 @login_required
@@ -66,11 +66,22 @@ def dialog(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
-def app_tree_view(request: HttpRequest) -> HttpResponse:
+def app_tree_view_summary(request: HttpRequest) -> HttpResponse:
     """Renders the app tree view."""
     tree = AppTree.from_drunc()
     return render(
         request=request,
         context=dict(tree=tree.to_shoelace_tree()),
-        template_name="controller/partials/app_tree.html",
+        template_name="controller/partials/app_tree_view_summary.html",
+    )
+
+
+@login_required
+def app_tree_view_partial(request: HttpRequest) -> HttpResponse:
+    """View that renders the app tree view page."""
+    table = AppTreeTable(AppTree.from_drunc().to_list())
+    return render(
+        request=request,
+        context=dict(table=table),
+        template_name="controller/partials/app_tree_view_partial.html",
     )

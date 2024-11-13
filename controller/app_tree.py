@@ -40,7 +40,8 @@ class AppTree(BaseModel):
         Returns:
             list[dict[str, str]]: The application tree structure as a list of strings.
         """
-        ind = " " * (level * base_indent)
+        bar = "+" if level > 0 else ""
+        ind = (bar + ("-" * base_indent)) * level + " "
         output = [
             {"name": ind + self.name, "host": self.host, "detector": self.detector}
         ]
