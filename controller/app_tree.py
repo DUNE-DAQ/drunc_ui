@@ -30,6 +30,24 @@ class AppTree(BaseModel):
             + "</sl-tree-item>"
         )
 
+    def to_list(self, level: int = 0, base_indent: int = 4) -> list[dict[str, str]]:
+        """Returns the application tree structure as a list of strings.
+
+        Args:
+            level (int): The current level of the tree.
+            base_indent (int): The number of spaces to indent each level.
+
+        Returns:
+            list[dict[str, str]]: The application tree structure as a list of strings.
+        """
+        ind = " " * (level * base_indent)
+        output = [
+            {"name": ind + self.name, "host": self.host, "detector": self.detector}
+        ]
+        for child in self.children:
+            output.extend(child.to_list(level=level + 1, base_indent=base_indent))
+        return output
+
     @classmethod
     def _dummy_tree(cls) -> AppTree:
         """Returns a dummy application tree structure.

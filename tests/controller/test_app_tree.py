@@ -48,3 +48,70 @@ def test_to_shoelace_tree_nested_children() -> None:
         "</sl-tree-item>"
     )
     assert tree.to_shoelace_tree() == expected_output
+
+
+def test_to_list_single_node() -> None:
+    """Test that a single node is converted to a list of dictionaries."""
+    tree = AppTree(name="root", host="localhost", detector="neutrinos")
+    expected_output = [{"name": "root", "host": "localhost", "detector": "neutrinos"}]
+    assert tree.to_list() == expected_output
+
+
+def test_to_list_with_children() -> None:
+    """Test that a node with children is converted to a list of dictionaries."""
+    tree = AppTree(
+        name="root",
+        host="localhost",
+        detector="neutrinos",
+        children=[
+            AppTree(name="child1", host="localhost:8001", detector="positrons"),
+            AppTree(name="child2", host="localhost:8002", detector="hadrons"),
+        ],
+    )
+    expected_output = [
+        {"name": "root", "host": "localhost", "detector": "neutrinos"},
+        {"name": "    child1", "host": "localhost:8001", "detector": "positrons"},
+        {"name": "    child2", "host": "localhost:8002", "detector": "hadrons"},
+    ]
+    assert tree.to_list() == expected_output
+
+
+def test_to_list_nested_children() -> None:
+    """Test that a node with nested children is converted to a list of dictionaries."""
+    tree = AppTree(
+        name="root",
+        host="localhost",
+        detector="neutrinos",
+        children=[
+            AppTree(
+                name="child1",
+                host="localhost:8001",
+                detector="positrons",
+                children=[
+                    AppTree(
+                        name="grandchild1", host="localhost:8003", detector="photons"
+                    ),
+                    AppTree(
+                        name="grandchild2", host="localhost:8004", detector="electrons"
+                    ),
+                ],
+            ),
+            AppTree(name="child2", host="localhost:8002", detector="hadrons"),
+        ],
+    )
+    expected_output = [
+        {"name": "root", "host": "localhost", "detector": "neutrinos"},
+        {"name": "    child1", "host": "localhost:8001", "detector": "positrons"},
+        {
+            "name": "        grandchild1",
+            "host": "localhost:8003",
+            "detector": "photons",
+        },
+        {
+            "name": "        grandchild2",
+            "host": "localhost:8004",
+            "detector": "electrons",
+        },
+        {"name": "    child2", "host": "localhost:8002", "detector": "hadrons"},
+    ]
+    assert tree.to_list() == expected_output
