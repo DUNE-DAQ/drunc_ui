@@ -20,6 +20,7 @@ django-crispy-forms = "^2.3"
 crispy-bootstrap5 = "^2024.10"
 django-stubs-ext = "^5.1.1"
 python-statemachine = "^2.4.0"
+pydantic = "^2.9.2"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3"
