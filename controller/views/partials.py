@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
+from ..app_tree import AppTree
 from ..fsm import DruncFSM
 from ..tables import FSMTable
 
@@ -42,7 +43,7 @@ def state_machine(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def dialog(request: HttpRequest) -> HttpResponse:
-    """Triggers a chan."""
+    """Renders the arguments dialog view."""
     event = request.POST.get("event", None)
 
     # TODO: Remove this once the controller is implemented
@@ -61,4 +62,15 @@ def dialog(request: HttpRequest) -> HttpResponse:
         request=request,
         context=context,
         template_name="controller/partials/arguments_dialog.html",
+    )
+
+
+@login_required
+def app_tree_view(request: HttpRequest) -> HttpResponse:
+    """Renders the app tree view."""
+    tree = AppTree.from_drunc()
+    return render(
+        request=request,
+        context=dict(tree=tree.to_shoelace_tree()),
+        template_name="controller/partials/app_tree.html",
     )

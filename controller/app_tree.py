@@ -34,7 +34,8 @@ class AppTree(BaseModel):
     def _dummy_tree(cls) -> AppTree:
         """Returns a dummy application tree structure.
 
-        TODO: Delete this method once the controller is implemented.
+        TODO: Delete this method or make it a fixture for tests once the controller is
+          implemented.
         """
         return AppTree(
             name="root",
