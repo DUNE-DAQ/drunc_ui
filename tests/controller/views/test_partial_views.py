@@ -92,3 +92,20 @@ class TestDialogView(LoginRequiredTest):
         assert response.context["current_state"] == state
         assert response.context["event"] == event
         assert response.context["args"] == ["arg1", "arg2", "arg3"]
+
+
+class TestAppTreeView(LoginRequiredTest):
+    """Test the controller.views.partials.app_tree_view view function."""
+
+    endpoint = reverse("controller:app_tree")
+
+    def test_empty_post(self, auth_client):
+        """Tests basic calls of view method."""
+        from controller.app_tree import AppTree
+
+        expected_tree = AppTree._dummy_tree().to_shoelace_tree()
+
+        response = auth_client.post(self.endpoint)
+        assert response.status_code == HTTPStatus.OK
+        tree = response.context["tree"]
+        assert tree == expected_tree
