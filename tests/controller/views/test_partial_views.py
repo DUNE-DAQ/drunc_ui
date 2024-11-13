@@ -94,10 +94,10 @@ class TestDialogView(LoginRequiredTest):
         assert response.context["args"] == ["arg1", "arg2", "arg3"]
 
 
-class TestAppTreeView(LoginRequiredTest):
+class TestAppTreeSummaryView(LoginRequiredTest):
     """Test the controller.views.partials.app_tree_view view function."""
 
-    endpoint = reverse("controller:app_tree")
+    endpoint = reverse("controller:app_tree_summary")
 
     def test_empty_post(self, auth_client):
         """Tests basic calls of view method."""
@@ -109,3 +109,24 @@ class TestAppTreeView(LoginRequiredTest):
         assert response.status_code == HTTPStatus.OK
         tree = response.context["tree"]
         assert tree == expected_tree
+
+
+class TestAppTreeView(LoginRequiredTest):
+    """Test the controller.views.partials.app_tree_view view function."""
+
+    endpoint = reverse("controller:app_tree_partial")
+
+    def test_get_view(self, auth_client):
+        """Tests basic calls of view method."""
+        from controller.app_tree import AppTree
+        from controller.tables import AppTreeTable
+
+        expected_table = AppTreeTable(AppTree._dummy_tree().to_list())
+
+        response = auth_client.post(self.endpoint)
+        assert response.status_code == HTTPStatus.OK
+        table: AppTreeTable = response.context["table"]
+        assert len(table.rows) == len(expected_table.rows)
+        for row, expected_row in zip(table.rows, expected_table.rows):
+            for cell, expected_cell in zip(row, expected_row):
+                assert cell == expected_cell
