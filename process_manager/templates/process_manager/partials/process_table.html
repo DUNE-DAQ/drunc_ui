@@ -4,21 +4,22 @@
 {% block table.thead %}
   <div>
     <button style="padding: 5px 12px;
-                   background-color: #f8f9fa;
-                   color: #495057;
-                   border: 1px solid #ddd;
-                   border-radius: 8px;
-                   font-size: 0.9em;
-                   font-weight: 600;
-                   cursor: pointer;
-                   transition: background-color 0.3s ease"
-            onmouseover="this.style.backgroundColor='#e2e6ea'"
-            onmouseout="this.style.backgroundColor='#f8f9fa'"
-            hx-get="{% url 'process_manager:process_table' %}?sort="
-            hx-target="div.table-container"
-            onclick="document.getElementById('sort-field').value = ''; document.getElementById('sort-param-display').textContent = 'None';">
-      Clear Sorting
-    </button>
+               background-color: #f8f9fa;
+               color: #495057;
+               border: 1px solid #ddd;
+               border-radius: 8px;
+               font-size: 0.9em;
+               font-weight: 600;
+               cursor: pointer;
+               transition: background-color 0.3s ease"
+        _="on mouseover set my style.backgroundColor to '#e2e6ea'
+            then on mouseout set my style.backgroundColor to '#f8f9fa'
+            then on click get #sort-field then set it.value to ''
+            then get #sort-param-display then set its textContent to 'None'
+            then trigger this hx-get to '{% url 'process_manager:process_table' %}?sort=' target 'div.table-container'">
+    Clear Sorting
+  </button>
+
   </div>
   {% if table.show_header %}
     <thead class="custom-thead" {{ table.attrs.thead.as_html }}>
