@@ -74,9 +74,17 @@ def process_table(request: HttpRequest) -> HttpResponse:
         }
         for process_instance in session_info.data.values
     ]
+    # Get the values from the GET request
+    search_dropdown = request.GET.get("search-drp", "")
+    search_input = request.GET.get("search", "")
 
+    # Combine them into filter_query, joining by ':' only if search_input is provided
+    if search_dropdown and not search_input:
+        filter_query = ""
+    else:
+        filter_query = f"{search_dropdown}:{search_input}" if search_input else search_dropdown
     # Apply search filtering
-    table_data = filter_table(request.GET.get("combined_search", ""), table_data)
+    table_data = filter_table(filter_query, table_data)
     table = ProcessTable(table_data)
 
     # Set the order based on the 'sort' parameter in the GET request, defaulting to ''
