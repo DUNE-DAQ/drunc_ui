@@ -40,7 +40,6 @@ def filter_table(
     return [row for row in table if any(search in str(row[k]).lower() for k in columns)]
 
 
-
 @login_required
 @handle_errors
 def process_table(request: HttpRequest) -> HttpResponse:
