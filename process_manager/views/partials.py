@@ -12,19 +12,18 @@ from ..tables import ProcessTable
 
 
 def filter_table(
-    search: str, table: list[dict[str, str | int]]
+    search: str, column: str, table: list[dict[str, str | int]]
 ) -> list[dict[str, str | int]]:
-    """Filter table data based on search parameter.
+    """Filter table data based on search and column parameters.
 
     If the search parameter is empty, the table data is returned unfiltered. Otherwise,
-    the table data is filtered based on the search parameter. The search parameter can
-    be a string or a string with a column name and search string separated by a colon.
-    If the search parameter is a column name, the search string is matched against the
-    values in that column only. Otherwise, the search string is matched against all
-    columns.
+    the table data is filtered based on the search parameter. If the column parameter
+    is provided, the search string is matched against the values in that column only.
+    If no valid column is specified, the search string is matched against all columns.
 
     Args:
         search: The search string to filter the table data.
+        column: The column name to filter by, or an empty string to search all columns.
         table: The table data to filter.
 
     Returns:
@@ -34,19 +33,12 @@ def filter_table(
         return table
 
     all_cols = list(table[0].keys())
-    column, _, search = search.partition(":")
-    if not search:
-        # No column-based filtering
-        search = column
-        columns = all_cols
-    elif column not in all_cols:
-        # If column is unknown, search all columns
-        columns = all_cols
-    else:
-        # Search only the specified column
-        columns = [column]
+    columns = [column] if column in all_cols else all_cols
+
+    # Convert search string to lowercase for case-insensitive matching
     search = search.lower()
     return [row for row in table if any(search in str(row[k]).lower() for k in columns)]
+
 
 
 @login_required
@@ -78,15 +70,12 @@ def process_table(request: HttpRequest) -> HttpResponse:
     search_dropdown = request.GET.get("search-drp", "")
     search_input = request.GET.get("search", "")
 
-    # Combine them into filter_query, joining by ':' only if search_input is provided
-    if search_dropdown and not search_input:
-        filter_query = ""
-    else:
-        filter_query = (
-            f"{search_dropdown}:{search_input}" if search_input else search_dropdown
-        )
+    # Determine the column and search values for filtering
+    column = search_dropdown if search_dropdown else ""
+    search = search_input if search_input else ""
+
     # Apply search filtering
-    table_data = filter_table(filter_query, table_data)
+    table_data = filter_table(search, column, table_data)
     table = ProcessTable(table_data)
 
     # Set the order based on the 'sort' parameter in the GET request, defaulting to ''
