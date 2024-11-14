@@ -84,48 +84,36 @@ process_2 = {
 
 
 @pytest.mark.parametrize(
-    "search,table,expected",
+    "search, column, table, expected",
     [
         pytest.param(
-            "",
-            [process_1, process_2],
-            [process_1, process_2],
+            "", "", [process_1, process_2], [process_1, process_2],
             id="no search",
         ),
         pytest.param(
-            "Process1",
-            [process_1, process_2],
-            [process_1],
+            "Process1", "", [process_1, process_2], [process_1],
             id="search all columns",
         ),
         pytest.param(
-            "name:Process1",
-            [process_1, process_2],
-            [process_1],
+            "Process1", "name", [process_1, process_2], [process_1],
             id="search specific column",
         ),
         pytest.param(
-            "nonexistent:Process1",
-            [process_1, process_2],
-            [process_1],
+            "Process1", "nonexistent", [process_1, process_2], [process_1],
             id="search non-existent column",
         ),
         pytest.param(
-            "Process1",
-            [],
-            [],
+            "Process1", "", [], [],
             id="filter empty table",
         ),
         pytest.param(
-            "process1",
-            [process_1, process_2],
-            [process_1],
+            "process1", "", [process_1, process_2], [process_1],
             id="search case insensitive",
         ),
     ],
 )
-def test_filter_table(search, table, expected):
+def test_filter_table(search, column, table, expected):
     """Test filter_table function."""
     from process_manager.views.partials import filter_table
 
-    assert filter_table(search, table) == expected
+    assert filter_table(search, column, table) == expected
