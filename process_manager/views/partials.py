@@ -82,7 +82,9 @@ def process_table(request: HttpRequest) -> HttpResponse:
     if search_dropdown and not search_input:
         filter_query = ""
     else:
-        filter_query = f"{search_dropdown}:{search_input}" if search_input else search_dropdown
+        filter_query = (
+            f"{search_dropdown}:{search_input}" if search_input else search_dropdown
+        )
     # Apply search filtering
     table_data = filter_table(filter_query, table_data)
     table = ProcessTable(table_data)
