@@ -48,9 +48,9 @@ class TestProcessTableView(LoginRequiredTest):
         sessions = ["session1", "session2", "session2", "session2", "session3"]
         self._mock_session_info(mocker, uuids, sessions)
 
-        # Perform the search request using 'combined_search' instead of 'search'
+        # Perform the search request using 'search-drp' and 'search' parameters
         response = auth_client.get(
-            self.endpoint, data={"combined_search": "session:session2"}
+            self.endpoint, data={"search-drp": "session", "search": "session2"}
         )
         assert response.status_code == HTTPStatus.OK
 
