@@ -10,6 +10,7 @@ WORKDIR /basedir
 # setup for the the dune development environment that provides the full set of
 # dependencies required for booting of the controller test session
 # See https://github.com/DUNE-DAQ/drunc/wiki/Setup-drunc-with-DUNE-DAQ for explanation
+ENV SPACK_ROOT /cvmfs/dunedaq.opensciencegrid.org/spack/releases/fddaq-v5.1.0-a9-1/spack-0.20.0
 RUN source /cvmfs/dunedaq.opensciencegrid.org/setup_dunedaq.sh && \
         setup_dbt latest_v5 && \
         dbt-create fddaq-v5.1.0-a9 fddaq-v5.1.0-a9 && \
