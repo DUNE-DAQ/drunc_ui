@@ -21,7 +21,7 @@ def messages(request: HttpRequest, topic: str) -> HttpResponse:
     ).order_by("-timestamp")
 
     table = DruncMessageTable(records)
-    RequestConfig(request).configure(table)
+    RequestConfig(request, paginate=False).configure(table)
 
     return render(
         request=request,
