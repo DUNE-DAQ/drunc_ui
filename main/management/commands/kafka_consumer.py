@@ -12,7 +12,7 @@ from kafka import KafkaConsumer
 from ...models import DruncMessage
 
 BROADCAST_TYPE_SEVERITY = {
-    BroadcastType.ACK: "DEBUG",
+    BroadcastType.ACK: "INFO",
     BroadcastType.RECEIVER_REMOVED: "INFO",
     BroadcastType.RECEIVER_ADDED: "INFO",
     BroadcastType.SERVER_READY: "INFO",
