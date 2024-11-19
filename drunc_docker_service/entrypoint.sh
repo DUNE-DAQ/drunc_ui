@@ -1,6 +1,6 @@
 #!/bin/bash
 
 # setup dunedaq environment
-. /basedir/fddaq-v5.1.0-a9/env.sh
+. /basedir/NFD_DEV_241114_A9/env.sh
 
 exec "$@"

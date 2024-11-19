@@ -1,4 +1,4 @@
-FROM ghcr.io/dune-daq/frozen-release-alma9:fddaq-v5.1.0-a9
+FROM ghcr.io/imperialcollegelondon/dunedaq_dev_environment:nightly-241114
 
 RUN yum install -y openssh-server && yum clean all
 
@@ -12,13 +12,12 @@ WORKDIR /basedir
 # See https://github.com/DUNE-DAQ/drunc/wiki/Setup-drunc-with-DUNE-DAQ for explanation
 RUN source /cvmfs/dunedaq.opensciencegrid.org/setup_dunedaq.sh && \
         setup_dbt latest_v5 && \
-        dbt-create fddaq-v5.1.0-a9 fddaq-v5.1.0-a9 && \
-        cd fddaq-v5.1.0-a9 && \
+        dbt-create -n NFD_DEV_241114_A9 && \
+        cd NFD_DEV_241114_A9 && \
         source env.sh && \
         dbt-build && \
-        dbt-workarea-env && \
-        pip install git+https://github.com/DUNE-DAQ/drunc.git@v0.10.2
-WORKDIR /basedir/fddaq-v5.1.0-a9/
+        dbt-workarea-env
+WORKDIR /basedir/NFD_DEV_241114_A9/
 
 COPY process-manager-kafka.json /
 
