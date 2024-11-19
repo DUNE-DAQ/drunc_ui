@@ -47,8 +47,8 @@ def send_event(event: str, **kwargs: dict[str, str]) -> FSMResponseFlag:
     """Send an event to the controller.
 
     Args:
-        event (str): The event to send.
-        **kwargs (dict[str, str]): The arguments for the event.
+        event: The event to send.
+        **kwargs: The arguments for the event.
 
     Returns:
         FSMResponseFlag: The flag returned by the controller. 0 if the event was
