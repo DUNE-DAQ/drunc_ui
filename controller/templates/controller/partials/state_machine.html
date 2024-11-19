@@ -2,9 +2,5 @@
 {% for event in events %}<input type="hidden" name="event" id="event_{{ event }}" value="{{ event }}">{% endfor %}
 <form>
   {% csrf_token %}
-  <input type="hidden"
-         name="current_state"
-         id="current_state"
-         value="{{ current_state }}">
   {% render_table table %}
 </form>
