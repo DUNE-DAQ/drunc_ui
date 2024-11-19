@@ -3,7 +3,7 @@
 from drunc.connectivity_service.client import ConnectivityServiceClient
 from drunc.controller.controller_driver import ControllerDriver
 from drunc.utils.shell_utils import create_dummy_token_from_uname
-from druncschema.controller_pb2 import FSMResponseFlag, Status
+from druncschema.controller_pb2 import FSMResponseFlag
 
 
 def get_controller_uri() -> str:
