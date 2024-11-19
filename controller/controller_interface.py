@@ -3,8 +3,8 @@
 from drunc.connectivity_service.client import ConnectivityServiceClient
 from drunc.controller.controller_driver import ControllerDriver
 from drunc.utils.shell_utils import create_dummy_token_from_uname
-from druncschema.controller_pb2 import FSMResponseFlag
 from drunc.utils.utils import get_control_type_and_uri_from_connectivity_service
+from druncschema.controller_pb2 import FSMResponseFlag
 from druncschema.request_response_pb2 import Description
 
 
