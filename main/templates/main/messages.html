@@ -24,9 +24,9 @@
                hx-trigger="input changed delay:500ms, every 1s"
                hx-target="#message-list"
                hx-include="#filter-form">
-
         <!-- Severity Filter Dropdown -->
-        <select name="severity" class="form-select mb-2"
+        <select name="severity"
+                class="form-select mb-2"
                 hx-get="{% url 'main:messages' topic|default:"ALL" %}"
                 hx-trigger="change delay:500ms"
                 hx-target="#message-list"
@@ -46,7 +46,7 @@
   </div>
 </div>
 {% block extra_js %}
-<script>
+  <script>
     document.body.addEventListener('htmx:beforeRequest', function(evt) {
       const filterForm = document.getElementById('filter-form');
       const activeElement = document.activeElement;
