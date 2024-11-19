@@ -4,7 +4,7 @@ from drunc.connectivity_service.client import ConnectivityServiceClient
 from drunc.controller.controller_driver import ControllerDriver
 from drunc.utils.shell_utils import create_dummy_token_from_uname
 from drunc.utils.utils import get_control_type_and_uri_from_connectivity_service
-from druncschema.controller_pb2 import FSMResponseFlag
+from druncschema.controller_pb2 import FSMCommand, FSMResponseFlag
 from druncschema.request_response_pb2 import Description
 
 
@@ -54,4 +54,7 @@ def send_event(event: str, **kwargs: dict[str, str]) -> FSMResponseFlag:
         FSMResponseFlag: The flag returned by the controller. 0 if the event was
             successful, 1-4 if the event failed.
     """
-    return get_controller_driver().execute_fsm_command(event, **kwargs).data.flag
+    controller = get_controller_driver()
+    controller.take_control()
+    command = FSMCommand(command_name=event, arguments=kwargs)
+    return controller.execute_fsm_command(command).flag
