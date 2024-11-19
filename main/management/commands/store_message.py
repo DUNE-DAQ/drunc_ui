@@ -18,7 +18,7 @@ class Command(BaseCommand):
         """Add commandline options."""
         parser.add_argument("-t", "--topic", default="NO_TOPIC")
         parser.add_argument("-m", "--message", default="NO_MESSAGE")
-        parser.add_argument("-s", "--severity", default="INFO")  # New argument
+        parser.add_argument("-s", "--severity", default="INFO")
 
     def handle(self, *args: Any, **kwargs: Any) -> None:  # type: ignore[misc]
         """Command business logic."""
