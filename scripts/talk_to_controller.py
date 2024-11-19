@@ -10,11 +10,21 @@ and provides a basic proof of principle of communicating with the controller via
 gRPC.
 """
 
+from drunc.connectivity_service.client import ConnectivityServiceClient
 from drunc.controller.controller_driver import ControllerDriver
 from drunc.utils.shell_utils import create_dummy_token_from_uname
+from drunc.utils.utils import get_control_type_and_uri_from_connectivity_service
 
 if __name__ == "__main__":
+    # find where the root controller is running via the connectivity service
+    csc = ConnectivityServiceClient("local-2x3-config", "drunc:5000")
+    _, uri = get_control_type_and_uri_from_connectivity_service(
+        csc,
+        name="root-controller",
+    )
+
+    # connect to and query the root controller
     token = create_dummy_token_from_uname()
-    controller = ControllerDriver("drunc:3333", token=token, aio_channel=True)
-    val = controller.get_status()
+    controller = ControllerDriver(uri, token=token)
+    val = controller.status()
     print(val)
