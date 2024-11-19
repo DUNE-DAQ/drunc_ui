@@ -12,7 +12,7 @@ from kafka import KafkaConsumer
 from ...models import DruncMessage
 
 BROADCAST_TYPE_SEVERITY = {
-    BroadcastType.ACK: "INFO",
+    BroadcastType.ACK: "DEBUG",
     BroadcastType.RECEIVER_REMOVED: "INFO",
     BroadcastType.RECEIVER_ADDED: "INFO",
     BroadcastType.SERVER_READY: "INFO",
@@ -20,7 +20,7 @@ BROADCAST_TYPE_SEVERITY = {
     BroadcastType.TEXT_MESSAGE: "INFO",
     BroadcastType.COMMAND_EXECUTION_START: "INFO",
     BroadcastType.COMMAND_RECEIVED: "INFO",
-    BroadcastType.COMMAND_EXECUTION_SUCCESS: "INFO",
+    BroadcastType.COMMAND_EXECUTION_SUCCESS: "DEBUG",
     BroadcastType.DRUNC_EXCEPTION_RAISED: "ERROR",
     BroadcastType.UNHANDLED_EXCEPTION_RAISED: "CRITICAL",
     BroadcastType.STATUS_UPDATE: "INFO",
