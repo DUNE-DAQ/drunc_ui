@@ -16,9 +16,17 @@ from main.views.utils import handle_errors
 def messages(request: HttpRequest, topic: str) -> HttpResponse:
     """View function to display messages for a given topic."""
     search = request.GET.get("search", "")
+    severity = request.GET.get("severity", "")
+
     records = DruncMessage.objects.filter(
         topic__regex=settings.KAFKA_TOPIC_REGEX[topic], message__icontains=search
-    ).order_by("-timestamp")
+    )
+
+    if severity:
+        records = records.filter(severity=severity)
+
+    # Order the records by timestamp descending
+    records = records.order_by("-timestamp")
 
     table = DruncMessageTable(records)
     RequestConfig(request, paginate=False).configure(table)

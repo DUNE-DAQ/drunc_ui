@@ -13,13 +13,31 @@
     <div class="card-body">
       {% now "e (O)" as server_time %}
       <span id="timezone" class="d-line text-body-tertiary">All timestamps are displayed in {{ server_time }}</span>
-      <input class="form-control mb-2"
-             type="search"
-             name="search"
-             placeholder="Search messages..."
-             hx-get="{% url 'main:messages' topic|default:"ALL" %}"
-             hx-trigger="input changed delay:500ms, every 1s"
-             hx-target="#message-list">
+      <!-- Filter Form -->
+      <form id="filter-form" method="get">
+        <!-- Search Input -->
+        <input class="form-control mb-2"
+               type="search"
+               name="search"
+               placeholder="Search messages..."
+               hx-get="{% url 'main:messages' topic|default:"ALL" %}"
+               hx-trigger="input changed delay:500ms, every 1s"
+               hx-target="#message-list"
+               hx-include="#filter-form">
+
+        <!-- Severity Filter Dropdown -->
+        <select name="severity" class="form-select mb-2"
+                hx-get="{% url 'main:messages' topic|default:"ALL" %}"
+                hx-trigger="change delay:500ms"
+                hx-target="#message-list"
+                hx-include="#filter-form">
+          <option value="">All Severities</option>
+          <option value="DEBUG">DEBUG</option>
+          <option value="INFO">INFO</option>
+          <option value="ERROR">ERROR</option>
+          <option value="CRITICAL">CRITICAL</option>
+        </select>
+      </form>
       <div id="message-list"
            class="list-group"
            hx-get="{% url 'main:messages' topic|default:"ALL" %}"
@@ -27,3 +45,14 @@
     </div>
   </div>
 </div>
+{% block extra_js %}
+<script>
+    document.body.addEventListener('htmx:beforeRequest', function(evt) {
+      const filterForm = document.getElementById('filter-form');
+      const activeElement = document.activeElement;
+      if (filterForm.contains(activeElement)) {
+        evt.preventDefault();
+      }
+    });
+  </script>
+{% endblock extra_js %}
