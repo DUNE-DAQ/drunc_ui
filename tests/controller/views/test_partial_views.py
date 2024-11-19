@@ -20,29 +20,29 @@ class TestFSMView(LoginRequiredTest):
         mock_state = mocker.patch("controller.controller_interface.get_fsm_state")
         mock_state.return_value = "initial"
 
+        mock_send = mocker.patch("controller.controller_interface.send_event")
+
         response = auth_client.post(self.endpoint)
         assert response.status_code == HTTPStatus.OK
         table = response.context["table"]
         assert isinstance(table, FSMTable)
-        assert response.context["current_state"] == "initial"
-        assert response.context["events"] == fsm.STATES["initial"]
+        mock_state.assert_called_once()
+        mock_send.assert_not_called()
 
     @pytest.mark.parametrize("state", fsm.STATES.keys())
     def test_non_empty_post(self, state, auth_client, mocker):
         """Tests basic calls of view method."""
         mock_state = mocker.patch("controller.controller_interface.get_fsm_state")
-        mocker.patch("controller.controller_interface.send_event")
+        mock_send = mocker.patch("controller.controller_interface.send_event")
 
         event = choice(fsm.STATES[state])
-        target = fsm.EVENTS[event]
 
-        mock_state.side_effect = [state, target]
+        mock_state.return_value = state
+        mock_send.return_value = event
 
-        response = auth_client.post(
-            self.endpoint, data={"event": event, "current_state": state}
-        )
+        response = auth_client.post(self.endpoint, data={"event": event})
         assert response.status_code == HTTPStatus.OK
         table = response.context["table"]
         assert isinstance(table, FSMTable)
-        assert response.context["current_state"] == target
-        assert response.context["events"] == fsm.STATES[target]
+        mock_state.assert_called_once()
+        mock_send.assert_called_once_with(event)

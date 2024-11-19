@@ -18,14 +18,8 @@ def state_machine(request: HttpRequest) -> HttpResponse:
 
     table = tables.FSMTable.from_dict(fsm.get_fsm_architecture(), ci.get_fsm_state())
 
-    state = ci.get_fsm_state()
-
     return render(
         request=request,
-        context=dict(
-            events=fsm.STATES[state],
-            current_state=state,
-            table=table,
-        ),
+        context=dict(table=table),
         template_name="controller/partials/state_machine.html",
     )

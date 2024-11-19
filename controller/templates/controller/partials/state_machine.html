@@ -1,5 +1,4 @@
 {% load render_table from django_tables2 %}
-{% for event in events %}<input type="hidden" name="event" id="event_{{ event }}" value="{{ event }}">{% endfor %}
 <form>
   {% csrf_token %}
   {% render_table table %}
