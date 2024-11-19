@@ -3,6 +3,7 @@
 from drunc.connectivity_service.client import ConnectivityServiceClient
 from drunc.controller.controller_driver import ControllerDriver
 from drunc.utils.shell_utils import create_dummy_token_from_uname
+from drunc.utils.utils import get_control_type_and_uri_from_connectivity_service
 from druncschema.request_response_pb2 import Description
 
 
@@ -12,8 +13,6 @@ def get_controller_uri() -> str:
     Returns:
         str: The URI of the root controller.
     """
-    from drunc.utils.utils import get_control_type_and_uri_from_connectivity_service
-
     csc = ConnectivityServiceClient("local-2x3-config", "drunc:5000")
     _, uri = get_control_type_and_uri_from_connectivity_service(
         csc,
