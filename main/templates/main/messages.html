@@ -28,7 +28,6 @@
         <select name="severity"
                 class="form-select mb-2"
                 hx-get="{% url 'main:messages' topic|default:"ALL" %}"
-                hx-trigger="change delay:500ms"
                 hx-target="#message-list"
                 hx-include="#filter-form">
           <option value="">All Severities</option>
