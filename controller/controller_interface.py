@@ -1,5 +1,6 @@
 """Module providing functions to interact with the drunc controller."""
 
+from django.conf import settings
 from drunc.connectivity_service.client import ConnectivityServiceClient
 from drunc.controller.controller_driver import ControllerDriver
 from drunc.utils.shell_utils import create_dummy_token_from_uname
@@ -13,7 +14,7 @@ def get_controller_uri() -> str:
     Returns:
         str: The URI of the root controller.
     """
-    csc = ConnectivityServiceClient("local-2x3-config", "drunc:5000")
+    csc = ConnectivityServiceClient(settings.CSC_SESSION, settings.CSC_URL)
     _, uri = get_control_type_and_uri_from_connectivity_service(
         csc,
         name="root-controller",
