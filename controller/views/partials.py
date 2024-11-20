@@ -34,19 +34,18 @@ def state_machine(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def dialog(request: HttpRequest) -> HttpResponse:
-    """Triggers a chan."""
+    """Dialog to gather the input arguments required by the event."""
     event = request.POST.get("event", None)
 
-    # TODO: Remove this and pull the arguments from the controller, once implemented
-    args = ["arg1", "arg2", "arg3"]
-
-    context = dict(
-        event=event,
-        args=args,
-    )
+    args = []
+    if event:
+        args = ci.get_arguments(event)
 
     return render(
         request=request,
-        context=context,
+        context=dict(
+            event=event,
+            args=args,
+        ),
         template_name="controller/partials/arguments_dialog.html",
     )

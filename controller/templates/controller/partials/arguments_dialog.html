@@ -2,7 +2,15 @@
         _="on dialog_close remove me on keydown if the event's key is 'Escape' remove me">
   <form method="dialog">
     <div class="dialog-header">
-      <h4 class="dialog-title">Arguments to run transition: {{ event }}</h4>
+      {% if args %}
+        <h4 class="dialog-title">
+          Arguments to run transition: <b>{{ event }}</b>
+        </h4>
+      {% else %}
+        <h4 class="dialog-title">
+          No arguments required for transition: <b>{{ event }}</b>
+        </h4>
+      {% endif %}
     </div>
     <form>
       {% csrf_token %}
@@ -24,7 +32,7 @@
         <button class="btn btn-success w-50 mx-2"
                 hx-post="{% url 'controller:state_machine' %}"
                 hx-target='#state-machine'
-                _="on click send dialog_close">Submit</button>
+                _="on click send dialog_close">Confirm transition</button>
       </div>
     </form>
   </form>

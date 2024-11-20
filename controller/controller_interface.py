@@ -62,3 +62,24 @@ def send_event(event: str, **kwargs: dict[str, str]) -> FSMResponseFlag:
     controller.take_control()
     command = FSMCommand(command_name=event, arguments=kwargs)
     return controller.execute_fsm_command(command).flag
+
+
+def get_arguments(event: str) -> list[str]:
+    """Get the arguments required to run an event.
+
+    Args:
+        event: The event to get the arguments for.
+
+    Returns:
+        The arguments for the event.
+    """
+    controller = get_controller_driver()
+    command = next(
+        c for c in controller.describe_fsm().data.commands if c.name == event
+    )
+
+    args = []
+    for arg in command.arguments:
+        args.append(arg.name)
+
+    return args
