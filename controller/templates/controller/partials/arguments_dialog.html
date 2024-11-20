@@ -1,0 +1,31 @@
+<dialog class="dialog"
+        _="on dialog_close remove me on keydown if the event's key is 'Escape' remove me">
+  <form method="dialog">
+    <div class="dialog-header">
+      <h4 class="dialog-title">Arguments to run transition: {{ event }}</h4>
+    </div>
+    <form>
+      {% csrf_token %}
+      <div class="dialog-body">
+        {% for arg in args %}
+          <div class="mb-3">
+            <label for="{{ arg }}" class="form-label">{{ arg }}</label>
+            <input type="text"
+                   class="form-control"
+                   id="{{ arg }}"
+                   name="{{ arg }}"
+                   required>
+          </div>
+        {% endfor %}
+      </div>
+      <div class="d-flex justify-content-between mb-3">
+        <input type="hidden" name="event" value="{{ event }}">
+        <button class="btn btn-danger w-50 mx-2" _="on click send dialog_close">Cancel</button>
+        <button class="btn btn-success w-50 mx-2"
+                hx-post="{% url 'controller:state_machine' %}"
+                hx-target='#state-machine'
+                _="on click send dialog_close">Submit</button>
+      </div>
+    </form>
+  </form>
+</dialog>
