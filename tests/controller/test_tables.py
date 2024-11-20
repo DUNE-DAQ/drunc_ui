@@ -46,7 +46,7 @@ def test_from_dict_empty_states():
 
 def test_from_dict_single_state_no_events():
     """Test the from_dict method with a single state and no events."""
-    states = {"state1": []}
+    states = {"state1": {}}
     current_state = "state1"
     result = FSMTable.from_dict(states, current_state)
     assert isinstance(result, FSMTable)
@@ -57,12 +57,7 @@ def test_from_dict_single_state_no_events():
 def test_from_dict_single_state_with_events(mocker):
     """Test the from_dict method with a single state and events."""
     mocker.patch("controller.tables.reverse", return_value="/mocked_url/")
-    states = {
-        "state1": [
-            {"event": "event1", "target": "state2"},
-            {"event": "event2", "target": "state3"},
-        ]
-    }
+    states = {"state1": {"event1": "state2", "event2": "state3"}}
     current_state = "state1"
     result = FSMTable.from_dict(states, current_state)
     assert isinstance(result, FSMTable)
@@ -87,8 +82,8 @@ def test_from_dict_multiple_states(mocker):
     """Test the from_dict method with multiple states and events."""
     mocker.patch("controller.tables.reverse", return_value="/mocked_url/")
     states = {
-        "state1": [{"event": "event1", "target": "state2"}],
-        "state2": [{"event": "event2", "target": "state3"}],
+        "state1": {"event1": "state2"},
+        "state2": {"event2": "state3"},
     }
     current_state = "state1"
     result = FSMTable.from_dict(states, current_state)

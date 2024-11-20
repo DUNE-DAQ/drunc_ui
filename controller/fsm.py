@@ -21,7 +21,7 @@ EVENTS: dict[str, str] = {
 }
 
 
-def get_fsm_architecture() -> dict[str, list[dict[str, str]]]:
+def get_fsm_architecture() -> dict[str, dict[str, str]]:
     """Return the FSM states and events as a dictionary.
 
     The states will be the keys and the valid events for each state a list of
@@ -32,6 +32,6 @@ def get_fsm_architecture() -> dict[str, list[dict[str, str]]]:
         The states and events as a dictionary.
     """
     return {
-        state: [{"event": event, "target": EVENTS[event]} for event in events]
+        state: {event: EVENTS[event] for event in events}
         for state, events in STATES.items()
     }

@@ -51,9 +51,7 @@ class FSMTable(tables.Table):
         }
 
     @classmethod
-    def from_dict(
-        cls, states: dict[str, list[dict[str, str]]], current_state: str
-    ) -> str:
+    def from_dict(cls, states: dict[str, dict[str, str]], current_state: str) -> str:
         """Create the FSM table from the states dictionary.
 
         Args:
@@ -71,12 +69,12 @@ class FSMTable(tables.Table):
                     "state": toggle_text(state, current),
                 }
             )
-            for event in events:
+            for event, target in events.items():
                 table_data.append(
                     {
-                        "transition": toggle_button(event["event"], current),
+                        "transition": toggle_button(event, current),
                         "arrow": mark_safe("→"),
-                        "target": toggle_text(event["target"], current),
+                        "target": toggle_text(target, current),
                     }
                 )
         return cls(table_data)

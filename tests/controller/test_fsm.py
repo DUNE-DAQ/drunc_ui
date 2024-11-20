@@ -10,6 +10,6 @@ def test_get_fsm_architecture(mocker):
     assert len(fsm_dict) == len(fsm.STATES)
     for state, events in fsm.STATES.items():
         assert len(fsm_dict[state]) == len(events)
-        for transition in fsm_dict[state]:
-            assert transition["event"] in fsm.STATES[state]
-            assert transition["target"] in fsm_dict
+        for event, target in fsm_dict[state].items():
+            assert event in fsm.STATES[state]
+            assert target in fsm_dict
