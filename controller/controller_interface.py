@@ -78,8 +78,4 @@ def get_arguments(event: str) -> list[str]:
         c for c in controller.describe_fsm().data.commands if c.name == event
     )
 
-    args = []
-    for arg in command.arguments:
-        args.append(arg.name)
-
-    return args
+    return command.arguments

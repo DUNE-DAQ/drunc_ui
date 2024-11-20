@@ -3,11 +3,12 @@
 from typing import Any
 
 from django.contrib.auth.decorators import login_required
+from django.forms import Form
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
 from .. import controller_interface as ci
-from .. import fsm, tables
+from .. import forms, fsm, tables
 
 
 @login_required
@@ -37,15 +38,17 @@ def dialog(request: HttpRequest) -> HttpResponse:
     """Dialog to gather the input arguments required by the event."""
     event = request.POST.get("event", None)
 
+    form: type[Form] | None = None
     args = []
     if event:
         args = ci.get_arguments(event)
+        form = forms.get_form_from_arguments(args)
 
     return render(
         request=request,
         context=dict(
             event=event,
-            args=args,
+            form=form if args else None,
         ),
         template_name="controller/partials/arguments_dialog.html",
     )
