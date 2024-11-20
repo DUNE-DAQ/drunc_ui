@@ -1,8 +1,9 @@
+{% load crispy_forms_tags %}
 <dialog class="dialog"
         _="on dialog_close remove me on keydown if the event's key is 'Escape' remove me">
   <form method="dialog">
     <div class="dialog-header">
-      {% if args %}
+      {% if form %}
         <h4 class="dialog-title">
           Arguments to run transition: <b>{{ event }}</b>
         </h4>
@@ -14,18 +15,7 @@
     </div>
     <form>
       {% csrf_token %}
-      <div class="dialog-body">
-        {% for arg in args %}
-          <div class="mb-3">
-            <label for="{{ arg }}" class="form-label">{{ arg }}</label>
-            <input type="text"
-                   class="form-control"
-                   id="{{ arg }}"
-                   name="{{ arg }}"
-                   required>
-          </div>
-        {% endfor %}
-      </div>
+      {{ form|crispy }}
       <div class="d-flex justify-content-between mb-3">
         <input type="hidden" name="event" value="{{ event }}">
         <button class="btn btn-danger w-50 mx-2" _="on click send dialog_close">Cancel</button>
