@@ -4,34 +4,17 @@
 {% block table.thead %}
   <div>
     <button style="padding: 5px 12px;
-                  background-color: #f8f9fa;
-                  color: #495057;
-                  border: 1px solid #ddd;
-                  border-radius: 8px;
-                  font-size: 0.9em;
-                  font-weight: 600;
-                  cursor: pointer;
-                  transition: background-color 0.3s ease"
-            _="on mouseover set my style.backgroundColor to '#e2e6ea'
-                then on mouseout set my style.backgroundColor to '#f8f9fa'
-                then on click 
-                    get #sort-field 
-                    then if it is not null
-                        set it.value to '' 
-                    end
-                    then get #sort-param-display 
-                    then if it is not null
-                        set its.textContent to 'None'
-                    end
-                    then set targetURL to '{% url 'process_manager:process_table' %}?sort='
-                    then my.setAttribute('hx-get', targetURL)">
-        Clear Sorting
+                   background-color: #f8f9fa;
+                   color: #495057;
+                   border: 1px solid #ddd;
+                   border-radius: 8px;
+                   font-size: 0.9em;
+                   font-weight: 600;
+                   cursor: pointer;
+                   transition: background-color 0.3s ease"
+            _="on mouseover set my style.backgroundColor to '#e2e6ea' then on mouseout set my style.backgroundColor to '#f8f9fa' then on click get #sort-field then if it is not null set it.value to '' end then get #sort-param-display then if it is not null set its.textContent to 'None' end then set targetURL to '{% url 'process_manager:process_table' %}?sort=' then my.setAttribute('hx-get', targetURL)">
+      Clear Sorting
     </button>
-
-
-
-
-
   </div>
   {% if table.show_header %}
     <thead class="custom-thead" {{ table.attrs.thead.as_html }}>
@@ -39,27 +22,14 @@
         {% for column in table.columns %}
           <th class="custom-th" {{ column.attrs.th.as_html }}>
             {% if column.orderable %}
-            <a _="on click 
-                get #sort-field 
-                then set currentSort to its.value 
-                then if currentSort is '{{ column.name }}'
-                    set #sort-field's value to '-{{ column.name }}'
-                else
-                    set #sort-field's value to '{{ column.name }}'
-                end
-                then set sortValue to #sort-field's value
-                then set newSortUrl to '/process_manager/partials/process_table/?sort=' + sortValue
-                then my.setAttribute('hx-get', newSortUrl)"
-          hx-get="/process_manager/partials/process_table/?sort="
-          hx-target="div.table-container"
-          href="#"
-          class="sort-link">
-            {{ column.header }}
-            <span class="sort-icon">⇅</span>
-        </a>
-
-
-   
+              <a _="on click get #sort-field then set currentSort to its.value then if currentSort is '{{ column.name }}' set #sort-field's value to '-{{ column.name }}' else set #sort-field's value to '{{ column.name }}' end then set sortValue to #sort-field's value then set newSortUrl to '/process_manager/partials/process_table/?sort=' + sortValue then my.setAttribute('hx-get', newSortUrl)"
+                 hx-get="/process_manager/partials/process_table/?sort="
+                 hx-target="div.table-container"
+                 href="#"
+                 class="sort-link">
+                {{ column.header }}
+                <span class="sort-icon">⇅</span>
+              </a>
             {% else %}
               <span class="table-header">{{ column.header }}</span>
             {% endif %}
