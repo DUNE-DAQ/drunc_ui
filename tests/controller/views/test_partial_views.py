@@ -2,6 +2,7 @@ from http import HTTPStatus
 from random import choice
 
 import pytest
+from django.forms import Field
 from django.urls import reverse
 
 from controller import fsm
@@ -61,3 +62,29 @@ class TestFSMView(LoginRequiredTest):
         assert isinstance(table, FSMTable)
         mock_state.assert_called_once()
         mock_send.assert_called_once_with(event, form.cleaned_data)
+
+
+class TestArgumentsDialogView(LoginRequiredTest):
+    """Test the process_manager.views.process_table view function."""
+
+    endpoint = reverse("controller:dialog")
+
+    @pytest.mark.parametrize(
+        "fields,has_args", [({}, False), ({"arg1": Field()}, True)]
+    )
+    def test_view(self, auth_client, mocker, fields, has_args):
+        """Tests basic calls of view method."""
+        from django.forms import Form
+
+        mock_form = mocker.patch("controller.forms.get_form_for_event")
+        event = "an_event"
+
+        form = Form()
+        form.fields = fields
+        mock_form.return_value = lambda: form
+        response = auth_client.post(self.endpoint, data={"event": event})
+        assert response.status_code == HTTPStatus.OK
+        form = response.context["form"]
+        assert isinstance(form, Form)
+        assert response.context["has_args"] == has_args
+        assert response.context["event"] == event
