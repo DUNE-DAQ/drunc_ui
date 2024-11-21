@@ -5,8 +5,8 @@ STATES: dict[str, list[str]] = {
     "configured": ["scrap", "start"],
     "ready": ["enable_triggers", "drain_dataflow"],
     "running": ["disable_triggers"],
-    "dataflow_drained": ["stop_triggered_sources"],
-    "triggered_sources_stopped": ["stop"],
+    "dataflow_drained": ["stop_trigger_sources"],
+    "trigger_sources_stopped": ["stop"],
 }
 
 EVENTS: dict[str, str] = {
@@ -16,7 +16,7 @@ EVENTS: dict[str, str] = {
     "enable_triggers": "running",
     "disable_triggers": "ready",
     "drain_dataflow": "dataflow_drained",
-    "stop_triggered_sources": "triggered_sources_stopped",
+    "stop_trigger_sources": "trigger_sources_stopped",
     "stop": "configured",
 }
 
