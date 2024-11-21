@@ -14,6 +14,8 @@ services:
       - db:/usr/src/app/db
     environment:
       - PROCESS_MANAGER_URL=drunc:10054
+      - CSC_URL
+      - CSC_SESSION
   drunc:
     build: ./drunc_docker_service/
     profiles:
@@ -26,6 +28,8 @@ services:
         drunc-process-manager --log-level debug /process-manager-kafka.json 10054
     expose:
       - 10054
+    environment:
+      - CSC_SESSION
     depends_on:
       kafka:
         condition: service_healthy
