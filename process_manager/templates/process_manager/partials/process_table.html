@@ -22,28 +22,14 @@
         {% for column in table.columns %}
           <th class="custom-th" {{ column.attrs.th.as_html }}>
             {% if column.orderable %}
-            <a _="on click 
-                  get #sort-field
-                  then set currentSort to its value
-                  then if currentSort is '{{ column.name }}'
-                      set #sort-field's value to '-{{ column.name }}'
-                  else
-                      set #sort-field's value to '{{ column.name }}'
-                  end
-                  then set newSortUrl to '/process_manager/partials/process_table/?sort=' + #sort-field's value
-                  then this.setAttribute('hx-get', newSortUrl)
-                  then call this.click()"
-              hx-get="/process_manager/partials/process_table/?sort="
-              hx-target="div.table-container"
-              href="#"
-              class="sort-link">
-              {{ column.header }}
-              <span class="sort-icon">⇅</span>
-          </a>
-
-
-   
-   
+              <a _="on click get #sort-field then set currentSort to its value then if currentSort is '{{ column.name }}' set #sort-field's value to '-{{ column.name }}' else set #sort-field's value to '{{ column.name }}' end then set newSortUrl to '/process_manager/partials/process_table/?sort=' + #sort-field's value then this.setAttribute('hx-get', newSortUrl) then call this.click()"
+                 hx-get="/process_manager/partials/process_table/?sort="
+                 hx-target="div.table-container"
+                 href="#"
+                 class="sort-link">
+                {{ column.header }}
+                <span class="sort-icon">⇅</span>
+              </a>
             {% else %}
               <span class="table-header">{{ column.header }}</span>
             {% endif %}
