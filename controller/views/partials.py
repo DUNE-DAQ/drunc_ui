@@ -41,17 +41,15 @@ def dialog(request: HttpRequest) -> HttpResponse:
     """Dialog to gather the input arguments required by the event."""
     event = request.POST.get("event", None)
 
-    form: Form | None = None
-    if event:
-        form = forms.get_form_for_event(event)()
-
-    has_args = form is not None and len(form.fields) > 0
+    form = forms.get_form_for_event(event)() if event else Form()
+    has_args = len(form.fields) > 0
 
     return render(
         request=request,
         context=dict(
             event=event,
-            form=form if has_args else None,
+            has_args=has_args,
+            form=form,
         ),
         template_name="controller/partials/arguments_dialog.html",
     )

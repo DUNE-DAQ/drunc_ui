@@ -1,4 +1,5 @@
 {% load render_table from django_tables2 %}
+<div _="on load remove #argsDialog"></div>
 <form>
   {% csrf_token %}
   {% render_table table %}
