@@ -1,29 +1,23 @@
 {% load crispy_forms_tags %}
 <dialog class="dialog"
         _="on dialog_close remove me on keydown if the event's key is 'Escape' remove me">
-  <form method="dialog">
-    <div class="dialog-header">
-      {% if form %}
-        <h4 class="dialog-title">
-          Arguments to run transition: <b>{{ event }}</b>
-        </h4>
-      {% else %}
-        <h4 class="dialog-title">
-          No arguments required for transition: <b>{{ event }}</b>
-        </h4>
-      {% endif %}
+  {% if form %}
+    <h4>
+      Arguments to run transition: <b>{{ event }}</b>
+    </h4>
+  {% else %}
+    <h4>
+      No arguments required for transition: <b>{{ event }}</b>
+    </h4>
+  {% endif %}
+  <form hx-post="{% url 'controller:state_machine' %}"
+        hx-target='#state-machine'>
+    {% csrf_token %}
+    {{ form|crispy }}
+    <div class="d-flex justify-content-between mb-3">
+      <input type="hidden" name="event" value="{{ event }}">
+      <button class="btn btn-danger w-50 mx-2" _="on click send dialog_close">Cancel</button>
+      <button class="btn btn-success w-50 mx-2" type="submit">Confirm transition</button>
     </div>
-    <form>
-      {% csrf_token %}
-      {{ form|crispy }}
-      <div class="d-flex justify-content-between mb-3">
-        <input type="hidden" name="event" value="{{ event }}">
-        <button class="btn btn-danger w-50 mx-2" _="on click send dialog_close">Cancel</button>
-        <button class="btn btn-success w-50 mx-2"
-                hx-post="{% url 'controller:state_machine' %}"
-                hx-target='#state-machine'
-                _="on click send dialog_close">Confirm transition</button>
-      </div>
-    </form>
   </form>
 </dialog>

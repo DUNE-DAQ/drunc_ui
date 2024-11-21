@@ -15,14 +15,17 @@ from .. import forms, fsm, tables
 def state_machine(request: HttpRequest) -> HttpResponse:
     """Triggers a chan."""
     event = request.POST.get("event", None)
-    kwargs: dict[str, Any] = {  # type: ignore[misc]
+    arguments: dict[str, Any] = {  # type: ignore[misc]
         k: v
         for k, v in request.POST.items()
-        if k not in ["csrfmiddlewaretoken", "event", "current_state"]
+        if k not in ["csrfmiddlewaretoken", "event"]
     }
-
     if event:
-        ci.send_event(event, **kwargs)
+        form = forms.get_form_for_event(event)(arguments)
+        if form.is_valid():
+            ci.send_event(event, form.cleaned_data)
+        else:
+            raise ValueError(f"Invalid form: {form.errors}")
 
     table = tables.FSMTable.from_dict(fsm.get_fsm_architecture(), ci.get_fsm_state())
 
@@ -38,17 +41,17 @@ def dialog(request: HttpRequest) -> HttpResponse:
     """Dialog to gather the input arguments required by the event."""
     event = request.POST.get("event", None)
 
-    form: type[Form] | None = None
-    args = []
+    form: Form | None = None
     if event:
-        args = ci.get_arguments(event)
-        form = forms.get_form_from_arguments(args)
+        form = forms.get_form_for_event(event)()
+
+    has_args = form is not None and len(form.fields) > 0
 
     return render(
         request=request,
         context=dict(
             event=event,
-            form=form if args else None,
+            form=form if has_args else None,
         ),
         template_name="controller/partials/arguments_dialog.html",
     )
