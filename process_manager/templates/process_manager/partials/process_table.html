@@ -15,13 +15,21 @@
         _="on mouseover set my style.backgroundColor to '#e2e6ea'
             then on mouseout set my style.backgroundColor to '#f8f9fa'
             then on click 
-                get #sort-field then set it.value to '' 
-                then get #sort-param-display then set its textContent to 'None'
+                get #sort-field 
+                then if it is not null
+                    set it.value to '' 
+                end
+                then get #sort-param-display 
+                then if it is not null
+                    set its textContent to 'None'
+                end
                 then set targetURL to '{% url 'process_manager:process_table' %}?sort='
-                then call this.setAttribute('hx-get', targetURL)
-                then call this.click()">
+                then my.setAttribute('hx-get', targetURL)
+                then my.click()">
     Clear Sorting
 </button>
+
+
 
 
   </div>
