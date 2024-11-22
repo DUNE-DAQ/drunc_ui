@@ -23,7 +23,7 @@ services:
       - -c
       - |
         /usr/sbin/sshd &&
-        drunc-process-manager --log-level debug file:///process-manager-kafka.json
+        drunc-process-manager --log-level debug /process-manager-kafka.json 10054
     expose:
       - 10054
     depends_on:
