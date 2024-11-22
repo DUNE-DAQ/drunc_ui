@@ -18,10 +18,14 @@ class Command(BaseCommand):
         """Add commandline options."""
         parser.add_argument("-t", "--topic", default="NO_TOPIC")
         parser.add_argument("-m", "--message", default="NO_MESSAGE")
+        parser.add_argument("-s", "--severity", default="INFO")
 
     def handle(self, *args: Any, **kwargs: Any) -> None:  # type: ignore[misc]
         """Command business logic."""
         topic = kwargs["topic"]
         message = kwargs["message"]
         timestamp = datetime.now(tz=UTC)
-        DruncMessage.objects.create(topic=topic, timestamp=timestamp, message=message)
+        severity = kwargs["severity"]
+        DruncMessage.objects.create(
+            topic=topic, timestamp=timestamp, message=message, severity=severity
+        )

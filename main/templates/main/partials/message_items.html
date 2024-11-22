@@ -1,7 +1,2 @@
-<ul class="list-group list-group-flush">
-  {% for message in messages %}
-    <li class="list-group-item py-2 message-item {% if forloop.counter0|divisibleby:2 %}bg-light{% else %}bg-white{% endif %}">
-      <span>{{ message }}</span>
-    </li>
-  {% endfor %}
-</ul>
+{% load django_tables2 %}
+{% render_table table %}
