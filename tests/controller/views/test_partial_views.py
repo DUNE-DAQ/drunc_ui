@@ -11,7 +11,7 @@ from ...utils import LoginRequiredTest
 
 
 class TestFSMView(LoginRequiredTest):
-    """Test the process_manager.views.process_table view function."""
+    """Test the controller.views.state_machine view function."""
 
     endpoint = reverse("controller:state_machine")
 
