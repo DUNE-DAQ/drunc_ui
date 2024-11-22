@@ -99,10 +99,14 @@ def get_arguments(event: str) -> list[Argument]:
         The arguments for the event.
     """
     controller = get_controller_driver()
-    command = next(
-        c for c in controller.describe_fsm().data.commands if c.name == event
-    )
-
+    events = controller.describe_fsm().data.commands
+    try:
+        command = next(c for c in events if c.name == event)
+    except StopIteration:
+        raise ValueError(
+            f"Event '{event}' not found in FSM. Valid events are: "
+            f"{', '.join(c.name for c in events)}"
+        )
     return command.arguments
 
 
