@@ -11,14 +11,15 @@ authors = [
 python = "^3.11"
 django = "^5.1"
 whitenoise = "^6.8.2"
-drunc = { git = "https://github.com/DUNE-DAQ/drunc.git" }
-druncschema = { git = "https://github.com/DUNE-DAQ/druncschema.git" }
+drunc = { git = "https://github.com/DUNE-DAQ/drunc.git", rev = "f068eaccb840da03a104adba2da3f27454c218d5" }
+druncschema = { git = "https://github.com/DUNE-DAQ/druncschema.git", rev = "a07226fa9c3a4329b4c38e084c913cb1e2db0b4e" }
 django-tables2 = "^2.7.0"
 django-bootstrap5 = "^24.3"
 pytest-asyncio = "^0.24.0"
 django-crispy-forms = "^2.3"
 crispy-bootstrap5 = "^2024.10"
 django-stubs-ext = "^5.1.1"
+requests = "^2.32.3"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3"
