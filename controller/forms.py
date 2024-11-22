@@ -19,17 +19,22 @@ def get_form_for_event(event: str) -> type[Form]:
     for item in data:
         name = item.name
         mandatory = item.presence == ci.Presence.MANDATORY
-        # Remove the new line and end of string characters causing trouble
-        # when submitting the form
-        initial = item.default_value.value.decode().strip().replace(chr(4), "")
+        initial = item.default_value.value.decode()
         match item.type:
             case ci.FieldType.INT:
+                initial = int(initial) if initial else initial
                 fields[name] = IntegerField(required=mandatory, initial=initial)
             case ci.FieldType.FLOAT:
+                initial = float(initial) if initial else initial
                 fields[name] = FloatField(required=mandatory, initial=initial)
             case ci.FieldType.STRING:
+                # Remove the new line and end of string characters causing trouble
+                # when submitting the form
+                initial = initial.strip().replace(chr(4), "")
                 fields[name] = CharField(required=mandatory, initial=initial)
             case ci.FieldType.BOOL:
+                # We assume this is provided as an integer, 1 or 0
+                initial = bool(int(initial)) if initial else initial
                 fields[name] = BooleanField(required=mandatory, initial=initial)
 
     return type("DynamicForm", (Form,), fields)
