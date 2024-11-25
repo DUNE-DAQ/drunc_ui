@@ -15,6 +15,6 @@ def index(request: HttpRequest) -> HttpResponse:
 class HelpView(View):
     """View that renders the help page."""
 
-    def get(self, request: HttpRequest) -> HttpResponse:
+    async def get(self, request: HttpRequest) -> HttpResponse:
         """Render the help page."""
         return render(request=request, template_name="main/help.html")

@@ -69,14 +69,7 @@ def process_call(uuids: Iterable[str], action: ProcessAction, username: str) -> 
     return asyncio.run(_process_call(uuids, action, username))
 
 
-async def _get_process_logs(uuid: str, username: str) -> list[DecodedResponse]:
-    pmd = get_process_manager_driver(username)
-    query = ProcessQuery(uuids=[ProcessUUID(uuid=uuid)])
-    request = LogRequest(query=query, how_far=100)
-    return [item async for item in pmd.logs(request)]
-
-
-def get_process_logs(uuid: str, username: str) -> list[DecodedResponse]:
+async def get_process_logs(uuid: str, username: str) -> list[DecodedResponse]:
     """Retrieve logs for a process from the process manager.
 
     Args:
@@ -86,7 +79,15 @@ def get_process_logs(uuid: str, username: str) -> list[DecodedResponse]:
     Returns:
       The process logs.
     """
-    return asyncio.run(_get_process_logs(uuid, username))
+    pmd = get_process_manager_driver(username)
+    query = ProcessQuery(uuids=[ProcessUUID(uuid=uuid)])
+    request = LogRequest(query=query, how_far=100)
+    return [item async for item in pmd.logs(request)]
+
+
+# def get_process_logs(uuid: str, username: str) -> list[DecodedResponse]:
+
+#     return asyncio.run(_get_process_logs(uuid, username))
 
 
 async def _boot_process(user: str, data: dict[str, str | int]) -> None:

@@ -2,6 +2,7 @@
 
 import uuid
 
+from asgiref.sync import sync_to_async
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpRequest, HttpResponse
@@ -21,7 +22,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
 @login_required
 @permission_required("main.can_view_process_logs", raise_exception=True)
-def logs(request: HttpRequest, uuid: uuid.UUID) -> HttpResponse:
+async def logs(request: HttpRequest, uuid: uuid.UUID) -> HttpResponse:
     """Display the logs of a process.
 
     Args:
@@ -31,7 +32,8 @@ def logs(request: HttpRequest, uuid: uuid.UUID) -> HttpResponse:
     Returns:
       The rendered page.
     """
-    logs_response = get_process_logs(str(uuid), request.user.username)
+    username = await sync_to_async(lambda: request.user.username)()
+    logs_response = await get_process_logs(str(uuid), username)
 
     # Process the log text to exclude empty lines
     log_lines = [val.data.line for val in logs_response if val.data.line.strip()]
