@@ -89,6 +89,16 @@ docker compose exec drunc /entrypoint.sh drunc-controller-shell grpc://localhost
 For details of working with the controller see the [drunc wiki]. You should also be able
 to see the booted processes in the Process Manager UI.
 
+#### Note for MacOS users
+
+The above `boot_test_session.sh` will not work on M-series Macs because of limitations
+with the x86 architecture emulation used by MacOS. There is a simpler configuration that
+can be used instead. To use this, set the following environment variables before
+starting the docker containers:
+
+- `CSC_SESSION=lr-session`
+- `CSC_URL=drunc:25000`
+
 [drunc wiki]: https://github.com/DUNE-DAQ/drunc/wiki/Controller
 
 ## Development
