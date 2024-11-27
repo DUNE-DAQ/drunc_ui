@@ -11,14 +11,15 @@ authors = [
 python = "^3.11"
 django = "^5.1"
 whitenoise = "^6.8.2"
-drunc = { git = "https://github.com/DUNE-DAQ/drunc.git" }
-druncschema = { git = "https://github.com/DUNE-DAQ/druncschema.git" }
+drunc = { git = "https://github.com/DUNE-DAQ/drunc.git", rev = "f068eaccb840da03a104adba2da3f27454c218d5" }
+druncschema = { git = "https://github.com/DUNE-DAQ/druncschema.git", rev = "a07226fa9c3a4329b4c38e084c913cb1e2db0b4e" }
 django-tables2 = "^2.7.0"
 django-bootstrap5 = "^24.3"
 pytest-asyncio = "^0.24.0"
 django-crispy-forms = "^2.3"
 crispy-bootstrap5 = "^2024.10"
 django-stubs-ext = "^5.1.1"
+requests = "^2.32.3"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3"
@@ -26,7 +27,7 @@ pytest-cov = "^6.0.0"
 pytest-mypy = "^0.10.0"
 pytest-mock = "^3.7.0"
 pre-commit = "^4.0.1"
-ruff = "^0.7.4"
+ruff = "^0.8.0"
 djlint = "^1.36.1"
 django-stubs = { extras = ["compatible-mypy"], version = "^5.1.1" }
 pytest-django = "^4.9.0"
@@ -36,7 +37,7 @@ pytest-django = "^4.9.0"
 mkdocs = "^1.6.1"
 mkdocstrings = "^0.27.0"
 mkdocstrings-python = "^1.12.2"
-mkdocs-material = "^9.5.44"
+mkdocs-material = "^9.5.45"
 mkdocs-gen-files = "^0.5.0"
 mkdocs-literate-nav = "^0.6.1"
 mkdocs-section-index = "^0.3.9"
