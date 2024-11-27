@@ -10,7 +10,7 @@ authors = [
 [tool.poetry.dependencies]
 python = "^3.11"
 django = "^5.1"
-whitenoise = "^6.7.0"
+whitenoise = "^6.8.2"
 drunc = { git = "https://github.com/DUNE-DAQ/drunc.git" }
 druncschema = { git = "https://github.com/DUNE-DAQ/druncschema.git" }
 django-tables2 = "^2.7.0"
@@ -22,21 +22,21 @@ django-stubs-ext = "^5.1.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3"
-pytest-cov = "^5.0.0"
+pytest-cov = "^6.0.0"
 pytest-mypy = "^0.10.0"
 pytest-mock = "^3.7.0"
 pre-commit = "^4.0.1"
-ruff = "^0.7.1"
-djlint = "^1.35.2"
-django-stubs = { extras = ["compatible-mypy"], version = "^5.1.0" }
+ruff = "^0.7.4"
+djlint = "^1.36.1"
+django-stubs = { extras = ["compatible-mypy"], version = "^5.1.1" }
 pytest-django = "^4.9.0"
 
 
 [tool.poetry.group.docs.dependencies]
 mkdocs = "^1.6.1"
-mkdocstrings = "^0.26.2"
+mkdocstrings = "^0.27.0"
 mkdocstrings-python = "^1.12.2"
-mkdocs-material = "^9.5.42"
+mkdocs-material = "^9.5.44"
 mkdocs-gen-files = "^0.5.0"
 mkdocs-literate-nav = "^0.6.1"
 mkdocs-section-index = "^0.3.9"
