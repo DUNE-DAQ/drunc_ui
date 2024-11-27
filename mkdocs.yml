@@ -1,5 +1,7 @@
 site_name: Drunc UI
 
+watch: [main, process_manager, controller]
+
 theme:
   name: material
 
