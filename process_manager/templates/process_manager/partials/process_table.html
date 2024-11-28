@@ -15,22 +15,11 @@
         {% for column in table.columns %}
           <th class="custom-th" {{ column.attrs.th.as_html }}>
             {% if column.orderable %}
-            <a _="on click 
-                      get #sort-field 
-                      then set currentSort to its.value 
-                      then if currentSort is '{{ column.name }}'
-                          set #sort-field's value to '-{{ column.name }}'
-                      else
-                          set #sort-field's value to '{{ column.name }}'
-                      end
-                      then set newSortUrl to '{% url 'process_manager:process_table' %}?sort=' + #sort-field.value
-                      then my.setAttribute('hx-get', newSortUrl)
-                      then call htmx.ajax('GET', newSortUrl, {target: 'div.table-container'})"
-                class="sort-link">
+              <a _="on click get #sort-field then set currentSort to its.value then if currentSort is '{{ column.name }}' set #sort-field's value to '-{{ column.name }}' else set #sort-field's value to '{{ column.name }}' end then set newSortUrl to '{% url 'process_manager:process_table' %}?sort=' + #sort-field.value then my.setAttribute('hx-get', newSortUrl) then call htmx.ajax('GET', newSortUrl, {target: 'div.table-container'})"
+                 class="sort-link">
                 {{ column.header }}
                 <span class="sort-icon">⇅</span>
-            </a>
-   
+              </a>
             {% else %}
               <span class="table-header">{{ column.header }}</span>
             {% endif %}
