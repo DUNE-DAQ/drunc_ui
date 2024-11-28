@@ -4,14 +4,10 @@
 {% block table.thead %}
   <div>
     <a href="{% url 'process_manager:process_table' %}?sort="
-      _="on click 
-            set #sort-field's value to ''
-            set #sort-param-display's textContent to 'None'"
-      hx-get="{% url 'process_manager:process_table' %}?sort="
-      hx-target="div.table-container"
-      class="clear-sorting">
-      Clear Sorting
-  </a>
+       _="on click set #sort-field's value to '' set #sort-param-display's textContent to 'None'"
+       hx-get="{% url 'process_manager:process_table' %}?sort="
+       hx-target="div.table-container"
+       class="clear-sorting">Clear Sorting</a>
   </div>
   {% if table.show_header %}
     <thead class="custom-thead" {{ table.attrs.thead.as_html }}>
