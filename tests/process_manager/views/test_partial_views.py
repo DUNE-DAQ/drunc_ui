@@ -34,9 +34,7 @@ class TestProcessTableView(LoginRequiredTest):
 
         for instance_mock, uuid, session in zip(instance_mocks, uuids, sessions):
             instance_mock.uuid.uuid = str(uuid)
-            instance_mock.process_description.metadata.session = (
-                session  # Correctly set the session attribute
-            )
+            instance_mock.process_description.metadata.session = session
             instance_mock.status_code = 0
 
         mock().data.values.__iter__.return_value = instance_mocks
@@ -59,10 +57,11 @@ class TestProcessTableView(LoginRequiredTest):
         assert isinstance(table, ProcessTable)
 
         # Check that each row in the table contains "session2" as the session value
-        for row in table.data.data:
+        for row, uuid in zip(table.data.data, uuids[1:4]):
             assert (
                 row["session"] == "session2"
             ), f"Expected 'session2', got '{row['session']}'"
+            assert row["uuid"] == uuid
 
 
 process_1 = {
