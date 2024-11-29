@@ -33,7 +33,7 @@ class TestProcessTableView(LoginRequiredTest):
         sessions = sessions or [f"session{i}" for i in range(len(uuids))]
         for instance_mock, uuid, session in zip(instance_mocks, uuids, sessions):
             instance_mock.uuid.uuid = str(uuid)
-            instance_mock.session = session
+            instance_mock.process_description.metadata.session = session
             instance_mock.status_code = 0
         mock().data.values.__iter__.return_value = instance_mocks
         return mock
@@ -47,7 +47,7 @@ class TestProcessTableView(LoginRequiredTest):
         assert response.status_code == HTTPStatus.OK
         table = response.context["table"]
         assert isinstance(table, ProcessTable)
-        for row, uuid in zip(table.data.data, uuids):
+        for row, uuid in zip(table.data.data, uuids[1:4]):
             assert row["uuid"] == uuid
             assert row["session"] == "session2"
 
