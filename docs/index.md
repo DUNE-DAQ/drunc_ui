@@ -64,7 +64,8 @@ corresponding terminal.
 
 ## Controller UI
 
-You must use the full Docker Compose profile when working with the Controller UI.
+You must use the full Docker Compose profile when working with the Controller UI. The
+controller UI will not function correctly with the lite profile.
 
 ### Getting Started with the Controller UI
 
