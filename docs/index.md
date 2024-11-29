@@ -79,16 +79,12 @@ docker compose exec drunc /boot_test_session.sh
 
 _Note that the above consumes several Gb of memory._
 
-Once booted you can interact with the root controller via:
+The test session boots a full set of processes and controllers suitable for UI testing
+and development. Once booted you can view the status of the root controller with the UI
+at <http://localhost:8000/controller>.
 
-```bash
-docker compose exec drunc /entrypoint.sh drunc-controller-shell grpc://localhost:3333
-```
-
-You should now be able to access the Controller UI at
-<http://localhost:8000/controller/> . For details of working with the controller see the
-[drunc wiki]. You should also be able to see the booted processes in the Process Manager
-UI.
+For details of working with the controller see the [drunc wiki]. You should also be able
+to see the booted processes in the Process Manager UI.
 
 ## Not Using Docker
 
