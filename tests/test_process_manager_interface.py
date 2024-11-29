@@ -30,26 +30,22 @@ def test_get_process_manager_driver(mocker):
     assert driver == mock_driver.return_value
 
 
-def test_boot_process(mocker, dummy_session_data):
+def test_boot_process(mock_get_process_manager_driver, dummy_session_data):
     """Test the boot_process function."""
-    mock = mocker.patch(
-        "process_manager.process_manager_interface.get_process_manager_driver"
-    )
+    mock_driver = mock_get_process_manager_driver
     boot_process("root", dummy_session_data)
-    mock.assert_called_once()
-    mock.return_value.dummy_boot.assert_called_once_with(
+    mock_driver.assert_called_once_with("root")
+    mock_driver.return_value.dummy_boot.assert_called_once_with(
         user="root", **dummy_session_data
     )
 
 
-def test_get_process_logs(mocker):
+def test_get_process_logs(mock_get_process_manager_driver):
     """Test the get_process_logs function."""
-    mock_driver = mocker.patch(
-        "process_manager.process_manager_interface.get_process_manager_driver"
-    )
+    mock_driver = mock_get_process_manager_driver
     get_process_logs("1234", "root")
 
-    mock_driver.assert_called_once()
+    mock_driver.assert_called_once_with("root")
     mock_logs = mock_driver.return_value.logs
 
     query = ProcessQuery(uuids=[ProcessUUID(uuid="1234")])
