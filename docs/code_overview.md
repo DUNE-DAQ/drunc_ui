@@ -6,7 +6,7 @@ The code base covers several user interfaces covering different aspects of the D
 control system. There are distinct interfaces but also shared infrastructure and
 approaches.
 
-For this reason the code is organised into three [Django apps]:
+For this reason the code is organised into the following [Django apps]:
 
 - `process_manager` - the Process Manager UI.
 - `controller` - the Controller UI.
@@ -73,14 +73,14 @@ from the database after a configurable retention period.
 In the absence of a defined authentication mechanism for use in production, the project
 currently uses the built-in [Django authentication system]. This requires manual
 creation of users via the Django command line interface and stores user data in the
-application database. This is a placeholder that will need to be replaced.
+application database. **This is a placeholder that will need to be replaced**.
 
 ## Permissions
 
 Permissions are used to control the actions that can be performed or information that
 can be viewed by different users. Permissions are defined on the custom user model
 defined in `main/models.py`. A fine-grained approach is taken to permissions whereby
-individual actions are have their own associated permission. Once the authorisation
+individual actions have their own associated permission. Once the authorisation
 model for the dune-daq systems is well defined, individual permissions can be grouped
 together into user roles via [Django groups].
 
