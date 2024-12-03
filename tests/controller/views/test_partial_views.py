@@ -146,3 +146,36 @@ def test_app_to_shoelace_tree_empty(app, expected_output):
     from controller.views.partials import app_to_shoelace_tree
 
     assert app_to_shoelace_tree(app) == expected_output
+
+
+class TestAppTreeView(LoginRequiredTest):
+    """Test the controller.views.partials.app_tree_view view function."""
+
+    endpoint = reverse("controller:app_tree")
+
+    def test_get_tree(self, auth_client, mocker):
+        """Tests basic calls of view method."""
+        mock_tree = mocker.patch("controller.controller_interface.get_app_tree")
+        apps = {
+            "name": "root",
+            "children": [
+                {
+                    "name": "child1",
+                    "children": [{"name": "grandchild1", "children": []}],
+                }
+            ],
+        }
+        mock_tree.return_value = apps
+
+        expected_tree = SafeString(
+            "<sl-tree-item expanded> root"
+            "<sl-tree-item expanded> child1"
+            "<sl-tree-item expanded> grandchild1</sl-tree-item>"
+            "</sl-tree-item>"
+            "</sl-tree-item>"
+        )
+
+        response = auth_client.post(self.endpoint)
+        assert response.status_code == HTTPStatus.OK
+        tree = response.context["tree"]
+        assert tree == expected_tree
