@@ -9,6 +9,12 @@ from . import controller_interface as ci
 def get_form_for_event(event: str) -> type[Form]:
     """Creates a form from a list of Arguments.
 
+    We loop over the arguments and create a form field for each one. The field
+    type is determined by the argument type. The initial value is set to the
+    default value of the argument, which needs decoding as it is received in binary
+    form. If the argument is mandatory, the field is required. Finally, the form class
+    is created dynamically and returned.
+
     Args:
         event: Event to get the form for.
 
