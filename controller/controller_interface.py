@@ -9,7 +9,7 @@ from drunc.controller.controller_driver import ControllerDriver
 from drunc.utils.grpc_utils import pack_to_any
 from drunc.utils.shell_utils import create_dummy_token_from_uname
 from drunc.utils.utils import get_control_type_and_uri_from_connectivity_service
-from druncschema.controller_pb2 import Argument, FSMCommand, FSMResponseFlag
+from druncschema.controller_pb2 import Argument, FSMCommand, FSMResponseFlag, Status
 from druncschema.generic_pb2 import bool_msg, float_msg, int_msg, string_msg
 from druncschema.request_response_pb2 import Description
 
@@ -123,3 +123,28 @@ def process_arguments(  # type: ignore[misc]
         processed[arg.name] = pack_to_any(MSG_TYPE[arg.type](value=arguments[arg.name]))
 
     return processed
+
+
+AppType = dict[str, str | list["AppType"]]
+"""Type alias for the application tree."""
+
+
+def get_app_tree(status: Status | None = None) -> AppType:
+    """Get the application tree for the controller.
+
+    It recursively gets the tree of applications and their children.
+
+    Args:
+        status: The status to get the tree for. If None, the root controller status is
+            used as the starting point.
+
+    Returns:
+        The application tree. A the top level, it contains the name of the application
+        and a list of its children. Each child is a dictionary with the same structure.
+    """
+    status = status or get_controller_status()
+
+    return {
+        "name": status.name,
+        "children": [get_app_tree(app) for app in status.children],
+    }
