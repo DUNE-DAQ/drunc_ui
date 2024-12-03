@@ -8,7 +8,7 @@
     </h4>
   {% else %}
     <h4>
-      No arguments required for transition: <b>{{ event }}</b>
+      Run the transition: <b>{{ event }}</b>
     </h4>
   {% endif %}
   <form hx-post="{% url 'controller:state_machine' %}"
