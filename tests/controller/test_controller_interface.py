@@ -84,7 +84,7 @@ def test_process_arguments(mocker):
     from druncschema.controller_pb2 import Argument
     from druncschema.generic_pb2 import bool_msg, float_msg, int_msg, string_msg
 
-    from controller.controller_interface import FieldType, process_arguments
+    from controller.controller_interface import process_arguments
 
     event = "event"
     arguments = {
@@ -95,10 +95,10 @@ def test_process_arguments(mocker):
     }
 
     valid_args = [
-        Argument(name="int_arg", type=FieldType.INT),
-        Argument(name="float_arg", type=FieldType.FLOAT),
-        Argument(name="string_arg", type=FieldType.STRING),
-        Argument(name="bool_arg", type=FieldType.BOOL),
+        Argument(name="int_arg", type=Argument.Type.INT),
+        Argument(name="float_arg", type=Argument.Type.FLOAT),
+        Argument(name="string_arg", type=Argument.Type.STRING),
+        Argument(name="bool_arg", type=Argument.Type.BOOL),
     ]
 
     mock_get_arguments = mocker.patch("controller.controller_interface.get_arguments")
@@ -121,7 +121,7 @@ def test_process_arguments_missing_args(mocker):
     from druncschema.controller_pb2 import Argument
     from druncschema.generic_pb2 import int_msg, string_msg
 
-    from controller.controller_interface import FieldType, process_arguments
+    from controller.controller_interface import process_arguments
 
     event = "event"
     arguments = {
@@ -132,10 +132,10 @@ def test_process_arguments_missing_args(mocker):
     }
 
     valid_args = [
-        Argument(name="int_arg", type=FieldType.INT),
-        Argument(name="float_arg", type=FieldType.FLOAT),
-        Argument(name="string_arg", type=FieldType.STRING),
-        Argument(name="bool_arg", type=FieldType.BOOL),
+        Argument(name="int_arg", type=Argument.Type.INT),
+        Argument(name="float_arg", type=Argument.Type.FLOAT),
+        Argument(name="string_arg", type=Argument.Type.STRING),
+        Argument(name="bool_arg", type=Argument.Type.BOOL),
     ]
 
     mock_get_arguments = mocker.patch("controller.controller_interface.get_arguments")

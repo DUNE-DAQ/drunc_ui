@@ -1,7 +1,6 @@
 """Module providing functions to interact with the drunc controller."""
 
 import functools
-from enum import IntEnum
 from typing import Any
 
 from django.conf import settings
@@ -14,21 +13,13 @@ from druncschema.controller_pb2 import Argument, FSMCommand, FSMResponseFlag
 from druncschema.generic_pb2 import bool_msg, float_msg, int_msg, string_msg
 from druncschema.request_response_pb2 import Description
 
-
-class Presence(IntEnum):
-    """Enum to represent the presence of an argument."""
-
-    MANDATORY = 0
-    OPTIONAL = 1
-
-
-class FieldType(IntEnum):
-    """Enum to represent the type of an argument."""
-
-    INT = 0
-    FLOAT = 1
-    STRING = 2
-    BOOL = 3
+MSG_TYPE = {
+    Argument.Type.INT: int_msg,
+    Argument.Type.FLOAT: float_msg,
+    Argument.Type.STRING: string_msg,
+    Argument.Type.BOOL: bool_msg,
+}
+"""Mapping of argument types to their protobuf message types."""
 
 
 @functools.cache
@@ -129,14 +120,6 @@ def process_arguments(  # type: ignore[misc]
         if arg.name not in arguments or arguments[arg.name] is None:
             continue
 
-        match arg.type:
-            case FieldType.INT:
-                processed[arg.name] = pack_to_any(int_msg(value=arguments[arg.name]))
-            case FieldType.FLOAT:
-                processed[arg.name] = pack_to_any(float_msg(value=arguments[arg.name]))
-            case FieldType.STRING:
-                processed[arg.name] = pack_to_any(string_msg(value=arguments[arg.name]))
-            case FieldType.BOOL:
-                processed[arg.name] = pack_to_any(bool_msg(value=arguments[arg.name]))
+        processed[arg.name] = pack_to_any(MSG_TYPE[arg.type](value=arguments[arg.name]))
 
     return processed

@@ -14,7 +14,8 @@ def test_get_form_for_event_with_arguments(mocker):
     """Test get_form_for_event with arguments."""
     from dataclasses import dataclass
 
-    from controller import controller_interface as ci
+    from druncschema.controller_pb2 import Argument as Arg
+
     from controller import forms
 
     @dataclass
@@ -28,34 +29,34 @@ def test_get_form_for_event_with_arguments(mocker):
         """Mock Argument class."""
 
         name: str
-        presence: ci.Presence
+        presence: Arg.Presence
         default_value: Value
-        type: ci.FieldType
+        type: Arg.Type
 
     mock_data = [
         Argument(
             name="arg1",
-            presence=ci.Presence.MANDATORY,
+            presence=Arg.Presence.MANDATORY,
             default_value=Value(b"default1"),
-            type=ci.FieldType.STRING,
+            type=Arg.Type.STRING,
         ),
         Argument(
             name="arg2",
-            presence=ci.Presence.OPTIONAL,
+            presence=Arg.Presence.OPTIONAL,
             default_value=Value(value=b"2"),
-            type=ci.FieldType.INT,
+            type=Arg.Type.INT,
         ),
         Argument(
             name="arg3",
-            presence=ci.Presence.MANDATORY,
+            presence=Arg.Presence.MANDATORY,
             default_value=Value(b"1"),
-            type=ci.FieldType.BOOL,
+            type=Arg.Type.BOOL,
         ),
         Argument(
             name="arg4",
-            presence=ci.Presence.MANDATORY,
+            presence=Arg.Presence.MANDATORY,
             default_value=Value(b"22.5"),
-            type=ci.FieldType.FLOAT,
+            type=Arg.Type.FLOAT,
         ),
     ]
     mocker.patch("controller.forms.ci.get_arguments", return_value=mock_data)
