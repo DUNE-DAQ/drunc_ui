@@ -66,9 +66,19 @@ def app_to_shoelace_tree(app: ci.AppType) -> SafeString:
         The shoelace tree component as safe HTML code.
     """
     return mark_safe(
-        f"<sl-tree-item expanded> {app["name"]}"
+        f"<sl-tree-item expanded> {app['name']}"
         + "".join(
             app_to_shoelace_tree(cast(ci.AppType, child)) for child in app["children"]
         )
         + "</sl-tree-item>"
+    )
+
+
+@login_required
+def app_tree_view(request: HttpRequest) -> HttpResponse:
+    """Renders the app tree view."""
+    return render(
+        request=request,
+        context=dict(tree=app_to_shoelace_tree(ci.get_app_tree())),
+        template_name="controller/partials/app_tree.html",
     )
