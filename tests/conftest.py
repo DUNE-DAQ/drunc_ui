@@ -51,3 +51,11 @@ def grpc_mock(mocker):
     yield mocker.patch(
         "process_manager.process_manager_interface.ProcessManagerDriver.send_command_aio"
     )
+
+
+@pytest.fixture
+def mock_get_process_manager_driver(mocker):
+    """Mock out the get_process_manager_driver function."""
+    return mocker.patch(
+        "process_manager.process_manager_interface.get_process_manager_driver"
+    )
