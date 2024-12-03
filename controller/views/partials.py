@@ -1,11 +1,12 @@
 """Partial views module for the controller app."""
 
-from typing import Any
+from typing import Any, cast
 
 from django.contrib.auth.decorators import login_required
 from django.forms import Form
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
+from django.utils.safestring import SafeString, mark_safe
 
 from .. import controller_interface as ci
 from .. import forms, fsm, tables
@@ -52,4 +53,22 @@ def dialog(request: HttpRequest) -> HttpResponse:
             form=form,
         ),
         template_name="controller/partials/arguments_dialog.html",
+    )
+
+
+def app_to_shoelace_tree(app: ci.AppType) -> SafeString:
+    """Convert the app tree to a format compatible with the shoelace tree component.
+
+    Args:
+        app: The app tree to convert.
+
+    Returns:
+        The shoelace tree component as safe HTML code.
+    """
+    return mark_safe(
+        f"<sl-tree-item expanded> {app["name"]}"
+        + "".join(
+            app_to_shoelace_tree(cast(ci.AppType, child)) for child in app["children"]
+        )
+        + "</sl-tree-item>"
     )
