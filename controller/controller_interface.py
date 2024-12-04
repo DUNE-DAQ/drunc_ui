@@ -162,5 +162,5 @@ def get_app_tree(
     return AppType(
         status.name,
         [get_app_tree(user, app, hostnames) for app in status.children],
-        hostnames[status.name],
+        hostnames.get(status.name, "unknown"),
     )

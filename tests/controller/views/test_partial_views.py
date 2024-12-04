@@ -6,7 +6,7 @@ from django.forms import Field
 from django.urls import reverse
 from django.utils.safestring import SafeString
 
-from controller import fsm
+from controller import app_tree, fsm
 from controller.tables import FSMTable
 
 from ...utils import LoginRequiredTest
@@ -95,11 +95,11 @@ class TestArgumentsDialogView(LoginRequiredTest):
     "app,expected_output",
     [
         (
-            {"name": "root", "children": []},
+            app_tree.AppType("root", [], ""),
             SafeString("<sl-tree-item expanded> root</sl-tree-item>"),
         ),
         (
-            {"name": "root", "children": [{"name": "child1", "children": []}]},
+            app_tree.AppType("root", [app_tree.AppType("child1", [], "")], ""),
             SafeString(
                 "<sl-tree-item expanded> root"
                 "<sl-tree-item expanded> child1</sl-tree-item>"
@@ -107,13 +107,14 @@ class TestArgumentsDialogView(LoginRequiredTest):
             ),
         ),
         (
-            {
-                "name": "root",
-                "children": [
-                    {"name": "child1", "children": []},
-                    {"name": "child2", "children": []},
+            app_tree.AppType(
+                "root",
+                [
+                    app_tree.AppType("child1", [], ""),
+                    app_tree.AppType("child2", [], ""),
                 ],
-            },
+                "",
+            ),
             SafeString(
                 "<sl-tree-item expanded> root"
                 "<sl-tree-item expanded> child1</sl-tree-item>"
@@ -122,15 +123,15 @@ class TestArgumentsDialogView(LoginRequiredTest):
             ),
         ),
         (
-            {
-                "name": "root",
-                "children": [
-                    {
-                        "name": "child1",
-                        "children": [{"name": "grandchild1", "children": []}],
-                    }
+            app_tree.AppType(
+                "root",
+                [
+                    app_tree.AppType(
+                        "child1", [app_tree.AppType("grandchild1", [], "")], ""
+                    )
                 ],
-            },
+                "",
+            ),
             SafeString(
                 "<sl-tree-item expanded> root"
                 "<sl-tree-item expanded> child1"
@@ -151,20 +152,16 @@ def test_app_to_shoelace_tree_empty(app, expected_output):
 class TestAppTreeView(LoginRequiredTest):
     """Test the controller.views.partials.app_tree_view view function."""
 
-    endpoint = reverse("controller:app_tree")
+    endpoint = reverse("controller:app_tree_summary")
 
     def test_get_tree(self, auth_client, mocker):
         """Tests basic calls of view method."""
         mock_tree = mocker.patch("controller.controller_interface.get_app_tree")
-        apps = {
-            "name": "root",
-            "children": [
-                {
-                    "name": "child1",
-                    "children": [{"name": "grandchild1", "children": []}],
-                }
-            ],
-        }
+        apps = app_tree.AppType(
+            "root",
+            [app_tree.AppType("child1", [app_tree.AppType("grandchild1", [], "")], "")],
+            "",
+        )
         mock_tree.return_value = apps
 
         expected_tree = SafeString(
