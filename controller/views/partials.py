@@ -68,9 +68,7 @@ def app_to_shoelace_tree(app: AppType) -> SafeString:
     """
     return mark_safe(
         f"<sl-tree-item expanded> {app.name}"
-        + "".join(
-            app_to_shoelace_tree(child) for child in app.children
-            )
+        + "".join(app_to_shoelace_tree(child) for child in app.children)
         + "</sl-tree-item>"
     )
 
@@ -80,7 +78,7 @@ def app_tree_view_summary(request: HttpRequest) -> HttpResponse:
     """Renders the app tree view summary."""
     return render(
         request=request,
-        context=dict(tree=app_to_shoelace_tree(ci.get_app_tree())),
+        context=dict(tree=app_to_shoelace_tree(ci.get_app_tree(request.user.username))),
         template_name="controller/partials/app_tree_summary_partial.html",
     )
 
@@ -88,7 +86,7 @@ def app_tree_view_summary(request: HttpRequest) -> HttpResponse:
 @login_required
 def app_tree_view_table(request: HttpRequest) -> HttpResponse:
     """View that renders the app tree view table."""
-    table = tables.AppTreeTable(ci.get_app_tree().to_list())
+    table = tables.AppTreeTable(ci.get_app_tree(request.user.username).to_list())
     return render(
         request=request,
         context=dict(table=table),
