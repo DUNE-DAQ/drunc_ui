@@ -75,10 +75,21 @@ def app_to_shoelace_tree(app: ci.AppType) -> SafeString:
 
 
 @login_required
-def app_tree_view(request: HttpRequest) -> HttpResponse:
-    """Renders the app tree view."""
+def app_tree_view_summary(request: HttpRequest) -> HttpResponse:
+    """Renders the app tree view summary."""
     return render(
         request=request,
         context=dict(tree=app_to_shoelace_tree(ci.get_app_tree())),
-        template_name="controller/partials/app_tree.html",
+        template_name="controller/partials/app_tree_summary_partial.html",
+    )
+
+
+@login_required
+def app_tree_view_table(request: HttpRequest) -> HttpResponse:
+    """View that renders the app tree view table."""
+    table = tables.AppTreeTable()
+    return render(
+        request=request,
+        context=dict(table=table),
+        template_name="controller/partials/app_tree_table_partial.html",
     )
