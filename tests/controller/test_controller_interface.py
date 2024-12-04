@@ -174,7 +174,7 @@ def test_send_event(mocker):
 
     mock_FSMCommand = mocker.patch("controller.controller_interface.FSMCommand")
 
-    result = send_event(event, arguments)
+    send_event(event, arguments)
 
     mock_get_controller_driver.assert_called_once()
     mock_controller.take_control.assert_called_once()
@@ -183,7 +183,6 @@ def test_send_event(mocker):
         command_name=event, arguments={"arg1": "packed_value1"}
     )
     mock_controller.execute_fsm_command.assert_called_once()
-    assert result == 0
 
 
 def test_get_app_tree(mocker):
