@@ -14,6 +14,8 @@ from druncschema.controller_pb2 import Argument, FSMCommand, FSMResponseFlag, St
 from druncschema.generic_pb2 import bool_msg, float_msg, int_msg, string_msg
 from druncschema.request_response_pb2 import Description
 
+from .app_tree import AppType
+
 MSG_TYPE = {
     Argument.Type.INT: int_msg,
     Argument.Type.FLOAT: float_msg,
@@ -135,10 +137,6 @@ def process_arguments(  # type: ignore[misc]
     return processed
 
 
-AppType = dict[str, str | list["AppType"]]
-"""Type alias for the application tree."""
-
-
 def get_app_tree(status: Status | None = None) -> AppType:
     """Get the application tree for the controller.
 
@@ -154,7 +152,4 @@ def get_app_tree(status: Status | None = None) -> AppType:
     """
     status = status or get_controller_status()
 
-    return {
-        "name": status.name,
-        "children": [get_app_tree(app) for app in status.children],
-    }
+    return AppType(status.name,[get_app_tree(app) for app in status.children])

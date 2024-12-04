@@ -10,6 +10,7 @@ from django.utils.safestring import SafeString, mark_safe
 
 from .. import controller_interface as ci
 from .. import forms, fsm, tables
+from ..app_tree import AppType
 
 
 @login_required
@@ -56,7 +57,7 @@ def dialog(request: HttpRequest) -> HttpResponse:
     )
 
 
-def app_to_shoelace_tree(app: ci.AppType) -> SafeString:
+def app_to_shoelace_tree(app: AppType) -> SafeString:
     """Convert the app tree to a format compatible with the shoelace tree component.
 
     Args:
@@ -66,10 +67,10 @@ def app_to_shoelace_tree(app: ci.AppType) -> SafeString:
         The shoelace tree component as safe HTML code.
     """
     return mark_safe(
-        f"<sl-tree-item expanded> {app['name']}"
+        f"<sl-tree-item expanded> {app.name}"
         + "".join(
-            app_to_shoelace_tree(cast(ci.AppType, child)) for child in app["children"]
-        )
+            app_to_shoelace_tree(child) for child in app.children
+            )
         + "</sl-tree-item>"
     )
 
@@ -87,7 +88,7 @@ def app_tree_view_summary(request: HttpRequest) -> HttpResponse:
 @login_required
 def app_tree_view_table(request: HttpRequest) -> HttpResponse:
     """View that renders the app tree view table."""
-    table = tables.AppTreeTable()
+    table = tables.AppTreeTable(ci.get_app_tree().to_list())
     return render(
         request=request,
         context=dict(table=table),

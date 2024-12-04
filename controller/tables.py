@@ -122,7 +122,7 @@ class AppTreeTable(tables.Table):
     name = tables.Column(
         verbose_name="Application Name",
         attrs={
-            "td": {"class": "fw-bold text-break text-start", "style": "width:300px;"},
+            "td": {"class": "text-break text-start", "style": "width:300px;"},
             "th": {"class": "header-style"},
         },
     )
@@ -130,7 +130,7 @@ class AppTreeTable(tables.Table):
     host = tables.Column(
         verbose_name="Host",
         attrs={
-            "td": {"class": "fw-bold text-primary text-start", "style": "width:200px;"},
+            "td": {"class": "text-primary text-start", "style": "width:200px;"},
             "th": {"class": "header-style"},
         },
     )
@@ -138,7 +138,7 @@ class AppTreeTable(tables.Table):
     detector = tables.Column(
         verbose_name="Detector",
         attrs={
-            "td": {"class": "fw-bold text-primary text-start", "style": "width:200px;"},
+            "td": {"class": "text-primary text-start", "style": "width:200px;"},
             "th": {"class": "header-style"},
         },
     )
