@@ -1,6 +1,7 @@
 """Module providing functions to interact with the drunc controller."""
 
 import functools
+from threading import Lock
 from typing import Any
 
 from django.conf import settings
@@ -21,6 +22,9 @@ MSG_TYPE = {
 }
 """Mapping of argument types to their protobuf message types."""
 
+connectivity_lock = Lock()
+"""Lock to ensure only one thread is accessing the connectivity service at a time."""
+
 
 @functools.cache
 def get_controller_uri() -> str:
@@ -29,11 +33,13 @@ def get_controller_uri() -> str:
     Returns:
         str: The URI of the root controller.
     """
-    csc = ConnectivityServiceClient(settings.CSC_SESSION, settings.CSC_URL)
-    _, uri = get_control_type_and_uri_from_connectivity_service(
-        csc,
-        name="root-controller",
-    )
+    global connectivity_lock
+    with connectivity_lock:
+        csc = ConnectivityServiceClient(settings.CSC_SESSION, settings.CSC_URL)
+        _, uri = get_control_type_and_uri_from_connectivity_service(
+            csc,
+            name="root-controller",
+        )
     return uri
 
 
