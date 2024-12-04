@@ -67,23 +67,27 @@ def get_fsm_state() -> str:
 def send_event(  # type: ignore[misc]
     event: str,
     arguments: dict[str, Any],
-) -> FSMResponseFlag:
+) -> None:
     """Send an event to the controller.
 
     Args:
         event: The event to send.
         arguments: The arguments for the event.
 
-    Returns:
-        FSMResponseFlag: The flag returned by the controller. 0 if the event was
-            successful, 1-4 if the event failed.
+    Raises:
+        RuntimeError: If the event failed, reporting the flag.
     """
     controller = get_controller_driver()
     controller.take_control()
     command = FSMCommand(
         command_name=event, arguments=process_arguments(event, arguments)
     )
-    return controller.execute_fsm_command(command).flag
+    response = controller.execute_fsm_command(command)
+    if response.flag != FSMResponseFlag.FSM_EXECUTED_SUCCESSFULLY:
+        raise RuntimeError(
+            f"Event '{event}' failed with flag {FSMResponseFlag(response.flag)} "
+            f"and message '{response.data}'"
+        )
 
 
 def get_arguments(event: str) -> list[Argument]:
