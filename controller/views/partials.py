@@ -1,6 +1,6 @@
 """Partial views module for the controller app."""
 
-from typing import Any, cast
+from typing import Any
 
 from django.contrib.auth.decorators import login_required
 from django.forms import Form
