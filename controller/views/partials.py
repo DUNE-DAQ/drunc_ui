@@ -6,11 +6,9 @@ from django.contrib.auth.decorators import login_required
 from django.forms import Form
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
-from django.utils.safestring import SafeString, mark_safe
 
 from .. import controller_interface as ci
 from .. import forms, fsm, tables
-from ..app_tree import AppType
 
 
 @login_required
@@ -57,28 +55,12 @@ def dialog(request: HttpRequest) -> HttpResponse:
     )
 
 
-def app_to_shoelace_tree(app: AppType) -> SafeString:
-    """Convert the app tree to a format compatible with the shoelace tree component.
-
-    Args:
-        app: The app tree to convert.
-
-    Returns:
-        The shoelace tree component as safe HTML code.
-    """
-    return mark_safe(
-        f"<sl-tree-item expanded> {app.name}"
-        + "".join(app_to_shoelace_tree(child) for child in app.children)
-        + "</sl-tree-item>"
-    )
-
-
 @login_required
 def app_tree_view_summary(request: HttpRequest) -> HttpResponse:
     """Renders the app tree view summary."""
     return render(
         request=request,
-        context=dict(tree=app_to_shoelace_tree(ci.get_app_tree(request.user.username))),
+        context=dict(tree=ci.get_app_tree(request.user.username)),
         template_name="controller/partials/app_tree_summary_partial.html",
     )
 
