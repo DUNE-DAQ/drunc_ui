@@ -140,7 +140,10 @@ def process_arguments(  # type: ignore[misc]
 
 
 def get_app_tree(
-    user: str, status: Status | None = None, hostnames: dict[str, str] | None = None
+    user: str,
+    status: Status | None = None,
+    hostnames: dict[str, str] | None = None,
+    detectors: dict[str, str] | None = None,
 ) -> AppType:
     """Get the application tree for the controller.
 
@@ -152,15 +155,29 @@ def get_app_tree(
             used as the starting point.
         hostnames: The hostnames of the applications. If None, the hostnames are
             retrieved from the process manager.
+        detectors: The detectors reported by the controller for each application.
 
     Returns:
         The application tree as a AppType object.
     """
     status = status or get_controller_status()
     hostnames = hostnames or get_hostnames(user)
+    detectors = detectors or get_detectors()
 
     return AppType(
         status.name,
-        [get_app_tree(user, app, hostnames) for app in status.children],
+        [get_app_tree(user, app, hostnames, detectors) for app in status.children],
         hostnames.get(status.name, "unknown"),
+        detectors.get(status.name, ""),
     )
+
+
+def get_detectors() -> dict[str, str]:
+    """Get the detectors available in the controller for each application.
+
+    TODO: This function is just a placeholder. It should be implemented properly.
+
+    Returns:
+        The detectors available in the controller.
+    """
+    return {}
