@@ -6,19 +6,20 @@ RUN yum install -y openssh-server && yum clean all
 SHELL ["/bin/bash", "-c"]
 
 WORKDIR /basedir
+ENV NIGHTLY_TAG=NFD_DEV_241114_A9
 
 # setup for the the dune development environment that provides the full set of
 # dependencies required for booting of the controller test session
 # See https://github.com/DUNE-DAQ/drunc/wiki/Setup-drunc-with-DUNE-DAQ for explanation
-ENV SPACK_ROOT /cvmfs/dunedaq-development.opensciencegrid.org/nightly/NFD_DEV_241114_A9/spack-0.22.0
+ENV SPACK_ROOT /cvmfs/dunedaq-development.opensciencegrid.org/nightly/$NIGHTLY_TAG/spack-0.22.0
 RUN source /cvmfs/dunedaq.opensciencegrid.org/setup_dunedaq.sh && \
-        setup_dbt latest_v5 && \
-        dbt-create -n NFD_DEV_241114_A9 && \
-        cd NFD_DEV_241114_A9 && \
-        source env.sh && \
-        dbt-build && \
-        dbt-workarea-env
-WORKDIR /basedir/NFD_DEV_241114_A9/
+    setup_dbt latest_v5 && \
+    dbt-create -n "$NIGHTLY_TAG" && \
+    cd "$NIGHTLY_TAG" && \
+    source env.sh && \
+    dbt-build && \
+    dbt-workarea-env
+WORKDIR /basedir/$NIGHTLY_TAG/
 
 COPY process-manager-kafka.json /
 
