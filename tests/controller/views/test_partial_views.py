@@ -4,7 +4,6 @@ from random import choice
 import pytest
 from django.forms import Field
 from django.urls import reverse
-from django.utils.safestring import SafeString
 
 from controller import fsm
 from controller.tables import FSMTable
@@ -91,63 +90,6 @@ class TestArgumentsDialogView(LoginRequiredTest):
         assert response.context["event"] == event
 
 
-@pytest.mark.parametrize(
-    "app,expected_output",
-    [
-        (
-            {"name": "root", "children": []},
-            SafeString("<sl-tree-item expanded> root</sl-tree-item>"),
-        ),
-        (
-            {"name": "root", "children": [{"name": "child1", "children": []}]},
-            SafeString(
-                "<sl-tree-item expanded> root"
-                "<sl-tree-item expanded> child1</sl-tree-item>"
-                "</sl-tree-item>"
-            ),
-        ),
-        (
-            {
-                "name": "root",
-                "children": [
-                    {"name": "child1", "children": []},
-                    {"name": "child2", "children": []},
-                ],
-            },
-            SafeString(
-                "<sl-tree-item expanded> root"
-                "<sl-tree-item expanded> child1</sl-tree-item>"
-                "<sl-tree-item expanded> child2</sl-tree-item>"
-                "</sl-tree-item>"
-            ),
-        ),
-        (
-            {
-                "name": "root",
-                "children": [
-                    {
-                        "name": "child1",
-                        "children": [{"name": "grandchild1", "children": []}],
-                    }
-                ],
-            },
-            SafeString(
-                "<sl-tree-item expanded> root"
-                "<sl-tree-item expanded> child1"
-                "<sl-tree-item expanded> grandchild1</sl-tree-item>"
-                "</sl-tree-item>"
-                "</sl-tree-item>"
-            ),
-        ),
-    ],
-)
-def test_app_to_shoelace_tree_empty(app, expected_output):
-    """Test the app_to_shoelace_tree function."""
-    from controller.views.partials import app_to_shoelace_tree
-
-    assert app_to_shoelace_tree(app) == expected_output
-
-
 class TestAppTreeView(LoginRequiredTest):
     """Test the controller.views.partials.app_tree_view view function."""
 
@@ -167,15 +109,7 @@ class TestAppTreeView(LoginRequiredTest):
         }
         mock_tree.return_value = apps
 
-        expected_tree = SafeString(
-            "<sl-tree-item expanded> root"
-            "<sl-tree-item expanded> child1"
-            "<sl-tree-item expanded> grandchild1</sl-tree-item>"
-            "</sl-tree-item>"
-            "</sl-tree-item>"
-        )
-
         response = auth_client.post(self.endpoint)
         assert response.status_code == HTTPStatus.OK
         tree = response.context["tree"]
-        assert tree == expected_tree
+        assert tree == apps
