@@ -97,6 +97,18 @@ at <http://localhost:8000/controller>.
 For details of working with the controller see the [drunc wiki]. You should also be able
 to see the booted processes in the Process Manager UI.
 
+#### Note for MacOS users
+
+The above `boot_test_session.sh` will not work on M-series Macs because of limitations
+with the x86 architecture emulation used by MacOS. There is a simpler configuration that
+can be used instead. To use this, set the following environment variables before
+starting the docker containers:
+
+- `CSC_SESSION=lr-session`
+- `CSC_URL=drunc:25000`
+
+[drunc wiki]: https://github.com/DUNE-DAQ/drunc/wiki/Controller
+
 ## Not Using Docker
 
 Brief instructions are provided below on how to manually run the various services
@@ -116,7 +128,6 @@ You may then need to perform subsequent actions such as booting test session dat
 
 [docker compose profiles]: https://docs.docker.com/compose/how-tos/profiles/
 [drunc repository]: https://github.com/DUNE-DAQ/drunc
-[drunc wiki]: https://github.com/DUNE-DAQ/drunc/wiki/Controller
 [running drunc with pocket kafka]: https://github.com/DUNE-DAQ/drunc/wiki/Running-drunc-with-pocket-kafka
 [the controllers]: https://imperialcollegelondon.github.io/drunc_ui/controller
 [the process manager]: https://imperialcollegelondon.github.io/drunc_ui/process_manager
