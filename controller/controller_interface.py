@@ -6,7 +6,6 @@ from django.conf import settings
 from drunc.connectivity_service.client import ConnectivityServiceClient
 from drunc.controller.controller_driver import ControllerDriver
 from drunc.utils.shell_utils import create_dummy_token_from_uname
-from drunc.utils.utils import get_control_type_and_uri_from_connectivity_service
 from druncschema.request_response_pb2 import Description
 
 
@@ -18,11 +17,13 @@ def get_controller_uri() -> str:
         str: The URI of the root controller.
     """
     csc = ConnectivityServiceClient(settings.CSC_SESSION, settings.CSC_URL)
-    _, uri = get_control_type_and_uri_from_connectivity_service(
-        csc,
-        name="root-controller",
-    )
-    return uri
+    uris = csc.resolve("root-controller_control", "RunControlMessage")
+    if len(uris) != 1:
+        raise ValueError(
+            f"Expected 1 URI for root-controller, found {len(uris)}: {uris}"
+        )
+
+    return uris[0]["uri"].removeprefix("grpc://")
 
 
 def get_controller_driver() -> ControllerDriver:
