@@ -5,7 +5,7 @@ import pytest
 from django.forms import Field
 from django.urls import reverse
 
-from controller import fsm
+from controller import app_tree, fsm
 from controller.tables import FSMTable
 
 from ...utils import LoginRequiredTest
@@ -88,3 +88,24 @@ class TestArgumentsDialogView(LoginRequiredTest):
         assert isinstance(form, Form)
         assert response.context["has_args"] == has_args
         assert response.context["event"] == event
+
+
+class TestAppTreeView(LoginRequiredTest):
+    """Test the controller.views.partials.app_tree_view view function."""
+
+    endpoint = reverse("controller:app_tree_summary")
+
+    def test_get_tree(self, auth_client, mocker):
+        """Tests basic calls of view method."""
+        mock_tree = mocker.patch("controller.controller_interface.get_app_tree")
+        apps = app_tree.AppTree(
+            "root",
+            [app_tree.AppTree("child1", [app_tree.AppTree("grandchild1", [], "")], "")],
+            "",
+        )
+        mock_tree.return_value = apps
+
+        response = auth_client.post(self.endpoint)
+        assert response.status_code == HTTPStatus.OK
+        tree = response.context["tree"]
+        assert tree == apps
