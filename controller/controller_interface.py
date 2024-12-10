@@ -1,7 +1,6 @@
 """Module providing functions to interact with the drunc controller."""
 
 import functools
-from threading import Lock
 from typing import Any
 
 from django.conf import settings
@@ -9,7 +8,6 @@ from drunc.connectivity_service.client import ConnectivityServiceClient
 from drunc.controller.controller_driver import ControllerDriver
 from drunc.utils.grpc_utils import pack_to_any
 from drunc.utils.shell_utils import create_dummy_token_from_uname
-from drunc.utils.utils import get_control_type_and_uri_from_connectivity_service
 from druncschema.controller_pb2 import Argument, FSMCommand, FSMResponseFlag, Status
 from druncschema.generic_pb2 import bool_msg, float_msg, int_msg, string_msg
 from druncschema.request_response_pb2 import Description
@@ -26,9 +24,6 @@ MSG_TYPE = {
 }
 """Mapping of argument types to their protobuf message types."""
 
-connectivity_lock = Lock()
-"""Lock to ensure only one thread is accessing the connectivity service at a time."""
-
 
 @functools.cache
 def get_controller_uri() -> str:
@@ -37,14 +32,14 @@ def get_controller_uri() -> str:
     Returns:
         str: The URI of the root controller.
     """
-    global connectivity_lock
-    with connectivity_lock:
-        csc = ConnectivityServiceClient(settings.CSC_SESSION, settings.CSC_URL)
-        _, uri = get_control_type_and_uri_from_connectivity_service(
-            csc,
-            name="root-controller",
+    csc = ConnectivityServiceClient(settings.CSC_SESSION, settings.CSC_URL)
+    uris = csc.resolve("root-controller_control", "RunControlMessage")
+    if len(uris) != 1:
+        raise ValueError(
+            f"Expected 1 URI for root-controller, found {len(uris)}: {uris}"
         )
-    return uri
+
+    return uris[0]["uri"].removeprefix("grpc://")
 
 
 def get_controller_driver() -> ControllerDriver:
