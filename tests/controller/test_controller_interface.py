@@ -187,6 +187,7 @@ def test_send_event(mocker):
 
 def test_get_app_tree(mocker):
     """Test the get_app_tree function."""
+    from controller.app_tree import AppTree
     from controller.controller_interface import get_app_tree
 
     class MockStatus:
@@ -197,19 +198,21 @@ def test_get_app_tree(mocker):
     mock_get_controller_status = mocker.patch(
         "controller.controller_interface.get_controller_status"
     )
+    hostnames = {"root": ""}
+    detectors = {"child": "det1"}
 
     # Test with no status provided (default case)
     root_status = MockStatus("root", [])
     mock_get_controller_status.return_value = root_status
-    result = get_app_tree()
-    assert result == {"name": "root", "children": []}
+    result = get_app_tree("a_user", None, hostnames, detectors)
+    assert result == AppTree("root", [], "")
     mock_get_controller_status.assert_called_once()
 
     # Test with a provided status
     child_status = MockStatus("child", [])
     root_status_with_child = MockStatus("root", [child_status])
-    result = get_app_tree(root_status_with_child)
-    assert result == {"name": "root", "children": [{"name": "child", "children": []}]}
+    result = get_app_tree("a_user", root_status_with_child, hostnames, detectors)
+    assert result == AppTree("root", [AppTree("child", [], "unknown", "det1")], "")
 
     # Test with nested children
     grandchild_status = MockStatus("grandchild", [])
@@ -217,10 +220,49 @@ def test_get_app_tree(mocker):
     root_status_with_nested_children = MockStatus(
         "root", [child_status_with_grandchild]
     )
-    result = get_app_tree(root_status_with_nested_children)
-    assert result == {
-        "name": "root",
-        "children": [
-            {"name": "child", "children": [{"name": "grandchild", "children": []}]}
-        ],
-    }
+    result = get_app_tree(
+        "a_user", root_status_with_nested_children, hostnames, detectors
+    )
+    assert result == AppTree(
+        "root",
+        [AppTree("child", [AppTree("grandchild", [], "unknown")], "unknown", "det1")],
+        "",
+    )
+
+
+def test_get_detectors(mocker):
+    """Test the get_app_tree function."""
+    from controller.controller_interface import get_detectors
+
+    class MockData:
+        def __init__(self, name, info):
+            self.name = name
+            self.info = info
+
+    class MockDescription:
+        def __init__(self, data, children):
+            self.data = data
+            self.children = children
+
+    mock_controller = mocker.patch(
+        "controller.controller_interface.get_controller_driver"
+    )
+
+    # No children
+    root_status = MockDescription(MockData("root", ""), [])
+    mock_controller().describe.return_value = root_status
+    result = get_detectors()
+    assert result == {"root": ""}
+
+    # With children
+    child_status = MockDescription(MockData("child", "det1"), [])
+    root_status_with_child = MockDescription(MockData("root", ""), [child_status])
+    mock_controller().describe.return_value = root_status_with_child
+    result = get_detectors()
+    assert result == {"root": "", "child": "det1"}
+
+    # With None children
+    root_status_with_none_child = MockDescription(MockData("root", ""), [None])
+    mock_controller().describe.return_value = root_status_with_none_child
+    result = get_detectors()
+    assert result == {"root": ""}
