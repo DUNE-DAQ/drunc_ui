@@ -172,12 +172,21 @@ def get_app_tree(
     )
 
 
-def get_detectors() -> dict[str, str]:
+def get_detectors(description: Description | None = None) -> dict[str, str]:
     """Get the detectors available in the controller for each application.
-
-    TODO: This function is just a placeholder. It should be implemented properly.
 
     Returns:
         The detectors available in the controller.
     """
-    return {}
+    detectors = {}
+    if description is None:
+        description = get_controller_driver().describe()
+
+    if hasattr(description.data, "info"):
+        detectors[description.data.name] = description.data.info
+
+    for child in description.children:
+        if child is not None:
+            detectors.update(get_detectors(child))
+
+    return detectors
