@@ -98,9 +98,9 @@ class TestAppTreeView(LoginRequiredTest):
     def test_get_tree(self, auth_client, mocker):
         """Tests basic calls of view method."""
         mock_tree = mocker.patch("controller.controller_interface.get_app_tree")
-        apps = app_tree.AppType(
+        apps = app_tree.AppTree(
             "root",
-            [app_tree.AppType("child1", [app_tree.AppType("grandchild1", [], "")], "")],
+            [app_tree.AppTree("child1", [app_tree.AppTree("grandchild1", [], "")], "")],
             "",
         )
         mock_tree.return_value = apps

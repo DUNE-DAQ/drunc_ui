@@ -16,7 +16,7 @@ from druncschema.request_response_pb2 import Description
 
 from process_manager.process_manager_interface import get_hostnames
 
-from .app_tree import AppType
+from .app_tree import AppTree
 
 MSG_TYPE = {
     Argument.Type.INT: int_msg,
@@ -144,7 +144,7 @@ def get_app_tree(
     status: Status | None = None,
     hostnames: dict[str, str] | None = None,
     detectors: dict[str, str] | None = None,
-) -> AppType:
+) -> AppTree:
     """Get the application tree for the controller.
 
     It recursively gets the tree of applications and their children.
@@ -164,7 +164,7 @@ def get_app_tree(
     hostnames = hostnames or get_hostnames(user)
     detectors = detectors or get_detectors()
 
-    return AppType(
+    return AppTree(
         status.name,
         [get_app_tree(user, app, hostnames, detectors) for app in status.children],
         hostnames.get(status.name, "unknown"),

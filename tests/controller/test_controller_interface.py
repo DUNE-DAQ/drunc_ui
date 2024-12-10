@@ -187,7 +187,7 @@ def test_send_event(mocker):
 
 def test_get_app_tree(mocker):
     """Test the get_app_tree function."""
-    from controller.app_tree import AppType
+    from controller.app_tree import AppTree
     from controller.controller_interface import get_app_tree
 
     class MockStatus:
@@ -199,19 +199,20 @@ def test_get_app_tree(mocker):
         "controller.controller_interface.get_controller_status"
     )
     hostnames = {"root": ""}
+    detectors = {"child": "det1"}
 
     # Test with no status provided (default case)
     root_status = MockStatus("root", [])
     mock_get_controller_status.return_value = root_status
-    result = get_app_tree("a_user", None, hostnames)
-    assert result == AppType("root", [], "")
+    result = get_app_tree("a_user", None, hostnames, detectors)
+    assert result == AppTree("root", [], "")
     mock_get_controller_status.assert_called_once()
 
     # Test with a provided status
     child_status = MockStatus("child", [])
     root_status_with_child = MockStatus("root", [child_status])
-    result = get_app_tree("a_user", root_status_with_child, hostnames)
-    assert result == AppType("root", [AppType("child", [], "unknown")], "")
+    result = get_app_tree("a_user", root_status_with_child, hostnames, detectors)
+    assert result == AppTree("root", [AppTree("child", [], "unknown", "det1")], "")
 
     # Test with nested children
     grandchild_status = MockStatus("grandchild", [])
@@ -219,9 +220,11 @@ def test_get_app_tree(mocker):
     root_status_with_nested_children = MockStatus(
         "root", [child_status_with_grandchild]
     )
-    result = get_app_tree("a_user", root_status_with_nested_children, hostnames)
-    assert result == AppType(
+    result = get_app_tree(
+        "a_user", root_status_with_nested_children, hostnames, detectors
+    )
+    assert result == AppTree(
         "root",
-        [AppType("child", [AppType("grandchild", [], "unknown")], "unknown")],
+        [AppTree("child", [AppTree("grandchild", [], "unknown")], "unknown", "det1")],
         "",
     )

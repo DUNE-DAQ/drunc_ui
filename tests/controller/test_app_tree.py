@@ -1,14 +1,14 @@
 import pytest
 from django.utils.safestring import mark_safe
 
-from controller.app_tree import AppType
+from controller.app_tree import AppTree
 
 
 @pytest.mark.parametrize(
     "app, expected",
     [
         (
-            AppType(name="App1", children=[], host="localhost"),
+            AppTree(name="App1", children=[], host="localhost"),
             [
                 {
                     "name": mark_safe("App1"),
@@ -18,9 +18,9 @@ from controller.app_tree import AppType
             ],
         ),
         (
-            AppType(
+            AppTree(
                 name="ParentApp",
-                children=[AppType(name="ChildApp", children=[], host="childhost")],
+                children=[AppTree(name="ChildApp", children=[], host="childhost")],
                 host="parenthost",
             ),
             [
@@ -39,11 +39,11 @@ from controller.app_tree import AppType
             ],
         ),
         (
-            AppType(
+            AppTree(
                 name="ParentApp",
                 children=[
-                    AppType(name="ChildApp1", children=[], host="childhost1"),
-                    AppType(name="ChildApp2", children=[], host="childhost2"),
+                    AppTree(name="ChildApp1", children=[], host="childhost1"),
+                    AppTree(name="ChildApp2", children=[], host="childhost2"),
                 ],
                 host="parenthost",
             ),
@@ -70,13 +70,13 @@ from controller.app_tree import AppType
             ],
         ),
         (
-            AppType(
+            AppTree(
                 name="ParentApp",
                 children=[
-                    AppType(
+                    AppTree(
                         name="ChildApp",
                         children=[
-                            AppType(
+                            AppTree(
                                 name="GrandChildApp", children=[], host="grandchildhost"
                             )
                         ],

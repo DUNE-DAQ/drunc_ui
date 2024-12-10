@@ -6,13 +6,13 @@ from django.utils.safestring import mark_safe
 
 
 @dataclass
-class AppType:
+class AppTree:
     """Application tree information."""
 
     name: str
     """The name of the application."""
 
-    children: list["AppType"]
+    children: list["AppTree"]
     """The children of the application."""
 
     host: str
