@@ -228,3 +228,41 @@ def test_get_app_tree(mocker):
         [AppTree("child", [AppTree("grandchild", [], "unknown")], "unknown", "det1")],
         "",
     )
+
+
+def test_get_detectors(mocker):
+    """Test the get_app_tree function."""
+    from controller.controller_interface import get_detectors
+
+    class MockData:
+        def __init__(self, name, info):
+            self.name = name
+            self.info = info
+
+    class MockDescription:
+        def __init__(self, data, children):
+            self.data = data
+            self.children = children
+
+    mock_controller = mocker.patch(
+        "controller.controller_interface.get_controller_driver"
+    )
+
+    # No children
+    root_status = MockDescription(MockData("root", ""), [])
+    mock_controller().describe.return_value = root_status
+    result = get_detectors()
+    assert result == {"root": ""}
+
+    # With children
+    child_status = MockDescription(MockData("child", "det1"), [])
+    root_status_with_child = MockDescription(MockData("root", ""), [child_status])
+    mock_controller().describe.return_value = root_status_with_child
+    result = get_detectors()
+    assert result == {"root": "", "child": "det1"}
+
+    # With None children
+    root_status_with_none_child = MockDescription(MockData("root", ""), [None])
+    mock_controller().describe.return_value = root_status_with_none_child
+    result = get_detectors()
+    assert result == {"root": ""}
