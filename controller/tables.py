@@ -106,9 +106,7 @@ def toggle_button(event: str, current: bool) -> SafeString:
         str: The button as a safe string.
     """
     if current:
-        action = (
-            f"hx-post={reverse('controller:state_machine')} hx-target='#state-machine'"
-        )
+        action = f"hx-post={reverse('controller:dialog')} hx-target='#arguments-dialog'"
         return mark_safe(
             f"<input type='submit' value={event} name='event' {action}"
             + " class='btn btn-success w-100 mx-2'>"
@@ -116,3 +114,39 @@ def toggle_button(event: str, current: bool) -> SafeString:
     return mark_safe(
         f"<input value={event} disabled class='btn btn-secondary w-100 mx-2'>"
     )
+
+
+class AppTreeTable(tables.Table):
+    """Defines a table for the data from the app tree data."""
+
+    name = tables.Column(
+        verbose_name="Application Name",
+        attrs={
+            "td": {"class": "text-break text-start", "style": "width:300px;"},
+            "th": {"class": "header-style"},
+        },
+    )
+
+    host = tables.Column(
+        verbose_name="Host",
+        attrs={
+            "td": {"class": "text-primary text-start", "style": "width:200px;"},
+            "th": {"class": "header-style"},
+        },
+    )
+
+    detector = tables.Column(
+        verbose_name="Detector",
+        attrs={
+            "td": {"class": "text-primary text-start", "style": "width:200px;"},
+            "th": {"class": "header-style"},
+        },
+    )
+
+    class Meta:
+        """Table meta options for rendering behavior and styling."""
+
+        orderable: ClassVar[bool] = False
+        attrs: ClassVar[dict[str, str]] = {
+            "class": "table table-hover table-responsive",
+        }
