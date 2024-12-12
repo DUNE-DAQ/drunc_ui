@@ -1,4 +1,4 @@
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from http import HTTPStatus
 
 import pytest
@@ -24,7 +24,7 @@ class TestMessagesView(LoginRequiredTest):
 
     def test_get(self, auth_client):
         """Test that the view returns messages in a table."""
-        t1 = datetime.now(tz=UTC)
+        t1 = datetime.now(tz=timezone.utc)
         t2 = t1 + timedelta(minutes=10)
         DruncMessage.objects.bulk_create(
             [
@@ -62,7 +62,7 @@ class TestMessagesView(LoginRequiredTest):
 
     def test_get_with_search(self, auth_client):
         """Test message filtering based on search query."""
-        t = datetime.now(tz=UTC)
+        t = datetime.now(tz=timezone.utc)
         DruncMessage.objects.bulk_create(
             [
                 DruncMessage(
@@ -110,7 +110,7 @@ class TestMessagesView(LoginRequiredTest):
         """Test that messages with non-matching topics are not included."""
         DruncMessage.objects.create(
             topic="the.wrong.topic",
-            timestamp=datetime.now(tz=UTC),
+            timestamp=datetime.now(tz=timezone.utc),
             message="message",
             severity="INFO",
         )
