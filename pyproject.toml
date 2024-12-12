@@ -8,7 +8,7 @@ authors = [
 ]
 
 [tool.poetry.dependencies]
-python = "~3.11"
+python = ">=3.10,<3.12"
 django = "^5.1"
 whitenoise = "^6.8.2"
 drunc = { git = "https://github.com/DUNE-DAQ/drunc.git", rev = "1848d8494d5583e1a551134d3cd3a38aea810cd0" }
@@ -73,7 +73,7 @@ FAIL_INVALID_TEMPLATE_VARS = true
 
 [tool.ruff]
 exclude = ["*/migrations"]
-target-version = "py312"
+target-version = "py310"
 
 [tool.ruff.lint]
 select = [
