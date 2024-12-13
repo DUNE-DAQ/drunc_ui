@@ -8,11 +8,11 @@ authors = [
 ]
 
 [tool.poetry.dependencies]
-python = "~3.11"
+python = ">=3.10,<3.12"
 django = "^5.1"
 whitenoise = "^6.8.2"
-drunc = { git = "https://github.com/DUNE-DAQ/drunc.git", rev = "f068eaccb840da03a104adba2da3f27454c218d5" }
-druncschema = { git = "https://github.com/DUNE-DAQ/druncschema.git", rev = "a07226fa9c3a4329b4c38e084c913cb1e2db0b4e" }
+drunc = { git = "https://github.com/DUNE-DAQ/drunc.git", rev = "1848d8494d5583e1a551134d3cd3a38aea810cd0" }
+druncschema = { git = "https://github.com/DUNE-DAQ/druncschema.git", rev = "91dbf64ef91c31df9fc1d2872d07f484880e5921" }
 django-tables2 = "^2.7.0"
 django-bootstrap5 = "^24.3"
 pytest-asyncio = "^0.24.0"
@@ -77,7 +77,7 @@ FAIL_INVALID_TEMPLATE_VARS = true
 
 [tool.ruff]
 exclude = ["*/migrations", "example_deployment/*"]
-target-version = "py312"
+target-version = "py310"
 
 [tool.ruff.lint]
 select = [
