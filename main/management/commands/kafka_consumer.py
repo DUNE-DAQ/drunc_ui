@@ -1,7 +1,7 @@
 """Django management command to populate Kafka messages into application database."""
 
 from argparse import ArgumentParser
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from django.conf import settings
@@ -60,7 +60,9 @@ class Command(BaseCommand):
                         self.stdout.flush()
 
                     # Convert Kafka timestamp (milliseconds) to datetime (seconds).
-                    time = datetime.fromtimestamp(message.timestamp / 1e3, tz=UTC)
+                    time = datetime.fromtimestamp(
+                        message.timestamp / 1e3, tz=timezone.utc
+                    )
 
                     bm = BroadcastMessage()
                     bm.ParseFromString(message.value)
@@ -82,7 +84,7 @@ class Command(BaseCommand):
 
             # Remove expired messages from the database.
             message_timeout = timedelta(seconds=settings.MESSAGE_EXPIRE_SECS)
-            expire_time = datetime.now(tz=UTC) - message_timeout
+            expire_time = datetime.now(tz=timezone.utc) - message_timeout
             query = DruncMessage.objects.filter(timestamp__lt=expire_time)
             if query.count():
                 if debug:

@@ -1,7 +1,7 @@
 """Django management command to populate Kafka messages into application database."""
 
 from argparse import ArgumentParser
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from typing import Any
 
 from django.core.management.base import BaseCommand
@@ -24,7 +24,7 @@ class Command(BaseCommand):
         """Command business logic."""
         topic = kwargs["topic"]
         message = kwargs["message"]
-        timestamp = datetime.now(tz=UTC)
+        timestamp = datetime.now(tz=timezone.utc)
         severity = kwargs["severity"]
         DruncMessage.objects.create(
             topic=topic, timestamp=timestamp, message=message, severity=severity
