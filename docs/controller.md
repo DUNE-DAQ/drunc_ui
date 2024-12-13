@@ -36,11 +36,10 @@ frontend is not updated accordingly.
 When clicking on a transition, a pop-up modal dialog opens to input the arguments (required
 or optional) to run the transition, and to confirm it. The code for the dialog is contained
 in another partial view and template. The arguments required for each transition are pulled dynamically from
-`drunc` and put together in a `django form`.
+`drunc` and put together in a `django` form.
 
 The table updates only when loading the page and when trying to execute a transition;
-there is no automatic refresh via HTMX as the overall state of the FSM is not expected to
-change on its own frequently enough - if ever - to justify this overhead.
+there is no automatic refresh via HTMX.
 
 ### Applications tree overview
 
@@ -54,12 +53,11 @@ more self-contained JS dependencies, meaning that **the application tree will no
 
 Like with the FSM, there is no automatic refresh via HTMX.
 
-The title of the application tree card is an hyperlink that opens the dedicated [applications
-tree page](#application-tree-page).
+The title of the application tree card is an hyperlink that opens the dedicated [applications tree page].
 
 ### Message Feed
 
-Similarly to the message feed in the [process manager](process_manager.md#message-feed)
+Similarly to the message feed in the [process manager]
 this is updated periodically to display new messages received. This is implemented in
 an equivalent manner with a partial function polled by HTMX. In this case, only messages
 from the topic `erskafka-reporting` are displayed.
@@ -78,8 +76,11 @@ The `detector` information is pulled directly from the controller driver recursi
 while the `hostname` needs to be requested via the `process manager`, which involves a
 probably unwanted cross application dependency at least for now.
 
-This page has no dynamic behaviour to care about and, contrary to the [application tree overview](#applications-tree-overview), it does not depend on Shoelace and therefore will work
+This page has no dynamic behaviour to care about and, contrary to the [application tree overview], it does not depend on Shoelace and therefore will work
 correctly even without internet access at runtime.
 
 [drunc documentation]: https://github.com/DUNE-DAQ/drunc/wiki/FSM
 [Shoelace tree component]: https://shoelace.style/components/tree
+[applications tree page]: #application-tree-page
+[application tree overview]: #applications-tree-overview
+[process manager]: process_manager.md#message-feed
