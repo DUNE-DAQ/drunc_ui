@@ -136,8 +136,7 @@ of threads and processes for handling incoming requests.
 It is strongly recommended to use HTTPS in deployment. This can be done by placing the
 WSGI server behind a reverse proxy that carries out TLS termination and forwards http
 traffic. The settings in `drunc_ui/settings/_production.py` support this arrangement.
-There are many capable servers capable of acting as reverse proxies (e.g. [Apache] or
-[Nginx]).
+There are many servers capable of acting as reverse proxies (e.g. [Apache] or [Nginx]).
 
 [Apache]: https://httpd.apache.org/
 [Nginx]: https://nginx.org/
@@ -208,8 +207,7 @@ example_deployment/docker-compose.yml up` and access the web app at `https://loc
 
 The example deployment address the following previously mentioned considerations:
 
-- The software environment is provided is built from the `Dockerfile` in the root of the
-  repository.
+- The software environment is built from the `Dockerfile` in the root of the repository.
 
 - The deloyment settings file is given by `example_deployment/deployment.py`. This is
   mounted into the relevant containers at
