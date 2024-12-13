@@ -6,7 +6,7 @@ The code base covers several user interfaces covering different aspects of the D
 control system. There are distinct interfaces but also shared infrastructure and
 approaches.
 
-For this reason the code is organised into three [Django apps]:
+For this reason the code is organised into the following [Django apps]:
 
 - `process_manager` - the Process Manager UI.
 - `controller` - the Controller UI.
@@ -63,24 +63,19 @@ These messages are displayed in several places in the web UIs. Receiving message
 Kafka requires a long-running process to act as a consumer and make messages available
 within the web application.
 
-The consumer is implemented as a [Django admin command] and can be run as
-`python manage.py kafka_consumer`. This makes messages available to the web application
-by storing them in the database. This command is also responsible for pruning messages
-from the database after a configurable retention period.
-
 ## Authentication
 
 In the absence of a defined authentication mechanism for use in production, the project
 currently uses the built-in [Django authentication system]. This requires manual
 creation of users via the Django command line interface and stores user data in the
-application database. This is a placeholder that will need to be replaced.
+application database. **This is a placeholder that will need to be replaced**.
 
 ## Permissions
 
 Permissions are used to control the actions that can be performed or information that
 can be viewed by different users. Permissions are defined on the custom user model
 defined in `main/models.py`. A fine-grained approach is taken to permissions whereby
-individual actions are have their own associated permission. Once the authorisation
+individual actions have their own associated permission. Once the authorisation
 model for the dune-daq systems is well defined, individual permissions can be grouped
 together into user roles via [Django groups].
 
@@ -97,7 +92,6 @@ database technology and supports [multiple different databases] that may be used
 deployment.
 
 [django]: https://www.djangoproject.com/
-[django admin command]: https://docs.djangoproject.com/en/5.1/howto/custom-management-commands/
 [django apps]: https://docs.djangoproject.com/en/5.1/ref/applications/
 [django authentication system]: https://docs.djangoproject.com/en/5.1/topics/auth/default/
 [django groups]: https://docs.djangoproject.com/en/5.1/topics/auth/default/#groups

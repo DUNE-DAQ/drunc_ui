@@ -147,6 +147,8 @@ INSTALLED_APPS += ["django_bootstrap5"]
 DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap5.html"
 
 PROCESS_MANAGER_URL = os.getenv("PROCESS_MANAGER_URL", "localhost:10054")
+CSC_URL = os.getenv("CSC_URL", "drunc:5000")
+CSC_SESSION = os.getenv("CSC_SESSION", "local-1x1-config")
 
 INSTALLED_APPS += ["crispy_forms", "crispy_bootstrap5"]
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
@@ -155,6 +157,8 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 KAFKA_ADDRESS = os.getenv("KAFKA_ADDRESS", "kafka:9092")
 
 KAFKA_TOPIC_REGEX = {
+    # ALL matches all topics.
+    "ALL": "^.*$",
     # PROCMAN matches topics of the form "control.<session>.process_manager".
     "PROCMAN": "^control\..+\.process_manager$",
     # ERS matches only the topic "erskafka-reporting".

@@ -1,15 +1,36 @@
 """Django management command to populate Kafka messages into application database."""
 
 from argparse import ArgumentParser
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from druncschema.broadcast_pb2 import BroadcastMessage
+from druncschema.broadcast_pb2 import BroadcastMessage, BroadcastType
 from kafka import KafkaConsumer
 
 from ...models import DruncMessage
+
+BROADCAST_TYPE_SEVERITY = {
+    BroadcastType.ACK: "DEBUG",
+    BroadcastType.RECEIVER_REMOVED: "INFO",
+    BroadcastType.RECEIVER_ADDED: "INFO",
+    BroadcastType.SERVER_READY: "INFO",
+    BroadcastType.SERVER_SHUTDOWN: "INFO",
+    BroadcastType.TEXT_MESSAGE: "INFO",
+    BroadcastType.COMMAND_EXECUTION_START: "INFO",
+    BroadcastType.COMMAND_RECEIVED: "INFO",
+    BroadcastType.COMMAND_EXECUTION_SUCCESS: "DEBUG",
+    BroadcastType.DRUNC_EXCEPTION_RAISED: "ERROR",
+    BroadcastType.UNHANDLED_EXCEPTION_RAISED: "CRITICAL",
+    BroadcastType.STATUS_UPDATE: "INFO",
+    BroadcastType.SUBPROCESS_STATUS_UPDATE: "INFO",
+    BroadcastType.DEBUG: "DEBUG",
+    BroadcastType.CHILD_COMMAND_EXECUTION_START: "INFO",
+    BroadcastType.CHILD_COMMAND_EXECUTION_SUCCESS: "INFO",
+    BroadcastType.CHILD_COMMAND_EXECUTION_FAILED: "ERROR",
+    BroadcastType.FSM_STATUS_UPDATE: "INFO",
+}
 
 
 class Command(BaseCommand):
@@ -39,14 +60,23 @@ class Command(BaseCommand):
                         self.stdout.flush()
 
                     # Convert Kafka timestamp (milliseconds) to datetime (seconds).
-                    time = datetime.fromtimestamp(message.timestamp / 1e3, tz=UTC)
+                    time = datetime.fromtimestamp(
+                        message.timestamp / 1e3, tz=timezone.utc
+                    )
 
                     bm = BroadcastMessage()
                     bm.ParseFromString(message.value)
                     body = bm.data.value.decode("utf-8")
 
+                    severity = BROADCAST_TYPE_SEVERITY.get(bm.type, "INFO")
+
                     message_records.append(
-                        DruncMessage(topic=message.topic, timestamp=time, message=body)
+                        DruncMessage(
+                            topic=message.topic,
+                            timestamp=time,
+                            message=body,
+                            severity=severity,
+                        )
                     )
 
                 if message_records:
@@ -54,7 +84,7 @@ class Command(BaseCommand):
 
             # Remove expired messages from the database.
             message_timeout = timedelta(seconds=settings.MESSAGE_EXPIRE_SECS)
-            expire_time = datetime.now(tz=UTC) - message_timeout
+            expire_time = datetime.now(tz=timezone.utc) - message_timeout
             query = DruncMessage.objects.filter(timestamp__lt=expire_time)
             if query.count():
                 if debug:

@@ -1,7 +1,12 @@
 #!/bin/bash
 
-# setup dunedaq environment
-. /basedir/fddaq-v5.1.0-a9/env.sh
-
 # boot full test session
-drunc-process-manager-shell grpc://localhost:10054 boot test/config/test-session.data.xml test-session
+if [[ "$CSC_SESSION" == "lr-session" ]]; then
+    CONFIG="config/lrSession.data.xml"
+    SESSION=$CSC_SESSION
+else
+    CONFIG="config/daqsystemtest/example-configs.data.xml"
+    SESSION="local-1x1-config"
+fi
+
+/entrypoint.sh drunc-process-manager-shell grpc://localhost:10054 boot $CONFIG $SESSION

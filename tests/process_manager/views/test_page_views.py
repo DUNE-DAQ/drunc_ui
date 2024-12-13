@@ -32,7 +32,7 @@ class TestLogsView(PermissionRequiredTest):
             response = auth_logs_client.get(self.endpoint)
         assert response.status_code == HTTPStatus.OK
 
-        mock.assert_called_once_with(str(self.uuid))
+        mock.assert_called_once_with(str(self.uuid), "logs_user")
         assert "log_lines" in response.context
 
 
@@ -73,4 +73,4 @@ class TestBootProcess(PermissionRequiredTest):
 
         assert response.url == reverse("process_manager:index")
 
-        mock.assert_called_once_with("root", dummy_session_data)
+        mock.assert_called_once_with("process_user", dummy_session_data)

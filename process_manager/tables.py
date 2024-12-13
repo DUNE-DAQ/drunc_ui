@@ -28,10 +28,12 @@ class ProcessTable(tables.Table):
 
     uuid = tables.Column(
         verbose_name="UUID",
+        orderable=True,
         attrs={"td": {"class": "fw-bold text-break text-start"}},
     )
     name = tables.Column(
         verbose_name="Process Name",
+        orderable=True,
         attrs={
             "td": {"class": "fw-bold text-primary text-center"},
             "th": {"class": "text-center header-style"},
@@ -39,6 +41,7 @@ class ProcessTable(tables.Table):
     )
     user = tables.Column(
         verbose_name="User",
+        orderable=True,
         attrs={
             "td": {"class": "text-secondary text-center"},
             "th": {"class": "text-center header-style"},
@@ -46,6 +49,7 @@ class ProcessTable(tables.Table):
     )
     session = tables.Column(
         verbose_name="Session",
+        orderable=True,
         attrs={
             "td": {"class": "text-secondary text-center"},
             "th": {"class": "text-center header-style"},
@@ -53,6 +57,7 @@ class ProcessTable(tables.Table):
     )
     status_code = tables.Column(
         verbose_name="Status",
+        orderable=True,
         attrs={
             "td": {"class": "fw-bold text-center"},
             "th": {"class": "text-center header-style"},
@@ -60,6 +65,7 @@ class ProcessTable(tables.Table):
     )
     exit_code = tables.Column(
         verbose_name="Exit Code",
+        orderable=True,
         attrs={
             "td": {"class": "text-center"},
             "th": {"class": "text-center header-style"},
@@ -68,6 +74,7 @@ class ProcessTable(tables.Table):
     logs = tables.TemplateColumn(
         logs_column_template,
         verbose_name="Logs",
+        orderable=False,
         attrs={
             "td": {"class": "text-center"},
             "th": {"class": "text-center header-style"},
@@ -75,6 +82,7 @@ class ProcessTable(tables.Table):
     )
     select = tables.CheckBoxColumn(
         accessor="uuid",
+        orderable=False,
         verbose_name="Select",
         attrs={
             "th__input": {

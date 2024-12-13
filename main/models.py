@@ -21,6 +21,14 @@ class User(AbstractUser):
 class DruncMessage(models.Model):
     """Model for drunc broadcast messages."""
 
+    SEVERITY_CHOICES = (
+        ("INFO", "INFO"),
+        ("CRITICAL", "CRITICAL"),
+        ("ERROR", "ERROR"),
+        ("DEBUG", "DEBUG"),
+    )
+
     topic = models.CharField(max_length=255)
     timestamp = models.DateTimeField()
     message = models.TextField()
+    severity = models.CharField(max_length=10, choices=SEVERITY_CHOICES, default="INFO")
