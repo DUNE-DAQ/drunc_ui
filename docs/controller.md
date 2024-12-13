@@ -26,14 +26,14 @@ The finite state machine describes the current state of the system, the possible
 from this state and where they lead, with all other possible transitions and states greyed out.
 It represents the states and the main transitions described in the [drunc documentation], excluding the sequences.
 
-The FSM diagram is built with a `django-tables2`, with the elements for each row and columns
+The FSM diagram is built with `django-tables2`, with the elements for each row and columns
 defined in the backend based on a **hardcoded** version of the real FSM used by `drunc`.
 This is done this way since `drunc` provides no way of extracting the architecture of the
 FSM machine dynamically, which also means that, potentially, they both (frontend and drunc)
 might become incompatible if the actual FSM is changed but the hardcoded version in the
 frontend is not updated accordingly.
 
-When clicking in a transition, a pop-up modal dialog opens to input the arguments (required
+When clicking on a transition, a pop-up modal dialog opens to input the arguments (required
 or optional) to run the transition, and to confirm it. The code for the dialog is contained
 in another partial view and template. The arguments required for each transition are pulled dynamically from
 `drunc` and put together in a `django form`.
