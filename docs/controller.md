@@ -18,7 +18,7 @@ The view functions for this UI are split into two categories:
 
 The index page contains three columns, the contents for each of them contained in a
 separate template file and loaded via a partial view. Left to right, the columns contain
-the final state machine, the applications tree and the message feed.
+the finite state machine, the applications tree and the message feed.
 
 ### Finite State Machine (FSM)
 
