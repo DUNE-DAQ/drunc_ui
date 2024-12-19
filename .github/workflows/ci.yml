@@ -28,7 +28,11 @@ jobs:
       - name: Install dependencies
         run: poetry install
 
+      - name: Test building the docs
+        run: poetry run mkdocs build --strict
+
       - name: Run tests
+        if: ${{ !cancelled() }}
         run: poetry run pytest --cov-report=xml
 
       - name: Upload coverage to Codecov
