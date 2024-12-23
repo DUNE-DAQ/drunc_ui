@@ -443,17 +443,17 @@ typing-extensions = "*"
 
 [[package]]
 name = "django-tables2"
-version = "2.7.0"
+version = "2.7.1"
 description = "Table/data-grid framework for Django"
 optional = false
 python-versions = "*"
 files = [
-    {file = "django-tables2-2.7.0.tar.gz", hash = "sha256:4113fcc575eb438a12e83a4d4ea01452e4800d970e8bdd0e4122ac171af1900d"},
-    {file = "django_tables2-2.7.0-py2.py3-none-any.whl", hash = "sha256:99e06d966ca8ac69fd74092eb45c79a280dd5ca0ccb81395d96261f62128e1af"},
+    {file = "django-tables2-2.7.1.tar.gz", hash = "sha256:d96f70884889197a28d91d1b006f997de3d8c3bcf867828fb2ed54bd86d38807"},
+    {file = "django_tables2-2.7.1-py2.py3-none-any.whl", hash = "sha256:1ac6426b05dc4b537ba3a952d2920c51653302ca7dcbd1d320cf6e421eeb2dbf"},
 ]
 
 [package.dependencies]
-Django = ">=3.2"
+Django = ">=4.2"
 
 [package.extras]
 tablib = ["tablib"]
@@ -2174,4 +2174,4 @@ brotli = ["brotli"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "b4478577ee7a40fd5be10754369f97f3598f4a265050605523437ba6af360adf"
+content-hash = "ee38a0d166c83ca180e4622b0d2909b777640e4fa2d914894373fc5cd310a57c"
