@@ -58,9 +58,9 @@ class TestProcessTableView(LoginRequiredTest):
 
         # Check that each row in the table contains "session2" as the session value
         for row, uuid in zip(table.data.data, uuids[1:4]):
-            assert (
-                row["session"] == "session2"
-            ), f"Expected 'session2', got '{row['session']}'"
+            assert row["session"] == "session2", (
+                f"Expected 'session2', got '{row['session']}'"
+            )
             assert row["uuid"] == uuid
 
 

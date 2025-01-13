@@ -89,7 +89,6 @@ class Command(BaseCommand):
             if query.count():
                 if debug:
                     self.stdout.write(
-                        f"Deleting {query.count()} messages "
-                        f"older than {expire_time}."
+                        f"Deleting {query.count()} messages older than {expire_time}."
                     )
                 query.delete()
