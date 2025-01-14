@@ -30,6 +30,8 @@
         href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.18.0/cdn/themes/light.css" />
   <script type="module"
           src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.18.0/cdn/shoelace-autoloader.js"></script>
+  <script type="module"
+          src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
 {% endblock extra_js %}
 {% block content %}
   <div class="container-fluid no-padding no-margin">
@@ -60,6 +62,24 @@
                  hx-trigger="load"
                  hx-target="#app_tree_summary"></div>
             <div id="app_tree_summary"></div>
+          </div>
+        </div>
+      </div>
+      <div class="fst-panel">
+        <div class="card shadow-sm rounded">
+          <div class="card-header bg-primary text-white rounded-top mb-3">
+            <h5>Application Diagram</h5>
+          </div>
+          <div class="card-body">
+            <div class="mermaid">
+              graph TD
+              A[Start] --> B{Decision?}
+              B -->|Yes| C[Task 1]
+              B -->|No| D[Task 2]
+              C --> E[End]
+              D --> E[End]
+            </div>
+            <script>mermaid.initialize({ startOnLoad: true });</script>
           </div>
         </div>
       </div>
