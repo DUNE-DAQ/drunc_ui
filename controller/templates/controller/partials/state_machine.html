@@ -1,6 +1,19 @@
 {% load render_table from django_tables2 %}
 <div _="on load if #argsDialog is not null remove #argsDialog"></div>
-<form>
-  {% csrf_token %}
-  {% render_table table %}
-</form>
+<div class="row">
+  <div class="col-md-auto">
+    <form>
+      {% csrf_token %}
+      {% render_table table %}
+    </form>
+  </div>
+  <div class="col-md-auto">
+    <pre class="mermaid">
+        {% comment %} flowchart TD {% endcomment %}
+        {% comment %} A[Start] --> B{Decision?} {% endcomment %}
+        {% comment %} B -- Yes --> C[Task 1] {% endcomment %}
+        {% comment %} B -- No --> D[Task 2] {% endcomment %}
+        {% comment %} C & D --> E[End] {% endcomment %}
+    </pre>
+  </div>
+</div>
