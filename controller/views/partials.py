@@ -27,11 +27,21 @@ def state_machine(request: HttpRequest) -> HttpResponse:
         else:
             raise ValueError(f"Invalid form: {form.errors}")
 
-    table = tables.FSMTable.from_dict(fsm.get_fsm_architecture(), ci.get_fsm_state())
+    states = fsm.get_fsm_architecture()
+    current_state = ci.get_fsm_state()
+
+    table = tables.FSMTable.from_dict(states, current_state)
+
+    flowchart = "flowchart TD\n"
+    for state, events in states.items():
+        # TODO: add current state highlighting
+        # current = (state == current_state)
+        for event, target in events.items():
+            flowchart += f"{state} -- {event} --> {target}\n"
 
     return render(
         request=request,
-        context=dict(table=table),
+        context=dict(table=table, flowchart=flowchart),
         template_name="controller/partials/state_machine.html",
     )
 
