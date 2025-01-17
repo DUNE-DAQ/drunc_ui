@@ -32,13 +32,15 @@ def state_machine(request: HttpRequest) -> HttpResponse:
 
     table = tables.FSMTable.from_dict(states, current_state)
 
-    flowchart = "flowchart TD\nclassDef current fill:#93c54b\n"
+    link = 0
+    flowchart = ""
     for state, events in states.items():
         for event, target in events.items():
+            flowchart += f"{state}({state}) -->|{event}| {target}({target})\n"
             if state == current_state:
-                flowchart += f"{state}:::current -- {event} --> {target}\n"
-            else:
-                flowchart += f"{state} -- {event} --> {target}\n"
+                flowchart += f"style {state} fill:#93c54b\n"
+                flowchart += f"linkStyle {link} background-color:#93c54b\n"
+            link += 1
 
     return render(
         request=request,

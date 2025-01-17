@@ -69,15 +69,4 @@
   </div>
   <!-- Arguments dialog -->
   <div id="arguments-dialog"></div>
-  <script>
-    // Refresh mermaid diagrams after htmx swap.
-    document.body.addEventListener('htmx:afterSwap', (event) => {
-        const target = event.detail.target;
-        if (target && target.querySelector('.mermaid')) {
-            mermaid.run({
-                nodes: target.querySelectorAll('.mermaid')
-            });
-        }
-    });
-  </script>
 {% endblock content %}
