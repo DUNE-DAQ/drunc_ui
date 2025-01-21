@@ -1,25 +1,16 @@
 {% load render_table from django_tables2 %}
 <div _="on load if #argsDialog is not null remove #argsDialog"></div>
 <div class="row">
-  <div class="col-md-auto">
-    <form>
-      {% csrf_token %}
-      {% render_table table %}
-    </form>
-  </div>
-  <div class="col-md-auto">
-    <pre class="mermaid">
-      flowchart TD
-
-      %% FSM states (nodes).
-      classDef default fill:#b5b3ae,stroke:black,stroke-width:2px
-
-      %% FSM transitions (edges).
-      linkStyle default background-color:#b5b3ae,stroke-width:2px
-
-      {{ flowchart }}
-    </pre>
-  </div>
+  <pre class="mermaid">
+    flowchart LR
+    classDef default stroke:black,stroke-width:2px
+    linkStyle default background-color:#b5b3ae,stroke-width:2px
+    {{ flowchart }}
+  </pre>
+  <form>
+    {% csrf_token %}
+    {% render_table table %}
+  </form>
 </div>
 <script>
   // Initialize mermaid diagrams.
@@ -28,8 +19,10 @@
     // Make flowchart text uppercase.
     themeCSS: ".label { text-transform: uppercase; }",
     themeVariables: {
+      primaryColor: "#b5b3ae",
       primaryTextColor: "white",
-      edgeLabelBackground: "transparent", // HACK: custom edge label colour
+      // HACK: for setting custom edge label backgrounds.
+      edgeLabelBackground: "transparent",
     },
   });
   // Refresh mermaid diagrams after htmx swap.
