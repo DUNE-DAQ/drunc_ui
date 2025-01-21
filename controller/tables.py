@@ -14,8 +14,8 @@ class FSMTable(tables.Table):
         verbose_name="State",
         default=" ",
         attrs={
-            "td": {"class": "text-secondary text-start"},
-            "th": {"class": "header-style"},
+            "td": {"class": "text-secondary text-start small-text"},
+            "th": {"class": "header-style small-text"},
         },
     )
 
@@ -23,22 +23,22 @@ class FSMTable(tables.Table):
         verbose_name="Transition",
         default=" ",
         attrs={
-            "th": {"class": "text-center header-style"},
+            "th": {"class": "text-center header-style small-text"},
         },
     )
 
     arrow = tables.Column(
         verbose_name="",
         default=" ",
-        attrs={"td": {"class": "fw-bold text-break text-start"}},
+        attrs={"td": {"class": "fw-bold text-break text-start small-text"}},
     )
 
     target = tables.Column(
         verbose_name="Target",
         default=" ",
         attrs={
-            "td": {"class": "text-secondary text-start"},
-            "th": {"class": "header-style"},
+            "td": {"class": "text-secondary text-start small-text"},
+            "th": {"class": "header-style small-text"},
         },
     )
 
@@ -47,7 +47,7 @@ class FSMTable(tables.Table):
 
         orderable: ClassVar[bool] = False
         attrs: ClassVar[dict[str, str]] = {
-            "class": "table table-hover table-responsive",
+            "class": "table table-hover table-responsive small-text",
         }
 
     @classmethod
@@ -55,7 +55,7 @@ class FSMTable(tables.Table):
         """Create the FSM table from the states dictionary.
 
         Args:
-            states (dict[str, list[dict[str, str]]): The FSM states and events.
+            states (dict[str, list[dict[str, str]]]): The FSM states and events.
             current_state (str): The current state of the FSM.
 
         Returns:
@@ -108,11 +108,11 @@ def toggle_button(event: str, current: bool) -> SafeString:
     if current:
         action = f"hx-post={reverse('controller:dialog')} hx-target='#arguments-dialog'"
         return mark_safe(
-            f"<input type='submit' value={event} name='event' {action}"
-            + " class='btn btn-success w-100 mx-2'>"
+            f"<input type='submit' value='{event}' name='event' {action} "
+            + "class='btn btn-success w-100 mx-2 small-text'>"
         )
     return mark_safe(
-        f"<input value={event} disabled class='btn btn-secondary w-100 mx-2'>"
+        f"<input value='{event}' disabled class='btn btn-secondary w-100 mx-2 small-text'>"
     )
 
 
@@ -122,24 +122,24 @@ class AppTreeTable(tables.Table):
     name = tables.Column(
         verbose_name="Application Name",
         attrs={
-            "td": {"class": "text-break text-start", "style": "width:300px;"},
-            "th": {"class": "header-style"},
+            "td": {"class": "text-break text-start small-text", "style": "width:300px;"},
+            "th": {"class": "header-style small-text"},
         },
     )
 
     host = tables.Column(
         verbose_name="Host",
         attrs={
-            "td": {"class": "text-primary text-start", "style": "width:200px;"},
-            "th": {"class": "header-style"},
+            "td": {"class": "text-primary text-start small-text", "style": "width:200px;"},
+            "th": {"class": "header-style small-text"},
         },
     )
 
     detector = tables.Column(
         verbose_name="Detector",
         attrs={
-            "td": {"class": "text-primary text-start", "style": "width:200px;"},
-            "th": {"class": "header-style"},
+            "td": {"class": "text-primary text-start small-text", "style": "width:200px;"},
+            "th": {"class": "header-style small-text"},
         },
     )
 
@@ -148,5 +148,5 @@ class AppTreeTable(tables.Table):
 
         orderable: ClassVar[bool] = False
         attrs: ClassVar[dict[str, str]] = {
-            "class": "table table-hover table-responsive",
+            "class": "table table-hover table-responsive small-text",
         }

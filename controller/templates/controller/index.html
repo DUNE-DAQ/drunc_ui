@@ -1,135 +1,174 @@
-<!-- Adjusting the layout for full-width FSM panel with left-side App Tree and ensuring FSM expansion -->
 {% extends "main/base.html" %}
 {% block title %}
   Controller
 {% endblock title %}
 {% block extra_css %}
-  <style>
-    .flex-container {
-        display: flex;
-        gap: 20px;
-        padding: 20px;
-        box-sizing: border-box;
-    }
-    .flex-container .app-tree-panel {
-        flex: 0 0 300px;
-        max-width: 300px;
-        min-width: 200px;
-        display: flex;
-        flex-direction: column; /* Stack children vertically */
-        height: 100%; /* Make the panel take full height */
-    }
-    .card {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1; /* Allow the card to grow to fill its container */
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        border-radius: 10px;
-    }
-    .card-body {
-        flex-grow: 1; /* Make the card body take all available space */
-        overflow-y: auto; /* Enable vertical scrolling */
-        display: flex;
-        flex-direction: column;
-        padding: 10px; /* Add spacing */
-        box-sizing: border-box;
-    }
-    #app_tree_summary {
-        flex-grow: 1; /* Allow the tree summary to expand within card-body */
-        overflow-y: auto; /* Enable vertical scrolling for large content */
-        padding: 10px;
-        box-sizing: border-box;
-    }
-    #state-machine {
-        display: flex;
-        flex-direction: column; /* Stack content vertically */
-        width: 100%; /* Fill available width */
-        height: 100%; /* Fill available height */
-    }
-    .mermaid {
-        flex-grow: 1; /* Allow the Mermaid diagram to expand vertically */
-        width: 100%; /* Fill available width */
-        height: auto; /* Maintain aspect ratio */
-        padding: 10px; /* Add some spacing around the diagram */
-        box-sizing: border-box; /* Include padding in total size */
-        overflow: hidden; /* Prevent unwanted scrollbars */
-    }
-    svg {
-        width: 100%; /* Make SVG fill the container */
-        height: 100%; /* Fill remaining height */
-    }
-    .flex-container .fsm-panel {
-        flex: 1;
-    }
-    .message-item {
-        font-family: 'Arial', sans-serif;
-        font-size: 0.875rem;
-        line-height: 1.4;
-    }
-    .message-panel {
-        width: 100%;
-    }
-    dialog {
-        border-radius: 8px;
-        padding: 20px;
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-    }
-    dialog[open] {
-        animation: fadeIn 0.3s ease-out;
-    }
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-        }
-        to {
-            opacity: 1;
-        }
-    }
-    sl-tree {
-        --tree-indent: 25px;
-        --tree-expand-icon-size: 20px;
-        margin: 0;
-    }
-    sl-tree-item {
-        padding-left: calc(var(--tree-indent) * var(--level, 1));
-        border-left: 2px solid #ddd;
-        margin-bottom: 5px;
-        padding: 5px 10px;
-        border-radius: 4px;
-        transition: background-color 0.2s, box-shadow 0.2s;
-    }
-    sl-tree-item:nth-child(odd) {
-        background-color: #f9f9f9;
-    }
-    sl-tree-item:nth-child(even) {
-        background-color: #fff;
-    }
-    sl-tree-item:hover {
-        background-color: #e6f7ff;
-        border-left-color: #1890ff;
-        box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.1);
-        cursor: pointer;
-    }
-    sl-tree-item.active {
-        background-color: #d6e4ff;
-        border-left: 3px solid #0056b3;
-        font-weight: bold;
-    }
-    @media (max-width: 768px) {
-        .flex-container {
-            flex-direction: column;
-            padding: 10px;
-        }
-        .app-tree-panel {
-            flex: none;
-            width: 100%;
-        }
-        .fsm-panel {
-            flex: none;
-            width: 100%;
-        }
-    }
-  </style>
+<style>
+  .small-text {
+      font-size: 0.875rem;
+  }
+
+  .flex-container {
+      display: flex;
+      gap: 20px;
+      padding: 20px;
+      box-sizing: border-box;
+      flex-wrap: wrap; /* Allow wrapping to prevent overlap */
+  }
+
+  .flex-container .app-tree-panel {
+      flex: 0 0 300px;
+      max-width: 300px;
+      min-width: 200px;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+  }
+
+  .card {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+  }
+
+  .card-body {
+      flex-grow: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+      box-sizing: border-box;
+  }
+
+  #app_tree_summary {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 10px;
+      box-sizing: border-box;
+  }
+
+  #state-machine {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+  }
+
+  .mermaid {
+      flex-grow: 1;
+      width: 100%;
+      height: auto;
+      padding: 10px;
+      box-sizing: border-box;
+      overflow: hidden;
+      margin-top: 10px; /* Add spacing to separate stacked elements */
+  }
+
+  svg {
+      width: 100%;
+      height: auto; /* Maintain aspect ratio for SVG */
+  }
+
+  .flex-container .fsm-panel {
+      flex: 1;
+  }
+
+  .message-item {
+      font-family: 'Arial', sans-serif;
+      font-size: 0.875rem;
+      line-height: 1.4;
+  }
+
+  .message-panel {
+      width: 100%;
+  }
+
+  dialog {
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  }
+
+  dialog[open] {
+      animation: fadeIn 0.3s ease-out;
+  }
+
+  @keyframes fadeIn {
+      from {
+          opacity: 0;
+      }
+      to {
+          opacity: 1;
+      }
+  }
+
+  sl-tree {
+      --tree-indent: 25px;
+      --tree-expand-icon-size: 20px;
+      margin: 0;
+  }
+
+  sl-tree-item {
+      padding-left: calc(var(--tree-indent) * var(--level, 1));
+      border-left: 2px solid #ddd;
+      margin-bottom: 5px;
+      padding: 5px 10px;
+      border-radius: 4px;
+      transition: background-color 0.2s, box-shadow 0.2s;
+  }
+
+  sl-tree-item:nth-child(odd) {
+      background-color: #f9f9f9;
+  }
+
+  sl-tree-item:nth-child(even) {
+      background-color: #fff;
+  }
+
+  sl-tree-item:hover {
+      background-color: #e6f7ff;
+      border-left-color: #1890ff;
+      box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+  }
+
+  sl-tree-item.active {
+      background-color: #d6e4ff;
+      border-left: 3px solid #0056b3;
+      font-weight: bold;
+  }
+
+  /* Ensure responsive behavior to avoid overlap */
+  @media (max-width: 992px) {
+      .flex-container {
+          flex-direction: column; /* Stack items vertically */
+          padding: 10px;
+      }
+
+      .app-tree-panel,
+      .fsm-panel {
+          flex: none;
+          width: 100%; /* Full width on smaller screens */
+      }
+
+      .mermaid {
+          margin-top: 10px; /* Ensure spacing below the control form */
+      }
+  }
+
+  @media (max-width: 768px) {
+      .flex-container {
+          gap: 10px; /* Reduce gap for smaller screens */
+      }
+
+      .mermaid {
+          margin-top: 15px;
+      }
+  }
+</style>
+
 {% endblock extra_css %}
 
 {% block extra_js %}
