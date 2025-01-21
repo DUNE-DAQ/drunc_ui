@@ -1,4 +1,4 @@
-<!-- Adjusting the layout for full-width FSM panel with left-side App Tree and ensuring content expansion -->
+<!-- Adjusting the layout for full-width FSM panel with left-side App Tree and ensuring FSM expansion -->
 {% extends "main/base.html" %}
 {% block title %}
   Controller
@@ -39,6 +39,24 @@
         overflow-y: auto; /* Enable vertical scrolling for large content */
         padding: 10px;
         box-sizing: border-box;
+    }
+    #state-machine {
+        display: flex;
+        flex-direction: column; /* Stack content vertically */
+        width: 100%; /* Fill available width */
+        height: 100%; /* Fill available height */
+    }
+    .mermaid {
+        flex-grow: 1; /* Allow the Mermaid diagram to expand vertically */
+        width: 100%; /* Fill available width */
+        height: auto; /* Maintain aspect ratio */
+        padding: 10px; /* Add some spacing around the diagram */
+        box-sizing: border-box; /* Include padding in total size */
+        overflow: hidden; /* Prevent unwanted scrollbars */
+    }
+    svg {
+        width: 100%; /* Make SVG fill the container */
+        height: 100%; /* Fill remaining height */
     }
     .flex-container .fsm-panel {
         flex: 1;

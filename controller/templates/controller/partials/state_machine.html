@@ -1,14 +1,17 @@
 {% load render_table from django_tables2 %}
 <div _="on load if #argsDialog is not null remove #argsDialog"></div>
 <div class="row">
-  <div class="col-md-auto">
-    <form>
+  <!-- Table Section (Control Form) -->
+  <div class="col-md-7"> <!-- Adjusted column width -->
+    <form style="padding: 15px; font-size: 1.2rem;"> <!-- Added padding and font size for larger form controls -->
       {% csrf_token %}
       {% render_table table %}
     </form>
   </div>
-  <div class="col-md-auto">
-    <pre class="mermaid">
+
+  <!-- Mermaid Diagram Section -->
+  <div class="col-md-5"> <!-- Adjusted column width -->
+    <pre class="mermaid" style="width: 100%; height: 100%;">
       flowchart TD
 
       %% FSM states (nodes).
@@ -25,18 +28,18 @@
   // Initialize mermaid diagrams.
   mermaid.initialize({
     theme: "base",
-    // Make flowchart text uppercase.
     themeCSS: ".label { text-transform: uppercase; }",
     themeVariables: {
       primaryTextColor: "white",
       edgeLabelBackground: "transparent", // HACK: custom edge label colour
     },
   });
+
   // Refresh mermaid diagrams after htmx swap.
   document.body.addEventListener("htmx:afterSwap", (event) => {
-      const target = event.detail.target;
-      if (target && target.querySelector(".mermaid")) {
-          mermaid.run({nodes: target.querySelectorAll(".mermaid")});
-      }
+    const target = event.detail.target;
+    if (target && target.querySelector(".mermaid")) {
+      mermaid.run({ nodes: target.querySelectorAll(".mermaid") });
+    }
   });
 </script>
