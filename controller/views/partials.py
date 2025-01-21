@@ -11,6 +11,33 @@ from .. import controller_interface as ci
 from .. import forms, fsm, tables
 
 
+def make_fsm_flowchart(states: dict[str, dict[str, str]], current_state: str) -> str:
+    """Create Mermaid syntax for a flowchart of FSM states and transitions.
+
+    Args:
+        states (dict[str, dict[str, str]]): The FSM states and events.
+        current_state (str): The current state of the FSM.
+
+    Returns:
+        str: Mermaid syntax for the flowchart.
+    """
+    link = 0
+    flowchart = "flowchart LR\n"
+    flowchart += "classDef default stroke:black,stroke-width:2px\n"
+    flowchart += "linkStyle default background-color:#b5b3ae,stroke-width:2px\n"
+    for state, events in states.items():
+        for event, target in events.items():
+            flowchart += f"{state}({state}) -->|{event}| {target}({target})\n"
+            if state == current_state:
+                flowchart += f"style {state} fill:#93c54b,color:#325d88\n"
+                flowchart += (
+                    f"linkStyle {link} background-color:#93c54b,color:#325d88\n"
+                )
+            link += 1
+
+    return flowchart
+
+
 @login_required
 def state_machine(request: HttpRequest) -> HttpResponse:
     """Triggers a chan."""
@@ -29,20 +56,8 @@ def state_machine(request: HttpRequest) -> HttpResponse:
 
     states = fsm.get_fsm_architecture()
     current_state = ci.get_fsm_state()
-
     table = tables.FSMTable.from_dict(states, current_state)
-
-    link = 0
-    flowchart = ""
-    for state, events in states.items():
-        for event, target in events.items():
-            flowchart += f"{state}({state}) -->|{event}| {target}({target})\n"
-            if state == current_state:
-                flowchart += f"style {state} fill:#93c54b,color:#325d88\n"
-                flowchart += (
-                    f"linkStyle {link} background-color:#93c54b,color:#325d88\n"
-                )
-            link += 1
+    flowchart = make_fsm_flowchart(states, current_state)
 
     return render(
         request=request,
