@@ -1,55 +1,151 @@
+<!-- Adjusting the layout for full-width FSM panel with left-side App Tree and ensuring content expansion -->
 {% extends "main/base.html" %}
 {% block title %}
   Controller
 {% endblock title %}
 {% block extra_css %}
   <style>
-    #hide-messages-button {
-      filter: invert(1);
-      float: right;
-    }
-    .message-item {
-      font-family: 'Arial', sans-serif;
-      font-size: 0.875rem;
-      line-height: 1.4;
-    }
     .flex-container {
-      display: flex;
-      gap: 15px;
+        display: flex;
+        gap: 20px;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+    .flex-container .app-tree-panel {
+        flex: 0 0 300px;
+        max-width: 300px;
+        min-width: 200px;
+        display: flex;
+        flex-direction: column; /* Stack children vertically */
+        height: 100%; /* Make the panel take full height */
+    }
+    .card {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1; /* Allow the card to grow to fill its container */
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+    .card-body {
+        flex-grow: 1; /* Make the card body take all available space */
+        overflow-y: auto; /* Enable vertical scrolling */
+        display: flex;
+        flex-direction: column;
+        padding: 10px; /* Add spacing */
+        box-sizing: border-box;
+    }
+    #app_tree_summary {
+        flex-grow: 1; /* Allow the tree summary to expand within card-body */
+        overflow-y: auto; /* Enable vertical scrolling for large content */
+        padding: 10px;
+        box-sizing: border-box;
     }
     .flex-container .fsm-panel {
-      flex: 1;
+        flex: 1;
     }
-    .flex-container .message-panel {
-      width: 30%;
+    .message-item {
+        font-family: 'Arial', sans-serif;
+        font-size: 0.875rem;
+        line-height: 1.4;
+    }
+    .message-panel {
+        width: 100%;
+    }
+    dialog {
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    }
+    dialog[open] {
+        animation: fadeIn 0.3s ease-out;
+    }
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+    sl-tree {
+        --tree-indent: 25px;
+        --tree-expand-icon-size: 20px;
+        margin: 0;
+    }
+    sl-tree-item {
+        padding-left: calc(var(--tree-indent) * var(--level, 1));
+        border-left: 2px solid #ddd;
+        margin-bottom: 5px;
+        padding: 5px 10px;
+        border-radius: 4px;
+        transition: background-color 0.2s, box-shadow 0.2s;
+    }
+    sl-tree-item:nth-child(odd) {
+        background-color: #f9f9f9;
+    }
+    sl-tree-item:nth-child(even) {
+        background-color: #fff;
+    }
+    sl-tree-item:hover {
+        background-color: #e6f7ff;
+        border-left-color: #1890ff;
+        box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+    }
+    sl-tree-item.active {
+        background-color: #d6e4ff;
+        border-left: 3px solid #0056b3;
+        font-weight: bold;
+    }
+    @media (max-width: 768px) {
+        .flex-container {
+            flex-direction: column;
+            padding: 10px;
+        }
+        .app-tree-panel {
+            flex: none;
+            width: 100%;
+        }
+        .fsm-panel {
+            flex: none;
+            width: 100%;
+        }
     }
   </style>
 {% endblock extra_css %}
+
 {% block extra_js %}
   <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.18.0/cdn/themes/light.css" />
   <script type="module"
           src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.18.0/cdn/shoelace-autoloader.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"></script>
+  <script>
+    // Initialize mermaid diagrams.
+    mermaid.initialize({
+        themeVariables: {
+            background: "white",
+            primaryColor: "#007bff",
+            nodeBorder: "#dddddd",
+            edgeLabelBackground: "transparent",
+        },
+    });
+
+    // Refresh mermaid diagrams after htmx swap.
+    document.body.addEventListener("htmx:afterSwap", (event) => {
+        const target = event.detail.target;
+        if (target && target.querySelector(".mermaid")) {
+            mermaid.run({ nodes: target.querySelectorAll(".mermaid") });
+        }
+    });
+  </script>
 {% endblock extra_js %}
+
 {% block content %}
   <div class="container-fluid no-padding no-margin">
     <div class="flex-container" id="main-content">
-      <!-- Finite state machine Panel -->
-      <div class="fst-panel">
-        <div class="card shadow-sm rounded">
-          <div class="card-header bg-primary text-white rounded-top mb-3">
-            <h5>Finite State Machine</h5>
-          </div>
-          <div class="card-body">
-            <div hx-get="{% url 'controller:state_machine' %}"
-                 hx-trigger="load"
-                 hx-target="#state-machine"></div>
-            <div id="state-machine"></div>
-          </div>
-        </div>
-      </div>
-      <div class="fst-panel">
+      <!-- Application Tree Panel -->
+      <div class="app-tree-panel">
         <div class="card shadow-sm rounded">
           <div class="card-header bg-primary text-white rounded-top mb-3">
             <a href="{% url 'controller:app_tree' %}">
@@ -64,6 +160,22 @@
           </div>
         </div>
       </div>
+      <!-- Finite State Machine Panel -->
+      <div class="fsm-panel">
+        <div class="card shadow-sm rounded">
+          <div class="card-header bg-primary text-white rounded-top mb-3">
+            <h5>Finite State Machine</h5>
+          </div>
+          <div class="card-body">
+            <div hx-get="{% url 'controller:state_machine' %}"
+                 hx-trigger="load"
+                 hx-target="#state-machine"></div>
+            <div id="state-machine"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="message-panel">
       {% include "main/messages.html" with topic="ERS" %}
     </div>
   </div>
