@@ -11,6 +11,35 @@ from controller.tables import FSMTable
 from ...utils import LoginRequiredTest
 
 
+def test_make_fsm_flowchart():
+    """Test the make_fsm_flowchart function."""
+    from controller.views.partials import make_fsm_flowchart
+
+    states = {
+        "state1": {
+            "event1": "state2",
+            "event2": "state3",
+        },
+        "state2": {
+            "event3": "state1",
+        },
+    }
+    current_state = "state2"
+    result = make_fsm_flowchart(states, current_state)
+
+    assert "flowchart LR\n" in result
+    assert "classDef default " in result
+    assert "linkStyle default " in result
+
+    assert "state1(state1) -->|event1| state2(state2)\n" in result
+    assert "state1(state1) -->|event2| state3(state3)\n" in result
+    assert "state2(state2) -->|event3| state1(state1)\n" in result
+
+    # Check current state is highlighted.
+    assert "style state2 fill:#93c54b,color:#325d88\n" in result
+    assert "linkStyle 2 background-color:#93c54b,color:#325d88\n" in result
+
+
 class TestFSMView(LoginRequiredTest):
     """Test the controller.views.state_machine view function."""
 
