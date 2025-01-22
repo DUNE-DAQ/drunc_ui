@@ -92,9 +92,7 @@ def toggle_text(text: str, current: bool) -> SafeString:
     """
     if not current:
         return mark_safe(text.upper())
-    return mark_safe(
-        f'<span class="fw-bold text-primary">{text.upper()}</span>'
-    )
+    return mark_safe(f'<span class="fw-bold text-primary">{text.upper()}</span>')
 
 
 def toggle_button(event: str, current: bool) -> SafeString:
@@ -108,10 +106,7 @@ def toggle_button(event: str, current: bool) -> SafeString:
         str: The button as a safe string.
     """
     if current:
-        action = (
-            f"hx-post={reverse('controller:dialog')} "
-            f"hx-target='#arguments-dialog'"
-        )
+        action = f"hx-post={reverse('controller:dialog')} hx-target='#arguments-dialog'"
         return mark_safe(
             f"<input type='submit' value='{event}' name='event' {action} "
             + "class='btn btn-success w-100 mx-2 small-text'>"
@@ -128,7 +123,10 @@ class AppTreeTable(tables.Table):
     name = tables.Column(
         verbose_name="Application Name",
         attrs={
-            "td": {"class": "text-break text-start small-text", "style": "width:300px;"},
+            "td": {
+                "class": "text-break text-start small-text",
+                "style": "width:300px;",
+            },
             "th": {"class": "header-style small-text"},
         },
     )
@@ -136,7 +134,10 @@ class AppTreeTable(tables.Table):
     host = tables.Column(
         verbose_name="Host",
         attrs={
-            "td": {"class": "text-primary text-start small-text", "style": "width:200px;"},
+            "td": {
+                "class": "text-primary text-start small-text",
+                "style": "width:200px;",
+            },
             "th": {"class": "header-style small-text"},
         },
     )
@@ -144,7 +145,10 @@ class AppTreeTable(tables.Table):
     detector = tables.Column(
         verbose_name="Detector",
         attrs={
-            "td": {"class": "text-primary text-start small-text", "style": "width:200px;"},
+            "td": {
+                "class": "text-primary text-start small-text",
+                "style": "width:200px;",
+            },
             "th": {"class": "header-style small-text"},
         },
     )
