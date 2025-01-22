@@ -122,7 +122,10 @@ class AppTreeTable(tables.Table):
     name = tables.Column(
         verbose_name="Application Name",
         attrs={
-            "td": {"class": "text-break text-start small-text", "style": "width:300px;"},
+            "td": {
+                "class": "text-break text-start small-text",
+                "style": "width:300px;",
+            },
             "th": {"class": "header-style small-text"},
         },
     )
@@ -130,7 +133,10 @@ class AppTreeTable(tables.Table):
     host = tables.Column(
         verbose_name="Host",
         attrs={
-            "td": {"class": "text-primary text-start small-text", "style": "width:200px;"},
+            "td": {
+                "class": "text-primary text-start small-text",
+                "style": "width:200px;",
+            },
             "th": {"class": "header-style small-text"},
         },
     )
@@ -138,7 +144,10 @@ class AppTreeTable(tables.Table):
     detector = tables.Column(
         verbose_name="Detector",
         attrs={
-            "td": {"class": "text-primary text-start small-text", "style": "width:200px;"},
+            "td": {
+                "class": "text-primary text-start small-text",
+                "style": "width:200px;",
+            },
             "th": {"class": "header-style small-text"},
         },
     )
