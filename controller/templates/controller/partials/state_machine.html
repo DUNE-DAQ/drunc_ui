@@ -3,14 +3,14 @@
 <div class="row align-items-start">
   <!-- Table Section (Control Form) -->
   <div class="col-md-7 col-12 mb-3">
-    <form style="padding: 15px; font-size: 1rem;">
+    <form class="control-form">
       {% csrf_token %}
       {% render_table table %}
     </form>
   </div>
   <!-- Mermaid Diagram Section -->
   <div class="col-md-5 col-12 mb-3">
-    <pre class="mermaid" style="width: 100%; height: auto; min-height: 200px;">
+    <pre class="mermaid">
       flowchart TD
 
       %% FSM states (nodes).
