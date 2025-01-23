@@ -11,6 +11,31 @@ from .. import controller_interface as ci
 from .. import forms, fsm, tables
 
 
+def make_fsm_flowchart(states: dict[str, dict[str, str]], current_state: str) -> str:
+    """Create Mermaid syntax for a flowchart of FSM states and transitions.
+
+    Args:
+        states (dict[str, dict[str, str]]): The FSM states and events.
+        current_state (str): The current state of the FSM.
+
+    Returns:
+        str: Mermaid syntax for the flowchart.
+    """
+    link = 0
+    chart = "flowchart LR\n"
+    chart += "classDef default stroke:black,stroke-width:2px\n"
+    chart += "linkStyle default background-color:#b5b3ae,stroke-width:2px\n"
+    for state, events in states.items():
+        for event, target in events.items():
+            chart += f"{state}({state}) -->|{event}| {target}({target})\n"
+            if state == current_state:
+                chart += f"style {state} fill:#93c54b,color:#325d88\n"
+                chart += f"linkStyle {link} background-color:#93c54b,color:#325d88\n"
+            link += 1
+
+    return chart
+
+
 @login_required
 def state_machine(request: HttpRequest) -> HttpResponse:
     """Triggers a chan."""
@@ -27,11 +52,14 @@ def state_machine(request: HttpRequest) -> HttpResponse:
         else:
             raise ValueError(f"Invalid form: {form.errors}")
 
-    table = tables.FSMTable.from_dict(fsm.get_fsm_architecture(), ci.get_fsm_state())
+    states = fsm.get_fsm_architecture()
+    current_state = ci.get_fsm_state()
+    table = tables.FSMTable.from_dict(states, current_state)
+    flowchart = make_fsm_flowchart(states, current_state)
 
     return render(
         request=request,
-        context=dict(table=table),
+        context=dict(table=table, flowchart=flowchart),
         template_name="controller/partials/state_machine.html",
     )
 

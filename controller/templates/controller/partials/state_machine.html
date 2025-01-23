@@ -1,6 +1,32 @@
 {% load render_table from django_tables2 %}
 <div _="on load if #argsDialog is not null remove #argsDialog"></div>
-<form>
-  {% csrf_token %}
-  {% render_table table %}
-</form>
+<div class="row">
+  <pre class="mermaid">
+    {{ flowchart }}
+  </pre>
+  <form>
+    {% csrf_token %}
+    {% render_table table %}
+  </form>
+</div>
+<script>
+  // Initialize mermaid diagrams.
+  mermaid.initialize({
+    theme: "base",
+    // Make flowchart text uppercase.
+    themeCSS: ".label { text-transform: uppercase; }",
+    themeVariables: {
+      primaryColor: "#b5b3ae",
+      primaryTextColor: "white",
+      // HACK: for setting custom edge label backgrounds.
+      edgeLabelBackground: "transparent",
+    },
+  });
+  // Refresh mermaid diagrams after htmx swap.
+  document.body.addEventListener("htmx:afterSwap", (event) => {
+      const target = event.detail.target;
+      if (target && target.querySelector(".mermaid")) {
+          mermaid.run({nodes: target.querySelectorAll(".mermaid")});
+      }
+  });
+</script>
