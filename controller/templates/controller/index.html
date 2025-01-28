@@ -185,25 +185,6 @@
   <script type="module"
           src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.18.0/cdn/shoelace-autoloader.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"></script>
-  <script>
-    // Initialize mermaid diagrams.
-    mermaid.initialize({
-        themeVariables: {
-            background: "white",
-            primaryColor: "#007bff",
-            nodeBorder: "#dddddd",
-            edgeLabelBackground: "transparent",
-        },
-    });
-
-    // Refresh mermaid diagrams after htmx swap.
-    document.body.addEventListener("htmx:afterSwap", (event) => {
-        const target = event.detail.target;
-        if (target && target.querySelector(".mermaid")) {
-            mermaid.run({ nodes: target.querySelectorAll(".mermaid") });
-        }
-    });
-  </script>
 {% endblock extra_js %}
 {% block content %}
   <div class="container-fluid no-padding no-margin">
