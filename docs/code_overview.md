@@ -12,6 +12,10 @@ For this reason the code is organised into the following [Django apps]:
 - `controller` - the Controller UI.
 - `main` - common functionality and shared infrastructure between the UIs.
 
+It also contains the following packages (not Django apps):
+
+- `interfaces` - Code to interface with the `drunc` endpoints.
+
 This separation of concerns has been chosen to allow splitting the UIs into separate
 code bases at a later point if desired.
 
