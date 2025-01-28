@@ -22,7 +22,7 @@ def make_fsm_flowchart(states: dict[str, dict[str, str]], current_state: str) ->
         str: Mermaid syntax for the flowchart.
     """
     link = 0
-    chart = "flowchart LR\n"
+    chart = "flowchart TD\n"
     chart += "classDef default stroke:black,stroke-width:2px\n"
     chart += "linkStyle default background-color:#b5b3ae,stroke-width:2px\n"
     for state, events in states.items():

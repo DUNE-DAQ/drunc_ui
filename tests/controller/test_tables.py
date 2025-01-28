@@ -21,7 +21,9 @@ def test_toggle_button_not_current(mocker):
     mocker.patch("controller.tables.reverse", return_value="/mocked_url/")
     result = toggle_button("event", False)
     assert isinstance(result, SafeString)
-    assert result == "<input value=event disabled class='btn btn-secondary w-100 mx-2'>"
+    assert result == (
+        "<input value='event' disabled class='btn btn-secondary w-100 mx-2 small-text'>"
+    )
 
 
 def test_toggle_button_current(mocker):
@@ -30,8 +32,8 @@ def test_toggle_button_current(mocker):
     result = toggle_button("event", True)
     assert isinstance(result, SafeString)
     assert result == (
-        "<input type='submit' value=event name='event' hx-post=/mocked_url/ "
-        "hx-target='#arguments-dialog' class='btn btn-success w-100 mx-2'>"
+        "<input type='submit' value='event' name='event' hx-post=/mocked_url/ "
+        "hx-target='#arguments-dialog' class='btn btn-success w-100 mx-2 small-text'>"
     )
 
 

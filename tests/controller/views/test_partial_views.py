@@ -27,7 +27,7 @@ def test_make_fsm_flowchart():
     current_state = "state2"
     result = make_fsm_flowchart(states, current_state)
 
-    assert "flowchart LR\n" in result
+    assert "flowchart TD\n" in result
     assert "classDef default " in result
     assert "linkStyle default " in result
 
