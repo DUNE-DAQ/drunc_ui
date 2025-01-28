@@ -12,7 +12,7 @@ from interfaces.process_manager_interface import (
 def test_get_process_manager_driver(mocker):
     """Test the get_process_manager_driver function."""
     mock_driver = mocker.patch(
-        "process_manager.process_manager_interface.ProcessManagerDriver"
+        "interfaces.process_manager_interface.ProcessManagerDriver"
     )
 
     username = "testuser"
