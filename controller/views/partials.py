@@ -7,8 +7,9 @@ from django.forms import Form
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
-from .. import controller_interface as ci
-from .. import forms, fsm, tables
+from interfaces import controller_interface as ci
+
+from .. import app_tree, forms, fsm, tables
 
 
 def make_fsm_flowchart(states: dict[str, dict[str, str]], current_state: str) -> str:
@@ -88,7 +89,7 @@ def app_tree_view_summary(request: HttpRequest) -> HttpResponse:
     """Renders the app tree view summary."""
     return render(
         request=request,
-        context=dict(tree=ci.get_app_tree(request.user.username)),
+        context=dict(tree=app_tree.get_app_tree(request.user.username)),
         template_name="controller/partials/app_tree_summary_partial.html",
     )
 
@@ -96,7 +97,7 @@ def app_tree_view_summary(request: HttpRequest) -> HttpResponse:
 @login_required
 def app_tree_view_table(request: HttpRequest) -> HttpResponse:
     """View that renders the app tree view table."""
-    table = tables.AppTreeTable(ci.get_app_tree(request.user.username).to_list())
+    table = tables.AppTreeTable(app_tree.get_app_tree(request.user.username).to_list())
     return render(
         request=request,
         context=dict(table=table),

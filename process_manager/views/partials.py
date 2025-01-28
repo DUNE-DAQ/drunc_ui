@@ -5,9 +5,9 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from druncschema.process_manager_pb2 import ProcessInstance
 
+from interfaces.process_manager_interface import get_session_info
 from main.views.utils import handle_errors
 
-from ..process_manager_interface import get_session_info
 from ..tables import ProcessTable
 
 
