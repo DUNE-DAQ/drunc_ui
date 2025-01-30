@@ -2,7 +2,7 @@ from django.conf import settings
 from druncschema.process_manager_pb2 import LogRequest, ProcessQuery, ProcessUUID
 from druncschema.token_pb2 import Token
 
-from process_manager.process_manager_interface import (
+from interfaces.process_manager_interface import (
     boot_process,
     get_process_logs,
     get_process_manager_driver,
@@ -12,7 +12,7 @@ from process_manager.process_manager_interface import (
 def test_get_process_manager_driver(mocker):
     """Test the get_process_manager_driver function."""
     mock_driver = mocker.patch(
-        "process_manager.process_manager_interface.ProcessManagerDriver"
+        "interfaces.process_manager_interface.ProcessManagerDriver"
     )
 
     username = "testuser"

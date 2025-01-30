@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 
-from ..process_manager_interface import ProcessAction, process_call
+from interfaces.process_manager_interface import ProcessAction, process_call
 
 
 @login_required
