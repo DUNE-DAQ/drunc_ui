@@ -71,8 +71,8 @@ def from_ers_message(message: Any) -> DruncMessage:  # type: ignore [misc]
     time = datetime.fromtimestamp(message.timestamp / 1e3, tz=timezone.utc)
 
     try:
-        # Package and modules names to be defined
-        from ers.issue_pb2 import IssueChain
+        # TODO: Package and module names to be defined.
+        from ers.issue_pb2 import IssueChain  # type: ignore [import-not-found]
 
     except ModuleNotFoundError:
         return DruncMessage(
@@ -84,11 +84,14 @@ def from_ers_message(message: Any) -> DruncMessage:  # type: ignore [misc]
 
     ic = IssueChain()
     ic.ParseFromString(message.value)
+
+    # TODO: Check if the value of this is valid.
+    severity = ic.final.severity.upper()
     return DruncMessage(
         topic=message.topic,
         timestamp=time,
         message=ic.final.message,
-        severity=ic.final.severity.upper(),
+        severity=severity,
     )
 
 
