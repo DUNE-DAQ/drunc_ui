@@ -33,6 +33,62 @@ BROADCAST_TYPE_SEVERITY = {
 }
 
 
+def from_kafka_message(message: Any) -> DruncMessage:  # type: ignore [misc]
+    """Process a Kafka style of message.
+
+    Args:
+        message: Message to be processed.
+
+    Return:
+        A DruncMessage object to be ingested by the database.
+    """
+    # Convert Kafka timestamp (milliseconds) to datetime (seconds).
+    time = datetime.fromtimestamp(message.timestamp / 1e3, tz=timezone.utc)
+
+    bm = BroadcastMessage()
+    bm.ParseFromString(message.value)
+    return DruncMessage(
+        topic=message.topic,
+        timestamp=time,
+        message=bm.data.value.decode("utf-8"),
+        severity=BROADCAST_TYPE_SEVERITY.get(bm.type, "INFO"),
+    )
+
+
+def from_ers_message(message: Any) -> DruncMessage:  # type: ignore [misc]
+    """Process a ERS style of message.
+
+    TODO: This does not work at the moment as IssueChain is not yet available in a
+    python package, so just publishing a placeholder message.
+
+    Args:
+        message: Message to be processed.
+
+    Return:
+        A DruncMessage object to be ingested by the database.
+    """
+    # Convert Kafka timestamp (milliseconds) to datetime (seconds).
+    time = datetime.fromtimestamp(message.timestamp / 1e3, tz=timezone.utc)
+
+    try:
+        ic = IssueChain()
+    except NameError:
+        return DruncMessage(
+            topic=message.topic,
+            timestamp=time,
+            message="ERS message could not be processed.",
+            severity="ERROR",
+        )
+
+    ic.ParseFromString(message.value)
+    return DruncMessage(
+        topic=message.topic,
+        timestamp=time,
+        message=ic.final.message,
+        severity=ic.final.severity.upper(),
+    )
+
+
 class Command(BaseCommand):
     """Consumes messages from Kafka and stores them in the database."""
 
@@ -51,33 +107,21 @@ class Command(BaseCommand):
 
         self.stdout.write("Listening for messages from Kafka.")
         while True:
-            for messages in consumer.poll(timeout_ms=500).values():
+            for topic, messages in consumer.poll(timeout_ms=500).items():
                 message_records = []
+
+                process_message = (
+                    from_ers_message
+                    if topic.topic.startswith("ers")
+                    else from_kafka_message
+                )
 
                 for message in messages:
                     if debug:
                         self.stdout.write(f"Message received: {message}")
                         self.stdout.flush()
 
-                    # Convert Kafka timestamp (milliseconds) to datetime (seconds).
-                    time = datetime.fromtimestamp(
-                        message.timestamp / 1e3, tz=timezone.utc
-                    )
-
-                    bm = BroadcastMessage()
-                    bm.ParseFromString(message.value)
-                    body = bm.data.value.decode("utf-8")
-
-                    severity = BROADCAST_TYPE_SEVERITY.get(bm.type, "INFO")
-
-                    message_records.append(
-                        DruncMessage(
-                            topic=message.topic,
-                            timestamp=time,
-                            message=body,
-                            severity=severity,
-                        )
-                    )
+                    message_records.append(process_message(message))
 
                 if message_records:
                     DruncMessage.objects.bulk_create(message_records)
