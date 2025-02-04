@@ -9,8 +9,9 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
 
+from interfaces.process_manager_interface import boot_process, get_process_logs
+
 from ..forms import BootProcessForm
-from ..process_manager_interface import boot_process, get_process_logs
 
 
 @login_required

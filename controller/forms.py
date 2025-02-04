@@ -3,7 +3,7 @@
 from django.forms import BooleanField, CharField, Field, FloatField, Form, IntegerField
 from druncschema.controller_pb2 import Argument
 
-from . import controller_interface as ci
+from interfaces import controller_interface as ci
 
 
 def get_form_for_event(event: str) -> type[Form]:

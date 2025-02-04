@@ -47,10 +47,10 @@ class TestFSMView(LoginRequiredTest):
 
     def test_empty_post(self, auth_client, mocker):
         """Tests basic calls of view method."""
-        mock_state = mocker.patch("controller.controller_interface.get_fsm_state")
+        mock_state = mocker.patch("interfaces.controller_interface.get_fsm_state")
         mock_state.return_value = "initial"
 
-        mock_send = mocker.patch("controller.controller_interface.send_event")
+        mock_send = mocker.patch("interfaces.controller_interface.send_event")
 
         response = auth_client.post(self.endpoint)
         assert response.status_code == HTTPStatus.OK
@@ -64,8 +64,8 @@ class TestFSMView(LoginRequiredTest):
         """Tests basic calls of view method."""
         from django.forms import Form
 
-        mock_state = mocker.patch("controller.controller_interface.get_fsm_state")
-        mock_send = mocker.patch("controller.controller_interface.send_event")
+        mock_state = mocker.patch("interfaces.controller_interface.get_fsm_state")
+        mock_send = mocker.patch("interfaces.controller_interface.send_event")
         mock_form = mocker.patch("controller.forms.get_form_for_event")
 
         event = choice(fsm.STATES[state])
@@ -126,7 +126,7 @@ class TestAppTreeView(LoginRequiredTest):
 
     def test_get_tree(self, auth_client, mocker):
         """Tests basic calls of view method."""
-        mock_tree = mocker.patch("controller.controller_interface.get_app_tree")
+        mock_tree = mocker.patch("controller.app_tree.get_app_tree")
         apps = app_tree.AppTree(
             "root",
             [app_tree.AppTree("child1", [app_tree.AppTree("grandchild1", [], "")], "")],

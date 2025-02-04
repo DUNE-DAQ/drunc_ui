@@ -3,15 +3,15 @@ import pytest
 
 def test_get_controller_driver(mocker):
     """Test the get_controller_driver function."""
-    mock_driver = mocker.patch("controller.controller_interface.ControllerDriver")
-    mock_uri = mocker.patch("controller.controller_interface.get_controller_uri")
+    mock_driver = mocker.patch("interfaces.controller_interface.ControllerDriver")
+    mock_uri = mocker.patch("interfaces.controller_interface.get_controller_uri")
     mock_uri.return_value = "uri"
     mock_token = mocker.patch(
-        "controller.controller_interface.create_dummy_token_from_uname"
+        "interfaces.controller_interface.create_dummy_token_from_uname"
     )
     mock_token.return_value = "token"
 
-    from controller.controller_interface import get_controller_driver
+    from interfaces.controller_interface import get_controller_driver
 
     get_controller_driver()
     mock_uri.assert_called_once()
@@ -21,12 +21,12 @@ def test_get_controller_driver(mocker):
 
 def test_get_controller_status(mocker):
     """Test the _boot_process function."""
-    from controller.controller_interface import get_controller_status
+    from interfaces.controller_interface import get_controller_status
 
     class MockControllerDriver:
         status = mocker.MagicMock()
 
-    mock = mocker.patch("controller.controller_interface.get_controller_driver")
+    mock = mocker.patch("interfaces.controller_interface.get_controller_driver")
     mock.return_value = MockControllerDriver()
     get_controller_status()
     mock.assert_called_once()
@@ -35,7 +35,7 @@ def test_get_controller_status(mocker):
 
 def test_get_fsm_state(mocker):
     """Test the get_fsm_state function."""
-    from controller.controller_interface import get_fsm_state
+    from interfaces.controller_interface import get_fsm_state
 
     class Data:
         state = 42
@@ -43,7 +43,7 @@ def test_get_fsm_state(mocker):
     class MockDescription:
         data = Data()
 
-    mock = mocker.patch("controller.controller_interface.get_controller_status")
+    mock = mocker.patch("interfaces.controller_interface.get_controller_status")
     mock.return_value = MockDescription()
     assert get_fsm_state() == MockDescription.data.state
     mock.assert_called_once()
@@ -53,7 +53,7 @@ def test_get_arguments(mocker):
     """Test the get_fsm_state function."""
     from dataclasses import dataclass
 
-    from controller.controller_interface import get_arguments
+    from interfaces.controller_interface import get_arguments
 
     event = "event"
 
@@ -68,7 +68,7 @@ def test_get_arguments(mocker):
     class MockDescription:
         data = Commands()
 
-    mock = mocker.patch("controller.controller_interface.get_controller_driver")
+    mock = mocker.patch("interfaces.controller_interface.get_controller_driver")
     mock().describe_fsm.return_value = MockDescription()
     assert get_arguments(event) == ["arg1", "arg2"]
     mock.assert_called()
@@ -84,7 +84,7 @@ def test_process_arguments(mocker):
     from druncschema.controller_pb2 import Argument
     from druncschema.generic_pb2 import bool_msg, float_msg, int_msg, string_msg
 
-    from controller.controller_interface import process_arguments
+    from interfaces.controller_interface import process_arguments
 
     event = "event"
     arguments = {
@@ -101,7 +101,7 @@ def test_process_arguments(mocker):
         Argument(name="bool_arg", type=Argument.Type.BOOL),
     ]
 
-    mock_get_arguments = mocker.patch("controller.controller_interface.get_arguments")
+    mock_get_arguments = mocker.patch("interfaces.controller_interface.get_arguments")
     mock_get_arguments.return_value = valid_args
 
     result = process_arguments(event, arguments)
@@ -121,7 +121,7 @@ def test_process_arguments_missing_args(mocker):
     from druncschema.controller_pb2 import Argument
     from druncschema.generic_pb2 import int_msg, string_msg
 
-    from controller.controller_interface import process_arguments
+    from interfaces.controller_interface import process_arguments
 
     event = "event"
     arguments = {
@@ -138,7 +138,7 @@ def test_process_arguments_missing_args(mocker):
         Argument(name="bool_arg", type=Argument.Type.BOOL),
     ]
 
-    mock_get_arguments = mocker.patch("controller.controller_interface.get_arguments")
+    mock_get_arguments = mocker.patch("interfaces.controller_interface.get_arguments")
     mock_get_arguments.return_value = valid_args
 
     result = process_arguments(event, arguments)
@@ -152,7 +152,7 @@ def test_process_arguments_missing_args(mocker):
 
 def test_send_event(mocker):
     """Test the send_event function."""
-    from controller.controller_interface import send_event
+    from interfaces.controller_interface import send_event
 
     event = "test_event"
     arguments = {"arg1": "value1"}
@@ -163,16 +163,16 @@ def test_send_event(mocker):
     mock_controller.execute_fsm_command.return_value.flag = 0
 
     mock_get_controller_driver = mocker.patch(
-        "controller.controller_interface.get_controller_driver"
+        "interfaces.controller_interface.get_controller_driver"
     )
     mock_get_controller_driver.return_value = mock_controller
 
     mock_process_arguments = mocker.patch(
-        "controller.controller_interface.process_arguments"
+        "interfaces.controller_interface.process_arguments"
     )
     mock_process_arguments.return_value = {"arg1": "packed_value1"}
 
-    mock_FSMCommand = mocker.patch("controller.controller_interface.FSMCommand")
+    mock_FSMCommand = mocker.patch("interfaces.controller_interface.FSMCommand")
 
     send_event(event, arguments)
 
@@ -185,54 +185,9 @@ def test_send_event(mocker):
     mock_controller.execute_fsm_command.assert_called_once()
 
 
-def test_get_app_tree(mocker):
-    """Test the get_app_tree function."""
-    from controller.app_tree import AppTree
-    from controller.controller_interface import get_app_tree
-
-    class MockStatus:
-        def __init__(self, name, children):
-            self.name = name
-            self.children = children
-
-    mock_get_controller_status = mocker.patch(
-        "controller.controller_interface.get_controller_status"
-    )
-    hostnames = {"root": ""}
-    detectors = {"child": "det1"}
-
-    # Test with no status provided (default case)
-    root_status = MockStatus("root", [])
-    mock_get_controller_status.return_value = root_status
-    result = get_app_tree("a_user", None, hostnames, detectors)
-    assert result == AppTree("root", [], "")
-    mock_get_controller_status.assert_called_once()
-
-    # Test with a provided status
-    child_status = MockStatus("child", [])
-    root_status_with_child = MockStatus("root", [child_status])
-    result = get_app_tree("a_user", root_status_with_child, hostnames, detectors)
-    assert result == AppTree("root", [AppTree("child", [], "unknown", "det1")], "")
-
-    # Test with nested children
-    grandchild_status = MockStatus("grandchild", [])
-    child_status_with_grandchild = MockStatus("child", [grandchild_status])
-    root_status_with_nested_children = MockStatus(
-        "root", [child_status_with_grandchild]
-    )
-    result = get_app_tree(
-        "a_user", root_status_with_nested_children, hostnames, detectors
-    )
-    assert result == AppTree(
-        "root",
-        [AppTree("child", [AppTree("grandchild", [], "unknown")], "unknown", "det1")],
-        "",
-    )
-
-
 def test_get_detectors(mocker):
     """Test the get_app_tree function."""
-    from controller.controller_interface import get_detectors
+    from interfaces.controller_interface import get_detectors
 
     class MockData:
         def __init__(self, name, info):
@@ -245,7 +200,7 @@ def test_get_detectors(mocker):
             self.children = children
 
     mock_controller = mocker.patch(
-        "controller.controller_interface.get_controller_driver"
+        "interfaces.controller_interface.get_controller_driver"
     )
 
     # No children

@@ -49,7 +49,7 @@ def dummy_session_data() -> dict[str, str | int]:
 def grpc_mock(mocker):
     """Mock out the method that generates gRPC calls to external interfaces."""
     yield mocker.patch(
-        "process_manager.process_manager_interface.ProcessManagerDriver.send_command_aio"
+        "interfaces.process_manager_interface.ProcessManagerDriver.send_command_aio"
     )
 
 
@@ -57,5 +57,5 @@ def grpc_mock(mocker):
 def mock_get_process_manager_driver(mocker):
     """Mock out the get_process_manager_driver function."""
     return mocker.patch(
-        "process_manager.process_manager_interface.get_process_manager_driver"
+        "interfaces.process_manager_interface.get_process_manager_driver"
     )
