@@ -221,3 +221,11 @@ def test_get_detectors(mocker):
     mock_controller().describe.return_value = root_status_with_none_child
     result = get_detectors()
     assert result == {"root": ""}
+
+
+def test_get_configs():
+    """Test the get_configs function."""
+    from interfaces.controller_interface import get_configs
+
+    configs = get_configs()
+    assert all("file" in config.keys() and "id" in config.keys() for config in configs)
