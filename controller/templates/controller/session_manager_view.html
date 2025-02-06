@@ -78,10 +78,10 @@
             <h5>Available configurations</h5>
           </div>
           <div class="card-body">
-            <div hx-get="{% url 'controller:available_config' %}"
+            <div hx-get="{% url 'controller:available_config_table' %}"
                  hx-trigger="load, every 1s"
-                 hx-target="#available_config"></div>
-            <div id="available_config"></div>
+                 hx-target="#available_config_table"></div>
+            <div id="available_config_table"></div>
           </div>
         </div>
       </div>

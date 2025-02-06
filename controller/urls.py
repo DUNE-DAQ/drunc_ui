@@ -17,9 +17,9 @@ partial_urlpatterns = [
         name="active_sessions_table",
     ),
     path(
-        "available_config",
+        "available_config_table",
         partials.available_configs_table_view,
-        name="available_config",
+        name="available_config_table",
     ),
 ]
 
