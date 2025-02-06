@@ -178,3 +178,26 @@ def get_configs() -> list[dict[str, str]]:
             "id": "local-2x3-config",
         },
     ]
+
+
+def get_sessions() -> list[dict[str, str]]:
+    """Get the active sessions in the controller.
+
+    TODO: Placeholder function with random values. Pull data dynamically when the
+    relevant endpoint is implemented.
+
+    Returns:
+        List of dictionaries indicating the session name and the actor name (i.e. the
+        user who boots the session).
+    """
+    import random
+    import uuid
+
+    actors = ["Alice", "Bob", "Gandalf"]
+    return [
+        {
+            "name": uuid.uuid4().hex,
+            "actor": random.choice(actors),
+        }
+        for _ in range(random.randint(4, 10))
+    ]
