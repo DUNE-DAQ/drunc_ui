@@ -183,21 +183,23 @@ def get_configs() -> list[dict[str, str]]:
 def get_sessions() -> list[dict[str, str]]:
     """Get the active sessions in the controller.
 
-    TODO: Placeholder function with random values. Pull data dynamically when the
+    TODO: Placeholder function with hardcoded values. Pull data dynamically when the
     relevant endpoint is implemented.
 
     Returns:
         List of dictionaries indicating the session name and the actor name (i.e.
         typically, the user who boots the session).
     """
-    import random
-    import uuid
-
     actors = ["Alice", "Bob", "Gandalf"]
+    names = [
+        "a8098c1a-f86e-11da-bd1a-00112444be1e",
+        "6fa459ea-ee8a-3ca4-894e-db77e160355e",
+        "16fd2706-8baf-433b-82eb-8c7fada847da",
+    ]
     return [
         {
-            "name": uuid.uuid4().hex,
-            "actor": random.choice(actors),
+            "name": name,
+            "actor": actor,
         }
-        for _ in range(random.randint(4, 10))
+        for name, actor in zip(names, actors)
     ]
