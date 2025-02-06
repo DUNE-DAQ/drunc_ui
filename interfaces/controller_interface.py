@@ -187,8 +187,8 @@ def get_sessions() -> list[dict[str, str]]:
     relevant endpoint is implemented.
 
     Returns:
-        List of dictionaries indicating the session name and the actor name (i.e. the
-        user who boots the session).
+        List of dictionaries indicating the session name and the actor name (i.e.
+        typically, the user who boots the session).
     """
     import random
     import uuid
