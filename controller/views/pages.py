@@ -24,3 +24,12 @@ def app_tree_view(request: HttpRequest) -> HttpResponse:
 def ers_logs(request: HttpRequest) -> HttpResponse:
     """View that renders the ERSCONTROL log messages page."""
     return render(request=request, template_name="controller/ers_logs.html")
+
+
+@login_required
+def session_manager_view(request: HttpRequest) -> HttpResponse:
+    """View that renders the session manager page."""
+    return render(
+        request=request,
+        template_name="controller/session_manager_view.html",
+    )
