@@ -9,7 +9,7 @@ from django.core.management.base import BaseCommand
 from druncschema.broadcast_pb2 import BroadcastMessage, BroadcastType
 from kafka import KafkaConsumer
 
-from ers.issue_pb2 import IssueChain
+from ers.issue_pb2 import IssueChain  # type: ignore [attr-defined]
 
 from ...models import DruncMessage
 
