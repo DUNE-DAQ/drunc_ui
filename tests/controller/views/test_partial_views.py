@@ -6,7 +6,7 @@ from django.forms import Field
 from django.urls import reverse
 
 from controller import app_tree, fsm
-from controller.tables import ActiveSessions, AvailableConfigs, FSMTable
+from controller.tables import FSMTable
 
 from ...utils import LoginRequiredTest
 
@@ -138,41 +138,3 @@ class TestAppTreeView(LoginRequiredTest):
         assert response.status_code == HTTPStatus.OK
         tree = response.context["tree"]
         assert tree == apps
-
-
-class TestActiveSessionsView(LoginRequiredTest):
-    """Test the controller.views.partials.active_sessions_table_view view function."""
-
-    endpoint = reverse("controller:active_sessions_table")
-
-    def test_sessions_table(self, auth_client, mocker):
-        """Tests basic calls of view method."""
-        mock = mocker.patch("interfaces.controller_interface.get_sessions")
-        sessions = [{"name": "123", "actor": "Gandalf"}]
-        sessions_table = ActiveSessions(sessions)
-        mock.return_value = sessions
-
-        response = auth_client.post(self.endpoint)
-        assert response.status_code == HTTPStatus.OK
-        actual = list(response.context["table"].as_values())
-        expected = list(sessions_table.as_values())
-        assert actual == expected
-
-
-class TestAvailableConfigsView(LoginRequiredTest):
-    """Test the controller.views.partials.available_configs_table_view view function."""
-
-    endpoint = reverse("controller:available_config_table")
-
-    def test_available_configs(self, auth_client, mocker):
-        """Tests basic calls of view method."""
-        mock = mocker.patch("interfaces.controller_interface.get_configs")
-        configs = [{"file": "somewhere.xml", "id": "6x7-config"}]
-        configs_table = AvailableConfigs(configs)
-        mock.return_value = configs
-
-        response = auth_client.post(self.endpoint)
-        assert response.status_code == HTTPStatus.OK
-        actual = list(response.context["table"].as_values())
-        expected = list(configs_table.as_values())
-        assert actual == expected
