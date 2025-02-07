@@ -10,3 +10,4 @@ db/*
 !drunc_docker_service/process-manager-kafka.json
 !process_manager
 !controller
+!interfaces
