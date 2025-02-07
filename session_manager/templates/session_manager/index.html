@@ -64,7 +64,7 @@
             <h5>Active sessions</h5>
           </div>
           <div class="card-body">
-            <div hx-get="{% url 'controller:active_sessions_table' %}"
+            <div hx-get="{% url 'session_manager:active_sessions_table' %}"
                  hx-trigger="load, every 1s"
                  hx-target="#active_sessions_table"></div>
             <div id="active_sessions_table"></div>
@@ -78,7 +78,7 @@
             <h5>Available configurations</h5>
           </div>
           <div class="card-body">
-            <div hx-get="{% url 'controller:available_config_table' %}"
+            <div hx-get="{% url 'session_manager:available_config_table' %}"
                  hx-trigger="load, every 1s"
                  hx-target="#available_config_table"></div>
             <div id="available_config_table"></div>
