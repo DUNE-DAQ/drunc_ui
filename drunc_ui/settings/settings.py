@@ -132,7 +132,13 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 # Custom settings
-INSTALLED_APPS += ["main", "process_manager", "controller", "django_tables2"]
+INSTALLED_APPS += [
+    "main",
+    "process_manager",
+    "controller",
+    "django_tables2",
+    "session_manager",
+]
 
 
 MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
