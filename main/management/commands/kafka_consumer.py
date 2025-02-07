@@ -72,8 +72,8 @@ def from_ers_message(message: Any) -> DruncMessage:  # type: ignore [misc]
     ic = IssueChain()
     ic.ParseFromString(message.value)
 
-    # TODO: Check the valid options for severity.
-    severity = ic.final.severity.upper()
+    # FATAL = CRITICAL, so we replace the string for consistency
+    severity = ic.final.severity.upper().replace("FATAL", "CRITICAL") or "INFO"
 
     return DruncMessage(
         topic=message.topic,
