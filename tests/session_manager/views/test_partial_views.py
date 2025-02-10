@@ -14,7 +14,7 @@ class TestActiveSessionsView(LoginRequiredTest):
 
     def test_sessions_table(self, auth_client, mocker):
         """Tests basic calls of view method."""
-        mock = mocker.patch("interfaces.controller_interface.get_sessions")
+        mock = mocker.patch("interfaces.session_manager_interface.get_sessions")
         sessions = [{"name": "123", "actor": "Gandalf"}]
         sessions_table = ActiveSessions(sessions)
         mock.return_value = sessions
@@ -33,7 +33,7 @@ class TestAvailableConfigsView(LoginRequiredTest):
 
     def test_available_configs(self, auth_client, mocker):
         """Tests basic calls of view method."""
-        mock = mocker.patch("interfaces.controller_interface.get_configs")
+        mock = mocker.patch("interfaces.session_manager_interface.get_configs")
         configs = [{"file": "somewhere.xml", "id": "6x7-config"}]
         configs_table = AvailableConfigs(configs)
         mock.return_value = configs
