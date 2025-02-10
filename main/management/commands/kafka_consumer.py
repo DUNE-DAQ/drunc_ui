@@ -24,7 +24,7 @@ BROADCAST_TYPE_SEVERITY = {
     BroadcastType.COMMAND_RECEIVED: "INFO",
     BroadcastType.COMMAND_EXECUTION_SUCCESS: "DEBUG",
     BroadcastType.DRUNC_EXCEPTION_RAISED: "ERROR",
-    BroadcastType.UNHANDLED_EXCEPTION_RAISED: "CRITICAL",
+    BroadcastType.UNHANDLED_EXCEPTION_RAISED: "FATAL",
     BroadcastType.STATUS_UPDATE: "INFO",
     BroadcastType.SUBPROCESS_STATUS_UPDATE: "INFO",
     BroadcastType.DEBUG: "DEBUG",
@@ -71,15 +71,11 @@ def from_ers_message(message: Any) -> DruncMessage:  # type: ignore [misc]
 
     ic = IssueChain()
     ic.ParseFromString(message.value)
-
-    # FATAL = CRITICAL, so we replace the string for consistency
-    severity = ic.final.severity.upper().replace("FATAL", "CRITICAL") or "INFO"
-
     return DruncMessage(
         topic=message.topic,
         timestamp=time,
         message=ic.final.message,
-        severity=severity,
+        severity=ic.final.severity.upper() or "INFO",
     )
 
 
