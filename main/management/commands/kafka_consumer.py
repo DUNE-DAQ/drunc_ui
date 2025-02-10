@@ -9,6 +9,8 @@ from django.core.management.base import BaseCommand
 from druncschema.broadcast_pb2 import BroadcastMessage, BroadcastType
 from kafka import KafkaConsumer
 
+from ers.issue_pb2 import IssueChain  # type: ignore [attr-defined]
+
 from ...models import DruncMessage
 
 BROADCAST_TYPE_SEVERITY = {
@@ -22,7 +24,7 @@ BROADCAST_TYPE_SEVERITY = {
     BroadcastType.COMMAND_RECEIVED: "INFO",
     BroadcastType.COMMAND_EXECUTION_SUCCESS: "DEBUG",
     BroadcastType.DRUNC_EXCEPTION_RAISED: "ERROR",
-    BroadcastType.UNHANDLED_EXCEPTION_RAISED: "CRITICAL",
+    BroadcastType.UNHANDLED_EXCEPTION_RAISED: "FATAL",
     BroadcastType.STATUS_UPDATE: "INFO",
     BroadcastType.SUBPROCESS_STATUS_UPDATE: "INFO",
     BroadcastType.DEBUG: "DEBUG",
@@ -58,9 +60,6 @@ def from_kafka_message(message: Any) -> DruncMessage:  # type: ignore [misc]
 def from_ers_message(message: Any) -> DruncMessage:  # type: ignore [misc]
     """Process a ERS style of message.
 
-    TODO: This does not work at the moment as IssueChain is not yet available in a
-    python package, so just publishing a placeholder message.
-
     Args:
         message: Message to be processed.
 
@@ -70,28 +69,13 @@ def from_ers_message(message: Any) -> DruncMessage:  # type: ignore [misc]
     # Convert Kafka timestamp (milliseconds) to datetime (seconds).
     time = datetime.fromtimestamp(message.timestamp / 1e3, tz=timezone.utc)
 
-    try:
-        # TODO: Package and module names to be defined.
-        from ers.issue_pb2 import IssueChain  # type: ignore [import-not-found]
-
-    except ModuleNotFoundError:
-        return DruncMessage(
-            topic=message.topic,
-            timestamp=time,
-            message="ERS message could not be processed.",
-            severity="ERROR",
-        )
-
     ic = IssueChain()
     ic.ParseFromString(message.value)
-
-    # TODO: Check if the value of this is valid.
-    severity = ic.final.severity.upper()
     return DruncMessage(
         topic=message.topic,
         timestamp=time,
         message=ic.final.message,
-        severity=severity,
+        severity=ic.final.severity.upper() or "INFO",
     )
 
 

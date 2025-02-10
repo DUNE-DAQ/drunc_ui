@@ -23,7 +23,8 @@ class DruncMessage(models.Model):
 
     SEVERITY_CHOICES = (
         ("INFO", "INFO"),
-        ("CRITICAL", "CRITICAL"),
+        ("WARNING", "WARNING"),
+        ("FATAL", "FATAL"),
         ("ERROR", "ERROR"),
         ("DEBUG", "DEBUG"),
     )

@@ -10,7 +10,7 @@ authors = [
 [tool.poetry.dependencies]
 python = ">=3.10,<3.12"
 django = "^5.1"
-whitenoise = "^6.8.2"
+whitenoise = "^6.9.0"
 drunc = { git = "https://github.com/DUNE-DAQ/drunc.git", rev = "1848d8494d5583e1a551134d3cd3a38aea810cd0" }
 druncschema = { git = "https://github.com/DUNE-DAQ/druncschema.git", rev = "91dbf64ef91c31df9fc1d2872d07f484880e5921" }
 django-tables2 = "^2.7.5"
@@ -20,6 +20,7 @@ django-crispy-forms = "^2.3"
 crispy-bootstrap5 = "^2024.10"
 django-stubs-ext = "^5.1.2"
 requests = "^2.32.3"
+types-protobuf = "^5.29.1.20241207"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3"
@@ -27,7 +28,7 @@ pytest-cov = "^6.0.0"
 pytest-mypy = "^0.10.0"
 pytest-mock = "^3.7.0"
 pre-commit = "^4.1.0"
-ruff = "^0.9.4"
+ruff = "^0.9.5"
 djlint = "^1.36.4"
 django-stubs = { extras = ["compatible-mypy"], version = "^5.1.2" }
 pytest-django = "^4.9.0"
@@ -56,7 +57,7 @@ disallow_any_generics = true
 warn_unreachable = true
 warn_unused_ignores = true
 disallow_untyped_defs = true
-exclude = [".venv/", "manage.py", "*/migrations/"]
+exclude = [".venv/", "manage.py", "*/migrations/", "ers/"]
 plugins = ["mypy_django_plugin.main"]
 
 [[tool.mypy.overrides]]
@@ -71,12 +72,12 @@ ignore_missing_imports = true
 django_settings_module = "drunc_ui.settings"
 
 [tool.pytest.ini_options]
-addopts = "-v --mypy -p no:warnings --cov=. --cov-report=html --doctest-modules --ignore=manage.py --ignore=drunc_ui/settings/ --ignore=docs/ --ignore=example_deployment/"
+addopts = "-v --mypy -p no:warnings --cov=. --cov-report=html --doctest-modules --ignore=manage.py --ignore=drunc_ui/settings/ --ignore=docs/ --ignore=example_deployment/ --ignore=ers/"
 DJANGO_SETTINGS_MODULE = "drunc_ui.settings"
 FAIL_INVALID_TEMPLATE_VARS = true
 
 [tool.ruff]
-exclude = ["*/migrations", "example_deployment/*"]
+exclude = ["*/migrations", "example_deployment/*", "ers/*"]
 target-version = "py310"
 
 [tool.ruff.lint]
