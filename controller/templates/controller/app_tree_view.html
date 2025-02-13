@@ -3,33 +3,12 @@
   Application Tree View
 {% endblock title %}
 {% block extra_css %}
-  <style>
-    .flex-container {
-        display: flex;
-        justify-content: center; /* Center content horizontally */
-        gap: 20px;
-    }
-    .app-tree-table {
-        width: 80%; /* Set table width */
-        max-width: 1200px; /* Limit maximum width */
-    }
-    .card {
-        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-    }
-    .card-header {
-        background-color: var(--primary-color, #007bff);
-        color: white;
-        padding: 10px;
-        font-weight: bold;
-    }
-  </style>
+  <link rel="stylesheet" href="/static/styles.css">
 {% endblock extra_css %}
 {% block content %}
   <div class="container-fluid no-padding no-margin">
-    <div class="flex-container">
-      <!-- Application Tree Table -->
-      <div class="app-tree-table">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
         <div class="card shadow-sm rounded">
           <div class="card-header bg-primary text-white rounded-top mb-3">
             <h5>Application Tree</h5>
