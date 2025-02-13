@@ -1,6 +1,6 @@
 site_name: Drunc UI
 
-watch: [main, process_manager, controller, interfaces]
+watch: [main, process_manager, controller, interfaces, session_manager]
 
 theme:
   name: material
@@ -37,8 +37,9 @@ plugins:
 nav:
   - Home: index.md
   - Code Overview: code_overview.md
-  - Process Manager UI: process_manager.md
   - Controller UI: controller.md
+  - Process Manager UI: process_manager.md
+  - Session Manager UI: session_manager.md
   - Development: development.md
   - Deployment: deployment.md
   - Code Reference: reference/
