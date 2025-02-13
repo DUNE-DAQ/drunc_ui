@@ -23,4 +23,5 @@ urlpatterns = [
     path("", include("main.urls")),
     path("process_manager/", include("process_manager.urls")),
     path("controller/", include("controller.urls")),
+    path("session_manager/", include("session_manager.urls")),
 ]
