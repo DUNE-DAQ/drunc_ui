@@ -4,3 +4,4 @@
 
 [the controllers]: controller.md <!-- markdownlint-disable-line MD053 -->
 [the process manager]: process_manager.md <!-- markdownlint-disable-line MD053 -->
+[the session manager]: session_manager.md <!-- markdownlint-disable-line MD053 -->
