@@ -14,5 +14,17 @@ COPY --from=build /usr/local/lib/python3.10/site-packages /usr/local/lib/python3
 COPY --from=build /usr/local/bin /usr/local/bin
 EXPOSE 8000
 COPY --chown=nobody:nogroup . /usr/src/app
+RUN apt-get update && apt-get install -y git
+
+RUN cd / && \
+    git clone https://github.com/DUNE-DAQ/drunc.git && \
+    cd drunc && \
+    pip install -e .
+RUN cd / && \
+    git clone https://github.com/DUNE-DAQ/druncschema.git && \
+    cd druncschema && \
+    pip install -e .
+
+
 WORKDIR /usr/src/app
 USER nobody

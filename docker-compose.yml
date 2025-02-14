@@ -12,6 +12,7 @@ services:
     volumes:
       - .:/usr/src/app
       - db:/usr/src/app/db
+      - ./drunc:/drunc
     environment:
       - PROCESS_MANAGER_URL=drunc:10054
       - CSC_URL
@@ -33,6 +34,8 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
+    volumes:
+      - ./drunc:/basedir/NFD_DEV_241206_A9/drunc/
   drunc-lite:
     build:
       context: ./drunc_docker_service/

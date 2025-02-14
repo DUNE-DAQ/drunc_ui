@@ -19,7 +19,19 @@ RUN source /cvmfs/dunedaq.opensciencegrid.org/setup_dunedaq.sh && \
     source env.sh && \
     dbt-build && \
     dbt-workarea-env
+
 WORKDIR /basedir/$NIGHTLY_TAG/
+
+RUN source env.sh && \
+    git clone https://github.com/DUNE-DAQ/drunc.git && \
+    cd drunc && \
+    pip install -e .
+
+RUN source env.sh && \
+    git clone https://github.com/DUNE-DAQ/druncschema.git && \
+    cd druncschema && \
+    pip install -e .
+
 
 COPY process-manager-kafka.json /
 
