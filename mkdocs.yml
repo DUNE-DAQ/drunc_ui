@@ -40,6 +40,7 @@ nav:
   - Controller UI: controller.md
   - Process Manager UI: process_manager.md
   - Session Manager UI: session_manager.md
+  - Main app: main.md
   - Development: development.md
   - Deployment: deployment.md
   - Code Reference: reference/
