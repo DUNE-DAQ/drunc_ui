@@ -10,6 +10,7 @@ For this reason the code is organised into the following [Django apps]:
 
 - `process_manager` - the Process Manager UI.
 - `controller` - the Controller UI.
+- `session_manager` - the Session Manager UI.
 - `main` - common functionality and shared infrastructure between the UIs.
 
 It also contains the following packages (not Django apps):

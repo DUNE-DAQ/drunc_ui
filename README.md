@@ -13,8 +13,9 @@ details see the [documentation].
 
 This repo defines the web interface for various drunc tools. Including:
 
-- [The Process Manager]
 - [The Controllers]
+- [The Process Manager]
+- [The Session Manager]
 
 ## Running the Project Locally
 
@@ -131,3 +132,4 @@ You may then need to perform subsequent actions such as booting test session dat
 [running drunc with pocket kafka]: https://github.com/DUNE-DAQ/drunc/wiki/Running-drunc-with-pocket-kafka
 [the controllers]: https://imperialcollegelondon.github.io/drunc_ui/controller
 [the process manager]: https://imperialcollegelondon.github.io/drunc_ui/process_manager
+[the session manager]: https://imperialcollegelondon.github.io/drunc_ui/session_manager

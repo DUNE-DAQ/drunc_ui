@@ -10,7 +10,13 @@ nav = mkdocs_gen_files.Nav()
 for path in chain(
     *(
         sorted(Path(module_name).glob("**/*.py"))
-        for module_name in ("main", "process_manager", "controller", "interfaces")
+        for module_name in (
+            "main",
+            "process_manager",
+            "controller",
+            "interfaces",
+            "session_manager",
+        )
     )
 ):
     module_path = path.relative_to(".").with_suffix("")
