@@ -65,11 +65,6 @@
     transition: background-color 0.3s ease;
 }
 
-.sort-link:hover {
-    text-decoration: underline;
-    color: darkblue;
-}
-
 .clear-sorting:hover {
     background-color: #e2e6ea;
 }
@@ -128,4 +123,61 @@
     font-family: 'Arial', sans-serif;
     font-size: 0.875rem;
     line-height: 1.4;
+}
+
+/* Table Header Styling */
+.header-style {
+    font-family: Arial, sans-serif;
+    background-color: rgba(60, 60, 60, 0.8);
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: white;
+}
+
+/* Table Cell Styling */
+.fw-bold {
+    font-weight: bold;
+}
+
+.text-break {
+    word-break: break-word;
+}
+
+.text-start {
+    text-align: left;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-primary {
+    color: #007bff;
+}
+
+.text-secondary {
+    color: #6c757d;
+}
+
+/* Checkbox Styling */
+.form-check-input-lg {
+    transform: scale(1.5);
+}
+
+/* Logs Styling */
+.log-output {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.875rem;
+    line-height: 1.2;
+    background-color: rgba(240, 240, 240, 0.9);
+}
+
+.log-output:first-child {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.log-output:last-child {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
 }
