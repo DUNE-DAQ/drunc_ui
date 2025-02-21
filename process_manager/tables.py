@@ -108,13 +108,16 @@ class ProcessTable(tables.Table):
     def render_status_code(self, value: str) -> str:
         """Render the status_code with Bootstrap badge classes, larger font, and transparency."""
         if value == "DEAD":
-            return mark_safe('<span class="badge bg-danger text-white fs-5 opacity-75 px-3 py-2">DEAD</span>')
+            return mark_safe(
+                '<span class="badge bg-danger text-white fs-5 opacity-75 px-3 py-2">DEAD</span>'
+            )
         elif value == "RUNNING":
-            return mark_safe('<span class="badge bg-success text-white fs-5 opacity-75 px-3 py-2">RUNNING</span>')
+            return mark_safe(
+                '<span class="badge bg-success text-white fs-5 opacity-75 px-3 py-2">RUNNING</span>'
+            )
         return mark_safe(
             f'<span class="badge bg-secondary text-white fs-5 opacity-75 px-3 py-2">{value}</span>'
         )
-
 
     def render_select(self, value: str) -> str:
         """Customize behavior of checkboxes in the select column."""
