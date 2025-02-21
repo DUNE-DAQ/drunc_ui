@@ -113,7 +113,7 @@ class ProcessTable(tables.Table):
             return mark_safe(f'<span class="{base_class} bg-danger">DEAD</span>')
         elif value == "RUNNING":
             return mark_safe(f'<span class="{base_class} bg-success">RUNNING</span>')
-        
+
         return mark_safe(f'<span class="{base_class} bg-secondary">{value}</span>')
 
     def render_select(self, value: str) -> str:
