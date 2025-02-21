@@ -106,7 +106,7 @@ class ProcessTable(tables.Table):
         }
 
     def render_status_code(self, value: str) -> str:
-        """Render the status_code with Bootstrap badge classes, larger font, and transparency."""
+        """Render the status_code with Bootstrap badge classes"""
         base_class = "badge text-white fs-5 opacity-75 px-3 py-2"
 
         if value == "DEAD":

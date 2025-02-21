@@ -125,8 +125,8 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = [
-    BASE_DIR / "controller/static",
-    BASE_DIR / "process_manager/static",
+    BASE_DIR / "controller/templates/controller/static",
+    BASE_DIR / "process_manager/templates/process_manager/static",
 ]
 
 # Default primary key field type
