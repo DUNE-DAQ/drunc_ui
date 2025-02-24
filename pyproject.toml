@@ -45,7 +45,7 @@ mkdocs-section-index = "^0.3.9"
 
 
 [tool.poetry.group.postgres.dependencies]
-psycopg = { extras = ["binary"], version = "^3.2.4" }
+psycopg = { extras = ["binary"], version = "^3.2.5" }
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
