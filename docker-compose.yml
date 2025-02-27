@@ -54,7 +54,7 @@ services:
     environment:
       - CSC_SESSION
     depends_on:
-      kafka:
+      drunc-pm:
         condition: service_healthy
   drunc-lite:
     build:
