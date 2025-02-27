@@ -2,7 +2,7 @@
 $dependencies = @("drunc", "druncschema")
 
 # Define environment command
-$env_cmd = ". /basedir/$env:NIGHTLY_TAG/env.sh"
+$env_cmd = ". /basedir/`${NIGHTLY_TAG}/env.sh"
 
 # Install dependencies from local path
 foreach ($dep in $dependencies) {
