@@ -184,4 +184,32 @@ from the database after a configurable retention period.
 As may be expected the `kafka_consumer` service is dependent on the `kafka` service and
 will need to be replaced if Kafka is replaced.
 
+## Using local drunc dependencies
+
+Sometimes it may be necessary to work with other versions of the drunc dependencies, for
+instance with test versions of `drunc` and `druncschema`. To facilitate this, the
+developer may call `./scripts/install_local_deps.sh` whilst the docker compose containers
+are running to install local versions of drunc dependencies into the containers.
+
+By default, dependency repositories are searched for in the current working directory.
+However, the search directory can be changed by setting the `DRUNC_LOCAL_DEPS` environment
+variable before the docker compose is started.
+
+```bash
+# Defaults to current directory if unset.
+export DRUNC_LOCAL_DEPS=/path/containing/dep/repos
+
+docker compose --profile drunc up -d
+./scripts/insttall_local_deps.sh
+```
+
+An equivalent powershell script is also provided for Windows:
+
+```powershell
+[System.Environment]::SetEnvironmentVariable('DRUNC_LOCAL_DEPS', '/path/containing/dep/repos')
+
+docker compose --profile drunc up -d
+./scripts/install_local_deps.ps1
+```
+
 [django admin command]: https://docs.djangoproject.com/en/5.1/howto/custom-management-commands/
