@@ -206,6 +206,9 @@ docker compose --profile drunc up -d
 An equivalent powershell script is also provided for Windows:
 
 ```powershell
+[System.Environment]::SetEnvironmentVariable('DRUNC_LOCAL_DEPS', '/path/containing/dep/repos')
+
+docker compose --profile drunc up -d
 ./scripts/install_local_deps.ps1
 ```
 
