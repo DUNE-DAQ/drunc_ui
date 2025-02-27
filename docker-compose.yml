@@ -15,6 +15,7 @@ services:
       - ${DRUNC_LOCAL_DEPS:-.}:/mnt/local_deps
     environment:
       - PROCESS_MANAGER_URL=drunc:10054
+      - SESSION_MANAGER_URL=drunc:50000
       - CSC_URL
       - CSC_SESSION
   drunc:
@@ -26,9 +27,11 @@ services:
       - -c
       - |
         /usr/sbin/sshd &&
-        drunc-process-manager --log-level debug /process-manager-kafka.json 10054
+        drunc-process-manager --log-level debug /process-manager-kafka.json 10054 &&
+        drunc-session-manager
     expose:
       - 10054
+      - 50000
     volumes:
       - ${DRUNC_LOCAL_DEPS:-.}:/mnt/local_deps
     environment:
