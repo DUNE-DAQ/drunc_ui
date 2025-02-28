@@ -18,7 +18,7 @@ services:
       - SESSION_MANAGER_URL=drunc:50000
       - CSC_URL
       - CSC_SESSION
-  drunc-pm:
+  drunc_pm:
     build: ./drunc_docker_service/
     profiles:
       - drunc
@@ -37,7 +37,7 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
-  drunc-sm:
+  drunc_sm:
     build: ./drunc_docker_service/
     profiles:
       - drunc
@@ -54,7 +54,7 @@ services:
     environment:
       - CSC_SESSION
     depends_on:
-      drunc-pm:
+      kafka:
         condition: service_healthy
   drunc-lite:
     build:
