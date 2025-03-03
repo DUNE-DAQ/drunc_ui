@@ -27,7 +27,7 @@ services:
       - -c
       - |
         /usr/sbin/sshd &&
-        drunc-process-manager --log-level debug /process-manager-kafka.json 10054 &&
+        drunc-process-manager --log-level debug /process-manager-kafka.json 10054
     expose:
       - 10054
     volumes:
@@ -45,8 +45,7 @@ services:
       - bash
       - -c
       - |
-        /usr/sbin/sshd &&
-        drunc-session-manager
+        /boot_session_manager.sh
     expose:
       - 50000
     volumes:
