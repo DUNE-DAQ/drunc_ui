@@ -41,6 +41,7 @@ nav:
   - Process Manager UI: process_manager.md
   - Session Manager UI: session_manager.md
   - Main app: main.md
+  - Interfaces: interfaces.md
   - Development: development.md
   - Deployment: deployment.md
   - Code Reference: reference/
