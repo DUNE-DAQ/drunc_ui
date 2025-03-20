@@ -88,8 +88,8 @@ class Command(BaseCommand):
         """Add commandline options."""
         parser.add_argument("--debug", action="store_true")
 
-    def handle(
-        self,  # type: ignore[explicit-any]
+    def handle(  # type: ignore[explicit-any]
+        self,
         debug: bool = False,
         **kwargs: Any,
     ) -> None:
