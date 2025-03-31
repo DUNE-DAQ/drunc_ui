@@ -15,7 +15,7 @@ drunc = { git = "https://github.com/DUNE-DAQ/drunc.git", rev = "606a97385b09ad22
 druncschema = { git = "https://github.com/DUNE-DAQ/druncschema.git", rev = "e8c7272addc807bc0c32315863c44858b59080ab" }
 django-tables2 = "^2.7.5"
 django-bootstrap5 = "^25.1"
-pytest-asyncio = "^0.25.3"
+pytest-asyncio = "^0.26.0"
 django-crispy-forms = "^2.3"
 crispy-bootstrap5 = "^2024.10"
 django-stubs-ext = "^5.1.3"
