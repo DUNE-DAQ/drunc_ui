@@ -9,7 +9,7 @@ def get_session_manager_driver() -> SessionManagerDriver:
     """Get a ProcessManagerDriver instance."""
     token = create_dummy_token_from_uname()
     return SessionManagerDriver(
-        settings.SESSION_MANAGER_URL, token=token, aio_channel=True
+        settings.SESSION_MANAGER_URL, token=token, aio_channel=False
     )
 
 
