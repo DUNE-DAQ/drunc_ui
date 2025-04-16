@@ -1,11 +1,8 @@
 {% load render_table from django_tables2 %}
-
 <!-- Remove arguments dialog if it's still open -->
 <div _="on load if #argsDialog is not null remove #argsDialog"></div>
-
 <div class="container-fluid px-0 overflow-hidden">
   <div class="row align-items-start gx-3">
-
     <!-- Control Form Section (wider again: col-md-7) -->
     <div class="col-md-7 col-12 mb-3">
       <form class="control-form">
@@ -13,7 +10,6 @@
         {% render_table table %}
       </form>
     </div>
-
     <!-- Mermaid Diagram Section (col-md-5) -->
     <div class="col-md-5 col-12 mb-3">
       <div class="bg-light p-2 rounded overflow-x-auto overflow-y-hidden">
@@ -22,10 +18,8 @@
         </pre>
       </div>
     </div>
-
   </div>
 </div>
-
 <script>
   mermaid.initialize({
     theme: "base",
