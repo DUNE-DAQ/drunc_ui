@@ -78,7 +78,7 @@ WSGI_APPLICATION = "drunc_ui.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db" / "db.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
         # avoid database locking issues between Kafka consumer and web app
         # https://docs.djangoproject.com/en/5.1/ref/databases/#database-is-locked-errors
         "OPTIONS": {
