@@ -209,10 +209,9 @@ The example deployment address the following previously mentioned considerations
 
 - The software environment is built from the `Dockerfile` in the root of the repository.
 
-- The deloyment settings file is given by `example_deployment/deployment.py`. This is
-  mounted into the relevant containers at
-  `/usr/src/app/drunc_ui/settings/deployment.py`. The `DJANGO_SETTINGS_MODULE`
-  environment variable is then set to `drunc_ui.settings.deployment`.
+- The deloyment settings file is given by `example_deployment/deployment_settings.py`,
+  and the `DJANGO_SETTINGS_MODULE`environment variable is set to
+  `example_deployment.deployment_settings`.
 
 - The database is provided by a PostgreSQL container. The database name, user and
   hostname are set in the deployment settings file. The database password is read from
