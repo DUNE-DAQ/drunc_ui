@@ -209,7 +209,7 @@ The example deployment address the following previously mentioned considerations
 
 - The software environment is built from the `Dockerfile` in the root of the repository.
 
-- The deloyment settings file is given by `example_deployment/deployment_settings.py`,
+- The deployment settings file is given by `example_deployment/deployment_settings.py`,
   and the `DJANGO_SETTINGS_MODULE`environment variable is set to
   `example_deployment.deployment_settings`.
 
