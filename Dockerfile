@@ -17,5 +17,6 @@ RUN groupadd --gid 1221 dune_group && \
     useradd --uid 1221 --gid 1221 --create-home dune_user
 
 USER dune_user
+RUN mkdir /home/dune_user/db
 WORKDIR /home/dune_user/app
 EXPOSE 8000
