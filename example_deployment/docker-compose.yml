@@ -1,4 +1,5 @@
 services:
+
   app:
     build: ..
     command:
@@ -8,16 +9,73 @@ services:
         python manage.py migrate
         python manage.py collectstatic --noinput
         gunicorn --capture-output --access-logfile="-" --error-logfile="-" --worker-class gthread --workers 4 --threads 1 drunc_ui.wsgi -b 0.0.0.0:8000
-    volumes:
-      - ./deployment_settings.py:/usr/src/app/drunc_ui/settings/deployment.py
+    ports:
+      - 127.0.0.1:8000:8000
     environment:
-      - DJANGO_SETTINGS_MODULE=drunc_ui.settings.deployment
-      - SECRET_KEY=un)6fepeihit@4@ljucw$7qg2mt6ws((2kes#sql2!=q89^915
-      - PROCESS_MANAGER_URL=drunc_host:10054
-      - CSC_URL=connectivity_server_host:5000
-      - CSC_SESSION=local-2x3-config
+      - PROCESS_MANAGER_URL=drunc_pm:10054
+      - SESSION_MANAGER_URL=drunc_sm:50000
+      - CSC_URL
+      - CSC_SESSION
+      - CSC_SESSION_NAME
       - DATABASE_PASSWORD=m6&hn47opji-3w912c
+      - SECRET_KEY=un)6fepeihit@4@ljucw$7qg2mt6ws((2kes#sql2!=q89^915
+      - DJANGO_SETTINGS_MODULE=example_deployment.deployment_settings
       - DJANGO_LOG_LEVEL=INFO
+    volumes:
+      - ..:/home/dune_user/app
+
+  drunc_pm:
+    build: ../drunc_docker_service/
+    profiles:
+      - drunc
+    command:
+      - bash
+      - -c
+      - |
+        /usr/sbin/sshd &&
+        drunc-process-manager --log-level debug /process-manager-kafka.json 10054
+    expose:
+      - 10054
+    environment:
+      - CSC_SESSION
+    depends_on:
+      kafka:
+        condition: service_healthy
+
+  drunc_sm:
+    build: ../drunc_docker_service/
+    profiles:
+      - drunc
+    command:
+      - bash
+      - -c
+      - |
+        /boot_session_manager.sh
+    expose:
+      - 50000
+    environment:
+      - CSC_SESSION
+    depends_on:
+      kafka:
+        condition: service_healthy
+
+  kafka:
+    image: bitnami/kafka:latest
+    environment:
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+    expose:
+      - 9092
+    healthcheck:
+      test: timeout 5s kafka-cluster.sh cluster-id --bootstrap-server localhost:9092
+      interval: 1s
+      timeout: 6s
+      retries: 20
+
   kafka_consumer:
     build: ..
     command:
@@ -26,12 +84,19 @@ services:
       - |
         python manage.py kafka_consumer --debug
     environment:
-      - KAFKA_ADDRESS=kafka_broker:9092
-      - DJANGO_SETTINGS_MODULE=drunc_ui.settings.deployment
-      - SECRET_KEY=requiredbutnotused
+      - KAFKA_ADDRESS=kafka:9092
       - DATABASE_PASSWORD=m6&hn47opji-3w912c
+      - SECRET_KEY=requiredbutnotused
+      - DJANGO_SETTINGS_MODULE=example_deployment.deployment_settings
+      - DJANGO_LOG_LEVEL=INFO
     volumes:
-      - ./deployment_settings.py:/usr/src/app/drunc_ui/settings/deployment.py
+      - ..:/home/dune_user/app
+    depends_on:
+      kafka:
+        condition: service_healthy
+      app:
+        condition: service_started
+
   proxy:
     image: caddy:2-alpine
     depends_on:
@@ -47,6 +112,7 @@ services:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - ./tls/certificate.pem:/cert:ro
       - ./tls/key.pem:/key:ro
+
   db:
     image: postgres:17
     environment:
@@ -55,5 +121,6 @@ services:
       - POSTGRES_PASSWORD=m6&hn47opji-3w912c
     volumes:
       - db:/var/lib/postgresql/data
+
 volumes:
   db:

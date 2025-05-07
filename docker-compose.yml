@@ -1,4 +1,5 @@
 services:
+
   app:
     build: .
     command:
@@ -9,16 +10,18 @@ services:
         python manage.py runserver 0:8000
     ports:
       - 127.0.0.1:8000:8000
-    volumes:
-      - .:/usr/src/app
-      - db:/usr/src/app/db
-      - ${DRUNC_LOCAL_DEPS:-.}:/mnt/local_deps
     environment:
       - PROCESS_MANAGER_URL=drunc_pm:10054
       - SESSION_MANAGER_URL=drunc_sm:50000
+      - DATABASE_DIR=/home/dune_user/db
       - CSC_URL
       - CSC_SESSION
       - CSC_SESSION_NAME
+    volumes:
+      - .:/home/dune_user/app
+      - db:/home/dune_user/db
+      - ${DRUNC_LOCAL_DEPS:-.}:/mnt/local_deps
+
   drunc_pm:
     build: ./drunc_docker_service/
     profiles:
@@ -31,13 +34,14 @@ services:
         drunc-process-manager --log-level debug /process-manager-kafka.json 10054
     expose:
       - 10054
-    volumes:
-      - ${DRUNC_LOCAL_DEPS:-.}:/mnt/local_deps
     environment:
       - CSC_SESSION
+    volumes:
+      - ${DRUNC_LOCAL_DEPS:-.}:/mnt/local_deps
     depends_on:
       kafka:
         condition: service_healthy
+
   drunc_sm:
     build: ./drunc_docker_service/
     profiles:
@@ -49,13 +53,14 @@ services:
         /boot_session_manager.sh
     expose:
       - 50000
-    volumes:
-      - ${DRUNC_LOCAL_DEPS:-.}:/mnt/local_deps
     environment:
       - CSC_SESSION
+    volumes:
+      - ${DRUNC_LOCAL_DEPS:-.}:/mnt/local_deps
     depends_on:
       kafka:
         condition: service_healthy
+
   drunc-lite:
     build:
       context: ./drunc_docker_service/
@@ -74,6 +79,7 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
+
   kafka:
     image: bitnami/kafka:latest
     environment:
@@ -90,6 +96,7 @@ services:
       interval: 1s
       timeout: 6s
       retries: 20
+
   kafka_consumer:
     build: .
     command:
@@ -99,14 +106,16 @@ services:
         python manage.py kafka_consumer --debug
     environment:
       - KAFKA_ADDRESS=kafka:9092
+      - DATABASE_DIR=/home/dune_user/db
     volumes:
-      - .:/usr/src/app
-      - db:/usr/src/app/db
+      - .:/home/dune_user/app
+      - db:/home/dune_user/db
       - ${DRUNC_LOCAL_DEPS:-.}:/mnt/local_deps
     depends_on:
       kafka:
         condition: service_healthy
       app:
         condition: service_started
+
 volumes:
   db:
