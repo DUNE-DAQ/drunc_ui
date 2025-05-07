@@ -5,6 +5,8 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+  schedule:
+    - cron: '* 5 * * 0' # every Sunday at 5:00 UTC
 
 jobs:
   test:
@@ -27,6 +29,12 @@ jobs:
 
       - name: Install dependencies
         run: poetry install
+
+      - name: Install latest drunc and druncschema
+        if: github.event_name == 'schedule'
+        run: |
+          pip install git+https://github.com/DUNE-DAQ/druncschema.git@develop
+          pip install git+https://github.com/DUNE-DAQ/drunc.git@develop
 
       - name: Test building the docs
         run: poetry run mkdocs build --strict
