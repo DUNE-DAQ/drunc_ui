@@ -1,33 +1,36 @@
 {% load render_table from django_tables2 %}
+<!-- Remove arguments dialog if it's still open -->
 <div _="on load if #argsDialog is not null remove #argsDialog"></div>
-<div class="row align-items-start gx-3">
-  <!-- Table Section (Control Form) -->
-  <div class="col-md-7 col-12 mb-3">
-    <form class="control-form">
-      {% csrf_token %}
-      {% render_table table %}
-    </form>
-  </div>
-  <!-- Mermaid Diagram Section -->
-  <div class="col-md-5 col-12 mb-3">
-    <pre class="mermaid w-100 h-100 m-0">
-      {{ flowchart }}
-    </pre>
+<div class="container-fluid px-0 overflow-hidden">
+  <div class="row align-items-start gx-3">
+    <!-- Control Form Section (wider again: col-md-7) -->
+    <div class="col-md-7 col-12 mb-3">
+      <form class="control-form">
+        {% csrf_token %}
+        {% render_table table %}
+      </form>
+    </div>
+    <!-- Mermaid Diagram Section (col-md-5) -->
+    <div class="col-md-5 col-12 mb-3">
+      <div class="bg-light p-2 rounded overflow-x-auto overflow-y-hidden">
+        <pre class="mermaid m-0" style="min-width: 0; display: block; width: 100%;">
+          {{ flowchart }}
+        </pre>
+      </div>
+    </div>
   </div>
 </div>
 <script>
-  // Initialize mermaid diagrams.
   mermaid.initialize({
     theme: "base",
     themeCSS: ".label { text-transform: uppercase; }",
     themeVariables: {
       primaryColor: "#b5b3ae",
       primaryTextColor: "white",
-      edgeLabelBackground: "transparent", // HACK: custom edge label color
+      edgeLabelBackground: "transparent"
     },
   });
 
-  // Refresh mermaid diagrams after htmx swap.
   document.body.addEventListener("htmx:afterSwap", (event) => {
     const target = event.detail.target;
     if (target && target.querySelector(".mermaid")) {
