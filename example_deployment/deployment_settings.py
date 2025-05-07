@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 from drunc_ui.settings._production import *
 
@@ -43,3 +44,6 @@ LOGGING = {
         },
     },
 }
+
+# Static files location inside the container.
+STATIC_ROOT = Path.home() / "staticfiles"
