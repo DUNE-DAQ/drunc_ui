@@ -9,7 +9,7 @@ authors = [
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.12"
-django = "^5.1"
+django = "^5.2"
 whitenoise = "^6.9.0"
 drunc = { git = "https://github.com/DUNE-DAQ/drunc.git", rev = "606a97385b09ad22593acb63283c64cee4cb271a" }
 druncschema = { git = "https://github.com/DUNE-DAQ/druncschema.git", rev = "e8c7272addc807bc0c32315863c44858b59080ab" }
@@ -20,7 +20,7 @@ django-crispy-forms = "^2.4"
 crispy-bootstrap5 = "^2025.4"
 django-stubs-ext = "^5.2.0"
 requests = "^2.32.3"
-types-protobuf = "^6.30.2.20250503"
+types-protobuf = "^6.30.2.20250516"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3"
@@ -28,7 +28,7 @@ pytest-cov = "^6.1.1"
 pytest-mypy = "^1.0.1"
 pytest-mock = "^3.7.0"
 pre-commit = "^4.2.0"
-ruff = "^0.11.8"
+ruff = "^0.11.10"
 djlint = "^1.36.4"
 django-stubs = { extras = ["compatible-mypy"], version = "^5.2.0" }
 pytest-django = "^4.11.1"
@@ -38,14 +38,14 @@ pytest-django = "^4.11.1"
 mkdocs = "^1.6.1"
 mkdocstrings = "^0.29.1"
 mkdocstrings-python = "^1.16.10"
-mkdocs-material = "^9.6.12"
+mkdocs-material = "^9.6.14"
 mkdocs-gen-files = "^0.5.0"
 mkdocs-literate-nav = "^0.6.2"
 mkdocs-section-index = "^0.3.10"
 
 
 [tool.poetry.group.postgres.dependencies]
-psycopg = { extras = ["binary"], version = "^3.2.7" }
+psycopg = { extras = ["binary"], version = "^3.2.9" }
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
