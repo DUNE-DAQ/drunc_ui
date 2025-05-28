@@ -16,31 +16,12 @@ def get_session_manager_driver() -> SessionManagerDriver:
 def get_configs() -> list[dict[str, str]]:
     """Get the available configurations for the controller.
 
-    TODO: Placeholder function with hardcoded values. Pull data dynamically when the
-    relevant endpoint is implemented.
-
     Returns:
         List of dictionaries indicating the file where the config is contained and the
         id for the config.
     """
-    return [
-        {
-            "file": "example-configs.data.xml",
-            "id": "ehn1-local-1x1-config",
-        },
-        {
-            "file": "example-configs.data.xml",
-            "id": "ehn1-local-2x3-config",
-        },
-        {
-            "file": "example-configs.data.xml",
-            "id": "local-1x1-config",
-        },
-        {
-            "file": "example-configs.data.xml",
-            "id": "local-2x3-config",
-        },
-    ]
+    configs = get_session_manager_driver().list_all_configs().data
+    return [{"file": c.file, "session_id": c.session_id} for c in configs.config_keys]
 
 
 def get_sessions() -> list[dict[str, str]]:
@@ -50,4 +31,5 @@ def get_sessions() -> list[dict[str, str]]:
         List of dictionaries indicating the session name and the actor name (i.e.
         typically, the user who boots the session).
     """
-    return get_session_manager_driver().list_all_sessions()
+    sessions = get_session_manager_driver().list_all_sessions().data
+    return [{"name": s.name, "user": s.user} for s in sessions.active_sessions]

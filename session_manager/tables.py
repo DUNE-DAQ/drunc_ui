@@ -19,8 +19,8 @@ class ActiveSessions(tables.Table):
         },
     )
 
-    actor = tables.Column(
-        verbose_name="Actor",
+    user = tables.Column(
+        verbose_name="User",
         attrs={
             "td": {
                 "class": "text-primary text-start small-text",
@@ -53,7 +53,7 @@ class AvailableConfigs(tables.Table):
         },
     )
 
-    id = tables.Column(
+    session_id = tables.Column(
         verbose_name="ID",
         attrs={
             "td": {
