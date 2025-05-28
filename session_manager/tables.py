@@ -19,8 +19,8 @@ class ActiveSessions(tables.Table):
         },
     )
 
-    user = tables.Column(
-        verbose_name="User",
+    actor = tables.Column(
+        verbose_name="Actor",
         attrs={
             "td": {
                 "class": "text-primary text-start small-text",

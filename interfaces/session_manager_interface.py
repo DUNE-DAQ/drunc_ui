@@ -32,4 +32,4 @@ def get_sessions() -> list[dict[str, str]]:
         typically, the user who boots the session).
     """
     sessions = get_session_manager_driver().list_all_sessions().data
-    return [{"name": s.name, "user": s.user} for s in sessions.active_sessions]
+    return [{"name": s.name, "actor": s.user} for s in sessions.active_sessions]
