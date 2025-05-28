@@ -57,4 +57,4 @@ async def main() -> ProcessInstanceList:
 
 if __name__ == "__main__":
     val = asyncio.run(main())
-    print(val.data)
+    print(val.data)  # type: ignore [attr-defined]

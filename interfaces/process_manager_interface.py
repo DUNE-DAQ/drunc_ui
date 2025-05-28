@@ -120,7 +120,7 @@ def get_hostnames(user: str) -> dict[str, str]:
     """
     session = get_session_info(user)
     hostnames = {}
-    for process_instance in session.data.values:
+    for process_instance in session.data.values:  # type: ignore [attr-defined]
         hostnames[process_instance.process_description.metadata.name] = (
             process_instance.process_description.metadata.hostname
         )

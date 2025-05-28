@@ -8,7 +8,7 @@ from drunc.connectivity_service.client import ConnectivityServiceClient
 from drunc.controller.controller_driver import ControllerDriver
 from drunc.utils.grpc_utils import pack_to_any
 from drunc.utils.shell_utils import create_dummy_token_from_uname
-from druncschema.controller_pb2 import Argument, FSMCommand, FSMResponseFlag
+from druncschema.controller_pb2 import Argument, FSMCommand, FSMResponseFlag, Status
 from druncschema.generic_pb2 import bool_msg, float_msg, int_msg, string_msg
 from druncschema.request_response_pb2 import Description
 
@@ -45,7 +45,7 @@ def get_controller_driver() -> ControllerDriver:
     return ControllerDriver(uri, token=token)
 
 
-def get_controller_status() -> Description:
+def get_controller_status() -> Status:
     """Get the controller status."""
     return get_controller_driver().status()
 
@@ -56,7 +56,7 @@ def get_fsm_state() -> str:
     Returns:
         str: The state the FSM is in.
     """
-    return get_controller_status().data.state
+    return get_controller_status().data.state  # type: ignore [attr-defined]
 
 
 def send_event(  # type: ignore[explicit-any]
@@ -77,10 +77,11 @@ def send_event(  # type: ignore[explicit-any]
     command = FSMCommand(
         command_name=event, arguments=process_arguments(event, arguments)
     )
-    response = controller.execute_fsm_command(command)
+    response = controller.execute_fsm_command(arguments=command)
     if response.flag != FSMResponseFlag.FSM_EXECUTED_SUCCESSFULLY:
         raise RuntimeError(
-            f"Event '{event}' failed with flag {FSMResponseFlag(response.flag)} "
+            f"Event '{event}' failed with flag "
+            f"{FSMResponseFlag(response.flag)} "  # type: ignore [call-arg]
             f"and message '{response.data}'"
         )
 
@@ -140,10 +141,10 @@ def get_detectors(description: Description | None = None) -> dict[str, str]:
     if description is None:
         description = get_controller_driver().describe()
 
-    if hasattr(description.data, "info"):
-        detectors[description.data.name] = description.data.info
+    if hasattr(description.data, "info"):  # type: ignore [union-attr]
+        detectors[description.data.name] = description.data.info  # type: ignore [union-attr]
 
-    for child in description.children:
+    for child in description.children:  # type: ignore [union-attr]
         if child is not None:
             detectors.update(get_detectors(child))
 

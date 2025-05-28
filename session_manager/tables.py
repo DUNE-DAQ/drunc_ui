@@ -53,7 +53,7 @@ class AvailableConfigs(tables.Table):
         },
     )
 
-    id = tables.Column(
+    session_id = tables.Column(
         verbose_name="ID",
         attrs={
             "td": {

@@ -1,5 +1,7 @@
 """Module to create a Django form from a list of Arguments."""
 
+from typing import Any
+
 from django.forms import BooleanField, CharField, Field, FloatField, Form, IntegerField
 from druncschema.controller_pb2 import Argument
 
@@ -26,7 +28,7 @@ def get_form_for_event(event: str) -> type[Form]:
     for item in data:
         name = item.name
         mandatory = item.presence == Argument.Presence.MANDATORY
-        initial = item.default_value.value.decode()
+        initial: Any = item.default_value.value.decode()  # type: ignore [explicit-any]
         match item.type:
             case Argument.Type.INT:
                 initial = int(initial) if initial else initial
@@ -37,8 +39,8 @@ def get_form_for_event(event: str) -> type[Form]:
             case Argument.Type.STRING:
                 # Remove the new line and end of string characters causing trouble
                 # when submitting the form
-                initial = initial.strip().replace(chr(4), "")
-                fields[name] = CharField(required=mandatory, initial=initial)
+                initial_ = initial.strip().replace(chr(4), "")
+                fields[name] = CharField(required=mandatory, initial=initial_)
             case Argument.Type.BOOL:
                 # We assume this is provided as an integer, 1 or 0
                 initial = bool(int(initial)) if initial else initial
