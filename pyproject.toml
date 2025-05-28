@@ -8,11 +8,11 @@ authors = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.12"
+python = ">=3.10,<3.11"
 django = "^5.2"
 whitenoise = "^6.9.0"
-drunc = { git = "https://github.com/DUNE-DAQ/drunc.git", rev = "606a97385b09ad22593acb63283c64cee4cb271a" }
-druncschema = { git = "https://github.com/DUNE-DAQ/druncschema.git", rev = "e8c7272addc807bc0c32315863c44858b59080ab" }
+drunc = { git = "https://github.com/DUNE-DAQ/drunc.git", rev = "d411037139c52554bb2d1db307d520d1184d4e96" }
+druncschema = { git = "https://github.com/DUNE-DAQ/druncschema.git", rev = "82e7fbcc780c4815e4ea910f111f6fe25a0aacfe" }
 django-tables2 = "^2.7.5"
 django-bootstrap5 = "^25.1"
 pytest-asyncio = "^0.26.0"
