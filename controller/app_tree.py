@@ -74,8 +74,11 @@ def get_app_tree(
     detectors = detectors or get_detectors()
 
     return AppTree(
-        status.name,
-        [get_app_tree(user, app, hostnames, detectors) for app in status.children],
-        hostnames.get(status.name, "unknown"),
-        detectors.get(status.name, ""),
+        status.name,  # type: ignore [attr-defined]
+        [
+            get_app_tree(user, app, hostnames, detectors)
+            for app in status.children  # type: ignore [attr-defined]
+        ],
+        hostnames.get(status.name, "unknown"),  # type: ignore [attr-defined]
+        detectors.get(status.name, ""),  # type: ignore [attr-defined]
     )

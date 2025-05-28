@@ -39,7 +39,7 @@ def test_toggle_button_current(mocker):
 
 def test_from_dict_empty_states():
     """Test the from_dict method with empty states."""
-    states = {}
+    states: dict[str, dict[str, str]] = {}
     current_state = "state1"
     result = FSMTable.from_dict(states, current_state)
     assert isinstance(result, FSMTable)
@@ -48,7 +48,7 @@ def test_from_dict_empty_states():
 
 def test_from_dict_single_state_no_events():
     """Test the from_dict method with a single state and no events."""
-    states = {"state1": {}}
+    states: dict[str, dict[str, str]] = {"state1": {}}
     current_state = "state1"
     result = FSMTable.from_dict(states, current_state)
     assert isinstance(result, FSMTable)

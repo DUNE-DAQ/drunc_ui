@@ -63,7 +63,7 @@ def process_table(request: HttpRequest) -> HttpResponse:
             "status_code": status_enum_lookup[process_instance.status_code],
             "exit_code": process_instance.return_code,
         }
-        for process_instance in session_info.data.values
+        for process_instance in session_info.data.values  # type: ignore [attr-defined]
     ]
     # Get the values from the GET request
     search_dropdown = request.GET.get("search-drp", "")
