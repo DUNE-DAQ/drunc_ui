@@ -5,6 +5,13 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      python_version:
+        description: Python version to use in the workflow
+        default: '3.10'
+        required: true
+        type: string
   schedule:
     - cron: '* 5 * * 0' # every Sunday at 5:00 UTC
 
@@ -16,7 +23,8 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
-        python-version: ['3.10']
+        python-version:
+          - ${{ inputs.python_version }}
 
     steps:
       - uses: actions/checkout@v4
