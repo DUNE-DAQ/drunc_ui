@@ -1,6 +1,9 @@
 name: Test in Python 3.11
 
 on:
+  push:
+    branches: [main]
+  pull_request:
   workflow_dispatch:
   schedule:
     - cron: '* 5 * * 0' # every Sunday at 5:00 UTC
@@ -9,5 +12,5 @@ jobs:
   test:
     uses: ./.github/workflows/ci.yml
     with:
-      python_version: '3.11'
-      use_develop: false
+      python_version: '3.10'
+      use_develop: github.event_name == 'schedule'
