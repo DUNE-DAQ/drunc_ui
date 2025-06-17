@@ -1,4 +1,4 @@
-name: Test in Python 3.11
+name: Test in develop
 
 on:
   workflow_dispatch:
@@ -10,4 +10,4 @@ jobs:
     uses: ./.github/workflows/ci.yml
     with:
       python_version: '3.11'
-      use_develop: false
+      use_develop: true
