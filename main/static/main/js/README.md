@@ -18,10 +18,17 @@ The currently downloaded versions of the libraries are:
         - <https://unpkg.com/htmx.org@X.Y.Z/dist/htmx.min.js>
 - Boostrap:
     - **web**: <https://getbootstrap.com/>
-    - **current version**: 5.3.7
+    - **current version**: 5.3.6
     - **download link**:
         - <https://cdn.jsdelivr.net/npm/bootstrap@X.Y.Z/dist/css/bootstrap.min.css>
         - <https://cdn.jsdelivr.net/npm/bootstrap@X.Y.Z/dist/js/bootstrap.bundle.min.js>
+- Bootswatch (boostrap theme) - Sandstone:
+    - **web**: <https://bootswatch.com>
+    - **current version**: 5.3.6
+    - **download link**: Download the CSS file from the top menu.
+        - <https://bootswatch.com/sandstone/>
+
+>>>>>>> ac7b27d (Add bootswatch dependency.)
 
 ## Update process
 
@@ -33,4 +40,6 @@ The general process to update these dependencies is:
 - **Update this README with the new versions**.
 
 For some dependencies like bootstrap, this should be done for both the `js` code and the
-`css` code.
+`css` code. If a theme is used for Bootstrap, that should be downloaded separately and
+replace the default bootstrap `css` file. Version numbers of the theme and Bootstrap
+**must match**.
