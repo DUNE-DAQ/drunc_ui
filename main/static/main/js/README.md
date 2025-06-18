@@ -28,8 +28,6 @@ The currently downloaded versions of the libraries are:
     - **download link**: Download the CSS file from the top menu.
         - <https://bootswatch.com/sandstone/>
 
->>>>>>> ac7b27d (Add bootswatch dependency.)
-
 ## Update process
 
 The general process to update these dependencies is:
