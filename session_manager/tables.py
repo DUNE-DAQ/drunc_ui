@@ -5,13 +5,6 @@ from typing import ClassVar
 import django_tables2 as tables
 from django.utils.safestring import mark_safe
 
-row_checkbox_hyperscript = """
-on click
-if <.row-checkbox:not(:checked)/> is empty
-  set #header-checkbox.checked to true
-else
-  set #header-checkbox.checked to false
-"""
 
 class LabelledCheckBoxColumn(tables.CheckBoxColumn):
     """A CheckBoxColumn where the header is a label."""
@@ -74,7 +67,6 @@ class ActiveSessions(tables.Table):
             f'id="{value}-input" hx-preserve="true" '
             'class="form-check-input form-check-input-lg row-checkbox" '
             'style="transform: scale(1.5);" '
-            f'_="{row_checkbox_hyperscript}">'
         )
 
 
