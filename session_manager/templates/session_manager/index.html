@@ -107,14 +107,15 @@
             <h5>Available configurations</h5>
           </div>
           <div class="card-body">
-            <div class="d-flex justify-content-between mb-3"></div>
-            <input type="submit"
-                   value="Boot session"
-                   class="btn btn-success w-100 mx-2"
-                   name="action"
-                   onclick="return confirm('Boot session based on the selected configuration?')"
-                   disabled
-                   _="install disableActionButtonConfig">
+            <div class="d-flex justify-content-between mb-3">
+              <input type="submit"
+                     value="Boot session"
+                     class="btn btn-success w-100 mx-2"
+                     name="action"
+                     onclick="return confirm('Boot session based on the selected configuration?')"
+                     disabled
+                     _="install disableActionButtonConfig">
+            </div>
           </div>
           <div hx-get="{% url 'session_manager:available_config_table' %}"
                hx-trigger="load, every 1s"
