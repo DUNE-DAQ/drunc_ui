@@ -17,7 +17,7 @@ django-bootstrap5 = "^25.1"
 pytest-asyncio = "^1.1.0"
 django-crispy-forms = "^2.4"
 crispy-bootstrap5 = "^2025.6"
-django-stubs-ext = "^5.2.1"
+django-stubs-ext = "^5.2.2"
 requests = "^2.32.3"
 types-protobuf = "^6.30.2.20250703"
 
