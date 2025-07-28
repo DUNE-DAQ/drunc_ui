@@ -463,26 +463,26 @@ django = ">=4.2"
 
 [[package]]
 name = "django-stubs"
-version = "5.2.1"
+version = "5.2.2"
 description = "Mypy stubs for Django"
 optional = false
 python-versions = ">=3.10"
 groups = ["dev"]
 files = [
-    {file = "django_stubs-5.2.1-py3-none-any.whl", hash = "sha256:c0e170d70329c27e737a5b80c5518fb6161d0c4792321d11a4a93dcda120f4ef"},
-    {file = "django_stubs-5.2.1.tar.gz", hash = "sha256:e58260958e58f7b6a8da6bba56d6b31d16c0414079a4aa6baa01c668bd08d39d"},
+    {file = "django_stubs-5.2.2-py3-none-any.whl", hash = "sha256:79bd0fdbc78958a8f63e0b062bd9d03f1de539664476c0be62ade5f063c9e41e"},
+    {file = "django_stubs-5.2.2.tar.gz", hash = "sha256:2a04b510c7a812f88223fd7e6d87fb4ea98717f19c8e5c8b59691d83ad40a8a6"},
 ]
 
 [package.dependencies]
 django = "*"
-django-stubs-ext = ">=5.2.1"
-mypy = {version = ">=1.13,<1.17", optional = true, markers = "extra == \"compatible-mypy\""}
+django-stubs-ext = ">=5.2.2"
+mypy = {version = ">=1.13,<1.18", optional = true, markers = "extra == \"compatible-mypy\""}
 tomli = {version = "*", markers = "python_version < \"3.11\""}
 types-pyyaml = "*"
 typing-extensions = ">=4.11.0"
 
 [package.extras]
-compatible-mypy = ["mypy (>=1.13,<1.17)"]
+compatible-mypy = ["mypy (>=1.13,<1.18)"]
 oracle = ["oracledb"]
 redis = ["redis", "types-redis"]
 
@@ -2630,4 +2630,4 @@ brotli = ["brotli"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<3.11"
-content-hash = "5b5d6fee837e3a3992c60a9d2a903e94e550e35050a02191ed97b4f898d896da"
+content-hash = "2661d54a0d7ebfaa08e756abad815681f122fa6af3be8ee2d90c5c09545a0aa0"
