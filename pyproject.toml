@@ -26,7 +26,7 @@ pytest = "^8.4"
 pytest-cov = "^6.2.1"
 pytest-mypy = "^1.0.1"
 pytest-mock = "^3.7.0"
-pre-commit = "^4.2.0"
+pre-commit = "^4.3.0"
 ruff = "^0.12.7"
 djlint = "^1.36.4"
 django-stubs = { extras = ["compatible-mypy"], version = "^5.2.2" }
