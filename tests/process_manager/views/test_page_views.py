@@ -1,13 +1,14 @@
 from http import HTTPStatus
 from uuid import uuid4
 
+from django.test import TestCase
 from django.urls import reverse
 from pytest_django.asserts import assertContains, assertNotContains, assertTemplateUsed
 
 from ...utils import LoginRequiredTest, PermissionRequiredTest
 
 
-class TestIndexView(LoginRequiredTest):
+class TestIndexView(LoginRequiredTest, TestCase):
     """Tests for the index view."""
 
     endpoint = reverse("process_manager:index")
