@@ -2,7 +2,7 @@ from http import HTTPStatus
 from uuid import uuid4
 
 from django.urls import reverse
-from pytest_django.asserts import assertContains, assertTemplateUsed
+from pytest_django.asserts import assertContains, assertNotContains, assertTemplateUsed
 
 from ...utils import LoginRequiredTest, PermissionRequiredTest
 
@@ -17,6 +17,20 @@ class TestIndexView(LoginRequiredTest):
         with assertTemplateUsed(template_name="process_manager/index.html"):
             response = auth_client.get(self.endpoint)
         assert response.status_code == HTTPStatus.OK
+
+        assert response.context["debug"] is True
+        assertContains(
+            response,
+            f'<a class="nav-link" href="{reverse("process_manager:boot_process")}">Boot</a>',  # noqa: E501
+        )
+
+        with self.settings(DEBUG=False):
+            response = auth_client.get(self.endpoint)
+            assert not response.context["debug"]
+            assertNotContains(
+                response,
+                f'<a class="nav-link" href="{reverse("process_manager:boot_process")}">Boot</a>',  # noqa: E501
+            )
 
 
 class TestLogsView(PermissionRequiredTest):
