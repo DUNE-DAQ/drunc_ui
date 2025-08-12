@@ -9,7 +9,11 @@ class TestURLs(TestCase):
         from process_manager import urls
 
         with self.settings(DEBUG=True):
-            self.assertIn("boot_process", [url.pattern for url in urls.urlpatterns])
+            self.assertIn(
+                "boot_process", [url.pattern.name for url in urls.urlpatterns]
+            )
 
         with self.settings(DEBUG=False):
-            self.assertNotIn("boot_process", [url.pattern for url in urls.urlpatterns])
+            self.assertNotIn(
+                "boot_process", [url.pattern.name for url in urls.urlpatterns]
+            )

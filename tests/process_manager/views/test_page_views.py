@@ -13,6 +13,7 @@ class TestIndexView(LoginRequiredTest):
 
     endpoint = reverse("process_manager:index")
 
+    @override_settings(DEBUG=True)
     def test_authenticated(self, auth_client):
         """Test the index view for an authenticated user."""
         with assertTemplateUsed(template_name="process_manager/index.html"):
