@@ -1,6 +1,7 @@
 """Urls module for the process_manager app."""
 
-from django.urls import include, path
+from django.conf import settings
+from django.urls import URLPattern, URLResolver, include, path
 
 from .views import actions, pages, partials
 
@@ -10,10 +11,14 @@ partial_urlpatterns = [
     path("process_table/", partials.process_table, name="process_table"),
 ]
 
-urlpatterns = [
+urlpatterns: list[URLPattern | URLResolver] = [
     path("", pages.index, name="index"),
     path("process_action/", actions.process_action, name="process_action"),
     path("logs/<uuid:uuid>", pages.logs, name="logs"),
-    path("boot_process/", pages.BootProcessView.as_view(), name="boot_process"),
     path("partials/", include(partial_urlpatterns)),
 ]
+
+if settings.DEBUG:
+    urlpatterns.append(
+        path("boot_process/", pages.BootProcessView.as_view(), name="boot_process")
+    )

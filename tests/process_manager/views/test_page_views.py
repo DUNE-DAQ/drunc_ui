@@ -2,7 +2,7 @@ from http import HTTPStatus
 from uuid import uuid4
 
 from django.urls import reverse
-from pytest_django.asserts import assertContains, assertTemplateUsed
+from pytest_django.asserts import assertContains, assertNotContains, assertTemplateUsed
 
 from ...utils import LoginRequiredTest, PermissionRequiredTest
 
@@ -17,6 +17,20 @@ class TestIndexView(LoginRequiredTest):
         with assertTemplateUsed(template_name="process_manager/index.html"):
             response = auth_client.get(self.endpoint)
         assert response.status_code == HTTPStatus.OK
+
+    def test_debug_false(self, auth_client):
+        """Test the index view when DEBUG is False.
+
+        NOTE That tests are always run with DEBUG=False regardless of the actual
+        setting, so this test is to ensure the view does not expose debug information
+        in production.
+        """
+        response = auth_client.get(self.endpoint)
+        assert not response.context["debug"]
+        assertNotContains(
+            response,
+            f'<a class="nav-link" href="{reverse("process_manager:boot_process")}">Boot</a>',  # noqa: E501
+        )
 
 
 class TestLogsView(PermissionRequiredTest):
