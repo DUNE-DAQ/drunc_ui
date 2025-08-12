@@ -1,14 +1,14 @@
 from http import HTTPStatus
 from uuid import uuid4
 
-from django.test import TestCase
+from django.test import override_settings
 from django.urls import reverse
 from pytest_django.asserts import assertContains, assertNotContains, assertTemplateUsed
 
 from ...utils import LoginRequiredTest, PermissionRequiredTest
 
 
-class TestIndexView(LoginRequiredTest, TestCase):
+class TestIndexView(LoginRequiredTest):
     """Tests for the index view."""
 
     endpoint = reverse("process_manager:index")
@@ -25,13 +25,15 @@ class TestIndexView(LoginRequiredTest, TestCase):
             f'<a class="nav-link" href="{reverse("process_manager:boot_process")}">Boot</a>',  # noqa: E501
         )
 
-        with self.settings(DEBUG=False):
-            response = auth_client.get(self.endpoint)
-            assert not response.context["debug"]
-            assertNotContains(
-                response,
-                f'<a class="nav-link" href="{reverse("process_manager:boot_process")}">Boot</a>',  # noqa: E501
-            )
+    @override_settings(DEBUG=False)
+    def test_debug_false(self, auth_client):
+        """Test the index view when DEBUG is False."""
+        response = auth_client.get(self.endpoint)
+        assert not response.context["debug"]
+        assertNotContains(
+            response,
+            f'<a class="nav-link" href="{reverse("process_manager:boot_process")}">Boot</a>',  # noqa: E501
+        )
 
 
 class TestLogsView(PermissionRequiredTest):
