@@ -20,6 +20,7 @@ crispy-bootstrap5 = "^2025.6"
 django-stubs-ext = "^5.2.2"
 requests = "^2.32.3"
 types-protobuf = "^6.30.2.20250822"
+gunicorn = "^23.0.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.4"
