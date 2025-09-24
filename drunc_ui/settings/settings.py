@@ -130,6 +130,7 @@ STATICFILES_DIRS = [
     BASE_DIR / "controller/templates/controller/static",
     BASE_DIR / "process_manager/templates/process_manager/static",
 ]
+STATIC_ROOT = os.getenv("STATIC_ROOT", BASE_DIR / "static")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -148,7 +149,6 @@ INSTALLED_APPS += [
 
 
 MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
-STATIC_ROOT = BASE_DIR / "staticfiles"
 
 AUTH_USER_MODEL = "main.User"
 

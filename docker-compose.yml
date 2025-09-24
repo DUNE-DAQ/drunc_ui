@@ -7,19 +7,22 @@ services:
       - -c
       - |
         python manage.py migrate
+        python manage.py collectstatic --noinput
         python manage.py runserver 0:8000
     ports:
       - 127.0.0.1:8000:8000
     environment:
       - PROCESS_MANAGER_URL=drunc_pm:10054
       - SESSION_MANAGER_URL=drunc_sm:50000
-      - DATABASE_DIR=/home/dune_user/db
+      - DATABASE_DIR=/data/db
+      - STATIC_ROOT=/data/static
       - CSC_URL
       - CSC_SESSION
       - CSC_SESSION_NAME
     volumes:
-      - .:/home/dune_user/app
-      - db:/home/dune_user/db
+      - .:/app
+      - db:/data/db
+      - static:/data/static
       - ${DRUNC_LOCAL_DEPS:-.}:/mnt/local_deps
 
   drunc_pm:
@@ -106,10 +109,10 @@ services:
         python manage.py kafka_consumer --debug
     environment:
       - KAFKA_ADDRESS=kafka:9092
-      - DATABASE_DIR=/home/dune_user/db
+      - DATABASE_DIR=/data/db
     volumes:
-      - .:/home/dune_user/app
-      - db:/home/dune_user/db
+      - .:/app
+      - db:/data/db
       - ${DRUNC_LOCAL_DEPS:-.}:/mnt/local_deps
     depends_on:
       kafka:
@@ -119,3 +122,4 @@ services:
 
 volumes:
   db:
+  static:

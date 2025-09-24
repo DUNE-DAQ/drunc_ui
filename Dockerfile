@@ -13,10 +13,9 @@ FROM python
 COPY --from=build /usr/local/lib/python3.10/site-packages /usr/local/lib/python3.10/site-packages
 COPY --from=build /usr/local/bin /usr/local/bin
 
-RUN groupadd --gid 1221 dune_group && \
-    useradd --uid 1221 --gid 1221 --create-home dune_user
+COPY . /app
+WORKDIR /app
 
-USER dune_user
-RUN mkdir /home/dune_user/db
-WORKDIR /home/dune_user/app
 EXPOSE 8000
+
+CMD ["python", "manage.py", "runserver", "0:8000"]
