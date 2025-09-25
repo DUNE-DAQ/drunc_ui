@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-cm
+  namespace: drunc-ui-app
+data:
+  DB_HOST: postgres-service
+  DB_USERNAME: sampleuser
+  DB_PASSWORD: sampleuser123
+  DB_NAME: drunc-ui-app
+  DB_PORT: '5432'
+  STATIC_ROOT: /data/static
+  PROCESS_MANAGER_URL: drunc_pm:10054
+  SESSION_MANAGER_URL: drunc_sm:50000
+  CSRF_TRUSTED_ORIGINS: http://192.168.49.2:30080
