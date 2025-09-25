@@ -12,16 +12,19 @@ services:
     ports:
       - 127.0.0.1:8000:8000
     environment:
+      - DB_HOST=db
+      - DB_NAME=postgress
+      - DB_USERNAME=postgress
+      - DB_PASSWORD=postgress
+      - DB_PORT=5432
       - PROCESS_MANAGER_URL=drunc_pm:10054
       - SESSION_MANAGER_URL=drunc_sm:50000
-      - DATABASE_DIR=/data/db
       - STATIC_ROOT=/data/static
       - CSC_URL
       - CSC_SESSION
       - CSC_SESSION_NAME
     volumes:
       - .:/app
-      - db:/data/db
       - static:/data/static
       - ${DRUNC_LOCAL_DEPS:-.}:/mnt/local_deps
 
@@ -108,17 +111,36 @@ services:
       - |
         python manage.py kafka_consumer --debug
     environment:
+      - DB_HOST=db
+      - POSTGRES_DB=postgress
+      - POSTGRES_USER=postgress
+      - POSTGRES_PASSWORD=postgress
+      - DB_PORT=5432
       - KAFKA_ADDRESS=kafka:9092
-      - DATABASE_DIR=/data/db
     volumes:
       - .:/app
-      - db:/data/db
       - ${DRUNC_LOCAL_DEPS:-.}:/mnt/local_deps
     depends_on:
       kafka:
         condition: service_healthy
       app:
         condition: service_started
+
+  db:
+    image: postgres:16.0
+    volumes:
+      - db:/var/lib/postgres/data
+    environment:
+      - POSTGRES_DB=postgress
+      - POSTGRES_USER=postgress
+      - POSTGRES_PASSWORD=postgress
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U postgress]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - 5432:5432
 
 volumes:
   db:

@@ -27,8 +27,10 @@ SECRET_KEY = "django-insecure-h&kvnro2pjcvc*9iah-b95rdag)gjxcyy#2xl^e@3v^1zxc4$3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS: list[str] = []
+ALLOWED_HOSTS: list[str] = ["*"]
 
+if os.getenv("CSRF_TRUSTED_ORIGINS"):
+    CSRF_TRUSTED_ORIGINS: list[str] = os.getenv("CSRF_TRUSTED_ORIGINS").split(",")
 
 # Application definition
 
@@ -75,18 +77,14 @@ WSGI_APPLICATION = "drunc_ui.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASE_DIR = Path(os.getenv("DATABASE_DIR", BASE_DIR))
-
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": DATABASE_DIR / "db.sqlite3",
-        # avoid database locking issues between Kafka consumer and web app
-        # https://docs.djangoproject.com/en/5.1/ref/databases/#database-is-locked-errors
-        "OPTIONS": {
-            "timeout": 5,
-            "transaction_mode": "IMMEDIATE",
-        },
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("DB_NAME"),
+        "USER": os.getenv("DB_USERNAME"),
+        "PASSWORD": os.getenv("DB_PASSWORD"),
+        "HOST": os.getenv("DB_HOST"),
+        "PORT": os.getenv("DB_PORT"),
     }
 }
 
