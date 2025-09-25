@@ -9,6 +9,7 @@ db/*
 !drunc_docker_service_lite/requirements.txt
 !drunc_docker_service/process-manager-kafka.json
 !process_manager
+!session_manager
 !controller
 !interfaces
 !ers
