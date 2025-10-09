@@ -228,3 +228,22 @@ docker compose exec app python manage.py createsuperuser
 And then following the instructions for selecting a username, email and password.
 
 [documented in the Django docs]: https://docs.djangoproject.com/en/5.2/intro/tutorial02/#creating-an-admin-user
+
+## Docker Permissions Issue
+
+You might encountered a permissions issue in Linux (or WSL) when running `docker compose up`, which results
+in the following error:
+
+```output
+permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock
+```
+
+There are two options to fix this:
+
+1. Add your user to the `docker` group, and then restart your terminal session.
+
+    ```output
+    sudo usermod -aG docker $USER
+    ```
+
+1. Just run any `docker compose` commands using `sudo`, eg. `sudo docker compose up`.
