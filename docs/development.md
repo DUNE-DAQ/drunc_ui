@@ -213,3 +213,18 @@ docker compose --profile drunc up -d
 ```
 
 [django admin command]: https://docs.djangoproject.com/en/5.1/howto/custom-management-commands/
+
+## Creating a superuser
+
+In order to use Drunc UI - and in the absence of other sign-up process yet - developers will need
+to manually create a superuser. The steps are somewhat [documented in the Django docs], although
+hidden in the tutorial, so for completeness, and in combination to using Docker compose,
+they boild down to running:
+
+```bash
+docker compose exec app python manage.py createsuperuser
+```
+
+And then following the instructions for selecting a username, email and password.
+
+[documented in the Django docs]: https://docs.djangoproject.com/en/5.2/intro/tutorial02/#creating-an-admin-user
