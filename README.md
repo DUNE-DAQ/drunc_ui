@@ -29,19 +29,19 @@ provided.
 This repository provides a Docker Compose configuration providing the requisite services
 suitable for development of the interfaces using realistic test data. Working with the
 full docker stack requires building a very larger docker base image and has heavy
-resource requirements when running. For this reason a "lite" stack is also provided that
-can be used for development of the Process Manager UI.
+resource requirements when running.
 
-The full and lite stack are defined using [Docker Compose profiles]. It is recommended
-to set the `COMPOSE_PROFILES` environment variable to select which stack you are working
-with. Use the value `drunc` for the full stack or `drunc-lite` for the lite stack.
+It is recommended to set the `COMPOSE_PROFILES` environment variable to select which stack
+you are working with. Use the value `drunc` for the full stack or not set anything for
+a more ligtweight configuration that, however, might be good enough to develop some
+aspects of the fool.
 
 You can also use the `--profile` flag when invoking `docker compose` however the
 instructions in this file assume you are using the environment variable.
 
 ## Process Manager UI
 
-You can use either the full or lite Docker Compose profiles when working with the
+You can use either the `drunc` Docker Compose profiles when working with the
 Process Manager UI.
 
 ### Getting Started with the Process Manager UI
@@ -76,8 +76,7 @@ corresponding terminal.
 
 ## Controller UI
 
-You must use the full Docker Compose profile when working with the Controller UI. The
-controller UI will not function correctly with the lite profile.
+You must use the `drunc` Docker Compose profile when working with the Controller UI.
 
 ### Getting Started with the Controller UI
 
