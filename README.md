@@ -41,8 +41,7 @@ instructions in this file assume you are using the environment variable.
 
 ## Process Manager UI
 
-You can use either the `drunc` Docker Compose profiles when working with the
-Process Manager UI.
+You must use the `drunc` Docker Compose profile when working with the Process Manager UI.
 
 ### Getting Started with the Process Manager UI
 
