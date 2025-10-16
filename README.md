@@ -34,7 +34,7 @@ resource requirements when running.
 It is recommended to set the `COMPOSE_PROFILES` environment variable to select which stack
 you are working with. Use the value `drunc` for the full stack or not set anything for
 a more ligtweight configuration that, however, might be good enough to develop some
-aspects of the fool.
+aspects of the tool.
 
 You can also use the `--profile` flag when invoking `docker compose` however the
 instructions in this file assume you are using the environment variable.
