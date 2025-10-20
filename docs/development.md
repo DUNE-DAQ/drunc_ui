@@ -213,3 +213,55 @@ docker compose --profile drunc up -d
 ```
 
 [django admin command]: https://docs.djangoproject.com/en/5.1/howto/custom-management-commands/
+
+## Creating a superuser
+
+In order to use Drunc UI - and in the absence of other sign-up process yet - developers will need
+to manually create a superuser. The steps are somewhat [documented in the Django docs], although
+hidden in the tutorial, so for completeness, and in combination to using Docker compose,
+they boild down to running:
+
+```bash
+docker compose exec app python manage.py createsuperuser
+```
+
+And then following the instructions for selecting a username, email and password.
+
+[documented in the Django docs]: https://docs.djangoproject.com/en/5.2/intro/tutorial02/#creating-an-admin-user
+
+## Docker Permissions Issue
+
+You might encountered a permissions issue in Linux (or WSL) when running `docker compose up`, which results
+in the following error:
+
+```output
+permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock
+```
+
+There are two options to fix this:
+
+1. Add your user to the `docker` group, and then restart your terminal session.
+
+    ```output
+    sudo usermod -aG docker $USER
+    ```
+
+1. Just run any `docker compose` commands using `sudo`, eg. `sudo docker compose up`.
+
+## Setup WSL on Windows
+
+`drunc_ui` should run fine using `docker` directly on Windows (except perhaps some tests), but if you
+rather use the Windows Subsystem for Linux (WSL), just set it up following [the official documentation].
+
+A couple of things to take into account:
+
+1. You can share files between Windows and the WSL, but they are sepparate OS living in different
+    filesystems. Things will work more smoothly if you clone `drunc_ui` directly within the WSL than using
+    the files within the Windows filesystem.
+1. As it is a different OS, you will need to install there the appropriate version of python, poetry, etc.
+1. Likewise, you will need to configure your PAT to pull/push things from/to GitHub.
+1. Finally, if you use VScode for development, make sure you set it up to use WSL, following the steps
+    [in the documentation].
+
+[the official documentation]: https://learn.microsoft.com/en-us/windows/wsl/install
+[in the documentation]: https://code.visualstudio.com/docs/remote/wsl
