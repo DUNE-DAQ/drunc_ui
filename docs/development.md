@@ -144,22 +144,6 @@ The following changes are needed to update the version of the base image used fo
 [frozen-release-alma9]: https://github.com/DUNE-DAQ/daq-release/pkgs/container/frozen-release-alma9
 [imperialcollegelondon/dunedaq_dev_environment]: https://github.com/ImperialCollegeLondon/drunc_ui/pkgs/container/dunedaq_dev_environment
 
-### drunc-lite
-
-This service is only used as part of the `drunc-lite` Docker Compose profile. See the
-[Docker Setup overview] for details.
-
-This image contains a parred down version of the drunc python package containing only
-the pip installable dependencies. As it avoids the full complex dependency stack of
-Drunc it can be based on a standard (and much smaller) Python image. The main limitation
-of this image is that it cannot boot Drunc sessions and hence is only useful for working
-with dummy processes in the Process Manager UI.
-
-Similarly to the full `drunc` service, it starts the Drunc Process Manager and provides
-an SSH server to allow the booting of dummy processes.
-
-[Docker Setup overview]: index.md#docker-setup
-
 ### app
 
 Runs the `drunc_ui` codebase. This is a fairly simple image that installs this project's
