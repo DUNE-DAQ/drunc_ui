@@ -29,7 +29,7 @@ def get_controller_uri() -> str:
         str: The URI of the root controller.
     """
     csc = ConnectivityServiceClient(settings.CSC_SESSION, settings.CSC_URL)
-    uris = csc.resolve("root-controller_control", "RunControlMessage")
+    uris = csc.resolve("root-controller_control", "RunControlMessage", ntries=10)
     if len(uris) != 1:
         raise ValueError(
             f"Expected 1 URI for root-controller, found {len(uris)}: {uris}"

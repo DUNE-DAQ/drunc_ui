@@ -12,7 +12,7 @@ from main.views.utils import handle_errors
 
 
 @login_required
-@handle_errors
+@handle_errors()
 def messages(request: HttpRequest, topic: str) -> HttpResponse:
     """View function to display messages for a given topic."""
     search = request.GET.get("search", "")

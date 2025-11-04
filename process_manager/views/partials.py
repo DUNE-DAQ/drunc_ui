@@ -41,7 +41,7 @@ def filter_table(
 
 
 @login_required
-@handle_errors
+@handle_errors()
 def process_table(request: HttpRequest) -> HttpResponse:
     """Renders the process table.
 
