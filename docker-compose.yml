@@ -62,7 +62,7 @@ services:
         condition: service_healthy
 
   kafka:
-    image: ubuntu/kafka:latest
+    image: bitnami/kafka:latest
     environment:
       - KAFKA_CFG_NODE_ID=0
       - KAFKA_CFG_PROCESS_ROLES=controller,broker
