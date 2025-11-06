@@ -4,7 +4,10 @@ import functools
 from typing import Any
 
 from django.conf import settings
-from drunc.connectivity_service.client import ConnectivityServiceClient
+from drunc.connectivity_service.client import (
+    ApplicationLookupUnsuccessful,
+    ConnectivityServiceClient,
+)
 from drunc.controller.controller_driver import ControllerDriver
 from drunc.utils.grpc_utils import pack_to_any
 from drunc.utils.shell_utils import create_dummy_token_from_uname
@@ -29,7 +32,12 @@ def get_controller_uri() -> str:
         str: The URI of the root controller.
     """
     csc = ConnectivityServiceClient(settings.CSC_SESSION, settings.CSC_URL)
-    uris = csc.resolve("root-controller_control", "RunControlMessage", ntries=10)
+    try:
+        uris = csc.resolve("root-controller_control", "RunControlMessage", ntries=5)
+    except ApplicationLookupUnsuccessful as e:
+        raise ApplicationLookupUnsuccessful(
+            "Unable to connect with the Root Controller"
+        ) from e
     if len(uris) != 1:
         raise ValueError(
             f"Expected 1 URI for root-controller, found {len(uris)}: {uris}"

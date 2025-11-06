@@ -18,7 +18,7 @@ class HandleErrorsTest(TestCase):
         """Test the exception_view function."""
         mock_logger = mock_get_logger.return_value
 
-        @handle_errors()
+        @handle_errors
         def exception_view(request):
             raise Exception("Test exception")
 
@@ -28,7 +28,7 @@ class HandleErrorsTest(TestCase):
         expected_content = render_to_string(
             "main/error_message.html",
             request=request,
-            context={"error_message": "Error please refresh page"},
+            context={"error_message": "An error occurred: Test exception"},
         )
         self.assertEqual(response.content.decode(), expected_content)
 

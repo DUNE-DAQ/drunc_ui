@@ -2,7 +2,6 @@
 
 import logging
 from collections.abc import Callable
-from functools import wraps
 
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
@@ -12,29 +11,23 @@ ViewType = (
 )
 
 
-def handle_errors(
-    error_message: str = "Error please refresh page",
-) -> Callable[[ViewType], ViewType]:
+def handle_errors(view_func: ViewType) -> ViewType:
     """Decorator to handle errors. Must decorate a view function.
 
     Args:
-        error_message: The error message to display if something goes wrong.
+        view_func: The The view function to be wrapped.
 
     Returns:
         The wrapped view function.
     """
 
-    def decorator(view_func: ViewType) -> ViewType:
-        @wraps(view_func)
-        def wrapped_view(request: HttpRequest, *args, **kwargs) -> HttpResponse:  # type: ignore
-            try:
-                return view_func(request, *args, **kwargs)
-            except Exception as e:
-                logger = logging.getLogger("django")
-                logger.exception(e)
-                context = {"error_message": error_message}
-                return render(request, "main/error_message.html", context=context)
+    def wrapped_view(request: HttpRequest, *args, **kwargs) -> HttpResponse:  # type: ignore
+        try:
+            return view_func(request, *args, **kwargs)
+        except Exception as e:
+            logger = logging.getLogger("django")
+            logger.exception(e)
+            context = {"error_message": f"An error occurred: {e}"}
+            return render(request, "main/error_message.html", context=context)
 
-        return wrapped_view
-
-    return decorator
+    return wrapped_view

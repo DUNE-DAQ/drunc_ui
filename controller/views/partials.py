@@ -39,7 +39,7 @@ def make_fsm_flowchart(states: dict[str, dict[str, str]], current_state: str) ->
 
 
 @login_required
-@handle_errors(error_message="Unable to contact root controller")
+@handle_errors
 def state_machine(request: HttpRequest) -> HttpResponse:
     """Triggers a chan."""
     event = request.POST.get("event", None)
@@ -87,7 +87,7 @@ def dialog(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
-@handle_errors(error_message="Unable to contact root controller")
+@handle_errors
 def app_tree_view_summary(request: HttpRequest) -> HttpResponse:
     """Renders the app tree view summary."""
     return render(
@@ -98,7 +98,7 @@ def app_tree_view_summary(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
-@handle_errors(error_message="Unable to contact root controller")
+@handle_errors
 def app_tree_view_table(request: HttpRequest) -> HttpResponse:
     """View that renders the app tree view table."""
     table = tables.AppTreeTable(app_tree.get_app_tree(request.user.username).to_list())

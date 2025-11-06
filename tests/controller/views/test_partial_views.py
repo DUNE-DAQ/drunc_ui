@@ -81,7 +81,7 @@ class TestFSMView(LoginRequiredTest):
         # This should not really be possible, by design, so the error relates to the
         # most likely cause, a failure in connecting the controller.
         response = auth_client.post(self.endpoint, data={"event": event})
-        assert response.context["error_message"] == "Unable to contact root controller"
+        assert response.context["error_message"] == "An error occurred: Invalid form: "
 
         # Now it is valid, so all good
         form.is_valid = mocker.MagicMock()
