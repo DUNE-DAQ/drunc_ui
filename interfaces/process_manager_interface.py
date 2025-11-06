@@ -6,6 +6,7 @@ from enum import Enum
 
 from django.conf import settings
 from drunc.process_manager.process_manager_driver import ProcessManagerDriver
+from drunc.utils.grpc_utils import ServerUnreachable
 from drunc.utils.shell_utils import DecodedResponse
 from druncschema.process_manager_pb2 import (
     LogRequest,
@@ -27,7 +28,10 @@ def get_process_manager_driver(username: str) -> ProcessManagerDriver:
 async def _get_session_info(username: str) -> ProcessInstanceList:
     pmd = get_process_manager_driver(username)
     query = ProcessQuery(names=[".*"])
-    return await pmd.ps(query)
+    try:
+        return await pmd.ps(query)
+    except ServerUnreachable as e:
+        raise ServerUnreachable("Unable to connect with the Process Manager") from e
 
 
 def get_session_info(username: str) -> ProcessInstanceList:
