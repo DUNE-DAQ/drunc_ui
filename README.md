@@ -125,7 +125,6 @@ are not regularly tested or maintained.
 
 You may then need to perform subsequent actions such as booting test session data.
 
-[docker compose profiles]: https://docs.docker.com/compose/how-tos/profiles/
 [drunc repository]: https://github.com/DUNE-DAQ/drunc
 [running drunc with pocket kafka]: https://github.com/DUNE-DAQ/drunc/wiki/Running-drunc-with-pocket-kafka
 [the controllers]: https://imperialcollegelondon.github.io/drunc_ui/controller

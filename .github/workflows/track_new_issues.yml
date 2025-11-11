@@ -2,8 +2,8 @@ name: Add issue to project
 on:
   issues:
     types:
-      - opened   
-      
+      - opened
+
 jobs:
   track_issues_dispatch:
     name: Add new issue to project

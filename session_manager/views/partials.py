@@ -5,11 +5,13 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
 from interfaces import session_manager_interface as smi
+from main.views.utils import handle_errors
 
 from .. import tables
 
 
 @login_required
+@handle_errors
 def active_sessions_table_view(request: HttpRequest) -> HttpResponse:
     """View that renders the active sessions table."""
     return render(
@@ -20,6 +22,7 @@ def active_sessions_table_view(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
+@handle_errors
 def available_configs_table_view(request: HttpRequest) -> HttpResponse:
     """View that renders the available configs table."""
     return render(
