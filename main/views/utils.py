@@ -12,21 +12,22 @@ ViewType = (
 
 
 def handle_errors(view_func: ViewType) -> ViewType:
-    """Decorator to handle errors.
+    """Decorator to handle errors. Must decorate a view function.
 
     Args:
-        view_func: The view function to be wrapped.
+        view_func: The The view function to be wrapped.
 
     Returns:
         The wrapped view function.
     """
-    logger = logging.getLogger("django")
 
-    def wrapped_view(request, *args, **kwargs) -> HttpResponse:  # type: ignore
+    def wrapped_view(request: HttpRequest, *args, **kwargs) -> HttpResponse:  # type: ignore
         try:
             return view_func(request, *args, **kwargs)
         except Exception as e:
+            logger = logging.getLogger("django")
             logger.exception(e)
-            return render(request, "main/error_message.html")
+            context = {"error_message": f"An error occurred: {e}"}
+            return render(request, "main/error_message.html", context=context)
 
     return wrapped_view

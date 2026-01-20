@@ -67,25 +67,6 @@ services:
       kafka:
         condition: service_healthy
 
-  drunc-lite:
-    build:
-      context: ./drunc_docker_service/
-      dockerfile: ./Dockerfile_lite
-    container_name: drunc
-    profiles:
-      - drunc-lite
-    command:
-      - bash
-      - -c
-      - |
-        service ssh start &&
-        drunc-process-manager --log-level debug file:///process-manager-kafka.json
-    expose:
-      - 10054
-    depends_on:
-      kafka:
-        condition: service_healthy
-
   kafka:
     image: bitnami/kafka:latest
     environment:

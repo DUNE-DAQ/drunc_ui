@@ -32,7 +32,7 @@
             <div hx-get="{% url 'controller:app_tree_summary' %}"
                  hx-trigger="load"
                  hx-target="#app_tree_summary"></div>
-            <div id="app_tree_summary"></div>
+            <div id="app_tree_summary">Waiting for connectivity service...</div>
           </div>
         </div>
       </div>
@@ -47,7 +47,7 @@
               <div hx-get="{% url 'controller:state_machine' %}"
                    hx-trigger="load"
                    hx-target="#state-machine"></div>
-              <div id="state-machine"></div>
+              <div id="state-machine">Waiting for connectivity service...</div>
             </div>
           </div>
         </div>

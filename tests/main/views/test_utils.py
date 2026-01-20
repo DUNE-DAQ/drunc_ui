@@ -25,7 +25,11 @@ class HandleErrorsTest(TestCase):
         request = self.factory.get("/")
         response = exception_view(request)
 
-        expected_content = render_to_string("main/error_message.html", request=request)
+        expected_content = render_to_string(
+            "main/error_message.html",
+            request=request,
+            context={"error_message": "An error occurred: Test exception"},
+        )
         self.assertEqual(response.content.decode(), expected_content)
 
         mock_logger.exception.assert_called_once()

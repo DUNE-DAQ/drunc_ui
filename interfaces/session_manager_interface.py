@@ -2,6 +2,7 @@
 
 from django.conf import settings
 from drunc.session_manager.session_manager_driver import SessionManagerDriver
+from drunc.utils.grpc_utils import ServerUnreachable
 from drunc.utils.shell_utils import create_dummy_token_from_uname
 
 
@@ -20,8 +21,13 @@ def get_configs() -> list[dict[str, str]]:
         List of dictionaries indicating the file where the config is contained and the
         id for the config.
     """
-    configs = get_session_manager_driver().list_all_configs().data
-    return [{"file": c.file, "session_id": c.session_id} for c in configs.config_keys]
+    try:
+        configs = get_session_manager_driver().list_all_configs().data
+        return [
+            {"file": c.file, "session_id": c.session_id} for c in configs.config_keys
+        ]
+    except ServerUnreachable as e:
+        raise ServerUnreachable("Unable to connect with the Session Manager") from e
 
 
 def get_sessions() -> list[dict[str, str]]:
@@ -31,5 +37,8 @@ def get_sessions() -> list[dict[str, str]]:
         List of dictionaries indicating the session name and the actor name (i.e.
         typically, the user who boots the session).
     """
-    sessions = get_session_manager_driver().list_all_sessions().data
-    return [{"name": s.name, "actor": s.user} for s in sessions.active_sessions]
+    try:
+        sessions = get_session_manager_driver().list_all_sessions().data
+        return [{"name": s.name, "actor": s.user} for s in sessions.active_sessions]
+    except ServerUnreachable as e:
+        raise ServerUnreachable("Unable to connect with the Session Manager") from e

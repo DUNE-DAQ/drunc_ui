@@ -77,9 +77,11 @@ class TestFSMView(LoginRequiredTest):
         form.cleaned_data = {"arg1": 1, "arg2": 2}
         mock_form.return_value = lambda _: form
 
-        # The form is not valid, so there should be an exception
-        with pytest.raises(ValueError, match="Invalid form:"):
-            auth_client.post(self.endpoint, data={"event": event})
+        # The form is not valid, so there should be a message
+        # This should not really be possible, by design, so the error relates to the
+        # most likely cause, a failure in connecting the controller.
+        response = auth_client.post(self.endpoint, data={"event": event})
+        assert response.context["error_message"] == "An error occurred: Invalid form: "
 
         # Now it is valid, so all good
         form.is_valid = mocker.MagicMock()
