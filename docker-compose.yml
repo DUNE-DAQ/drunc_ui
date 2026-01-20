@@ -77,7 +77,7 @@ services:
     expose:
       - 9092
     healthcheck:
-      test: [CMD-SHELL, timeout 5s /opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 > /dev/null 2>&1]
+      test: timeout 5s /opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092
       interval: 1s
       timeout: 6s
       retries: 20
