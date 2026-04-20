@@ -23,7 +23,6 @@ def test_get_process_manager_driver(mocker):
     mock_driver.assert_called_once_with(
         settings.PROCESS_MANAGER_URL,
         token=expected_token,
-        aio_channel=True,
     )
 
     # Verify that the function returns the mock driver instance

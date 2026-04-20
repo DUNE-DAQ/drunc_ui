@@ -27,7 +27,10 @@ SECRET_KEY = "django-insecure-h&kvnro2pjcvc*9iah-b95rdag)gjxcyy#2xl^e@3v^1zxc4$3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS: list[str] = []
+ALLOWED_HOSTS: list[str] = ["*"]
+
+# TODO: SET DEBUG = False WHEN DEPLOYED
+# TODO: SET ALLOWED_HOSTS PROPERLY
 
 
 # Application definition
@@ -75,18 +78,14 @@ WSGI_APPLICATION = "drunc_ui.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASE_DIR = Path(os.getenv("DATABASE_DIR", BASE_DIR))
-
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": DATABASE_DIR / "db.sqlite3",
-        # avoid database locking issues between Kafka consumer and web app
-        # https://docs.djangoproject.com/en/5.1/ref/databases/#database-is-locked-errors
-        "OPTIONS": {
-            "timeout": 5,
-            "transaction_mode": "IMMEDIATE",
-        },
+        "ENGINE": "django.db.backends.postgresql",
+        "HOST": os.getenv("DB_HOST"),
+        "PORT": os.getenv("DB_PORT"),
+        "NAME": os.getenv("DB_NAME"),
+        "USER": os.getenv("DB_USER"),
+        "PASSWORD": os.getenv("DB_PASSWORD"),
     }
 }
 
@@ -125,11 +124,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [
     BASE_DIR / "controller/templates/controller/static",
     BASE_DIR / "process_manager/templates/process_manager/static",
 ]
+
+MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -146,10 +149,6 @@ INSTALLED_APPS += [
     "session_manager",
 ]
 
-
-MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
-STATIC_ROOT = BASE_DIR / "staticfiles"
-
 AUTH_USER_MODEL = "main.User"
 
 LOGIN_URL = "main:login"
@@ -160,9 +159,8 @@ DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap5.html"
 
 PROCESS_MANAGER_URL = os.getenv("PROCESS_MANAGER_URL", "localhost:10054")
 SESSION_MANAGER_URL = os.getenv("SESSION_MANAGER_URL", "localhost:50000")
-CSC_URL = os.getenv("CSC_URL", "drunc_pm:5000")
-CSC_SESSION = os.getenv("CSC_SESSION", "local-1x1-config")
-CSC_SESSION_NAME = os.getenv("CSC_SESSION_NAME", CSC_SESSION)
+CSC_URL = os.getenv("CSC_URL", "localhost:30005")
+CSC_SESSION = os.getenv("CSC_SESSION", "default")
 
 INSTALLED_APPS += ["crispy_forms", "crispy_bootstrap5"]
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"

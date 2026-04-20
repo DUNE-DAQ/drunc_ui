@@ -9,9 +9,7 @@ from drunc.utils.shell_utils import create_dummy_token_from_uname
 def get_session_manager_driver() -> SessionManagerDriver:
     """Get a ProcessManagerDriver instance."""
     token = create_dummy_token_from_uname()
-    return SessionManagerDriver(
-        settings.SESSION_MANAGER_URL, token=token, aio_channel=False
-    )
+    return SessionManagerDriver(settings.SESSION_MANAGER_URL, token=token)
 
 
 def get_configs() -> list[dict[str, str]]:
@@ -22,7 +20,7 @@ def get_configs() -> list[dict[str, str]]:
         id for the config.
     """
     try:
-        configs = get_session_manager_driver().list_all_configs().data
+        configs = get_session_manager_driver().list_all_configs()
         return [
             {"file": c.file, "session_id": c.session_id} for c in configs.config_keys
         ]
@@ -38,7 +36,7 @@ def get_sessions() -> list[dict[str, str]]:
         typically, the user who boots the session).
     """
     try:
-        sessions = get_session_manager_driver().list_all_sessions().data
+        sessions = get_session_manager_driver().list_all_sessions()
         return [{"name": s.name, "actor": s.user} for s in sessions.active_sessions]
     except ServerUnreachable as e:
         raise ServerUnreachable("Unable to connect with the Session Manager") from e

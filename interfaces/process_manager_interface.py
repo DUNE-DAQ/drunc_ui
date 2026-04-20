@@ -1,13 +1,11 @@
 """Module providing functions to interact with the drunc process manager."""
 
-import asyncio
 from collections.abc import Iterable
 from enum import Enum
 
 from django.conf import settings
 from drunc.process_manager.process_manager_driver import ProcessManagerDriver
 from drunc.utils.grpc_utils import ServerUnreachable
-from drunc.utils.shell_utils import DecodedResponse
 from druncschema.process_manager_pb2 import (
     LogRequest,
     ProcessInstanceList,
@@ -20,23 +18,17 @@ from druncschema.token_pb2 import Token
 def get_process_manager_driver(username: str) -> ProcessManagerDriver:
     """Get a ProcessManagerDriver instance."""
     token = Token(token=f"{username}-token", user_name=username)
-    return ProcessManagerDriver(
-        settings.PROCESS_MANAGER_URL, token=token, aio_channel=True
-    )
-
-
-async def _get_session_info(username: str) -> ProcessInstanceList:
-    pmd = get_process_manager_driver(username)
-    query = ProcessQuery(names=[".*"])
-    try:
-        return await pmd.ps(query)
-    except ServerUnreachable as e:
-        raise ServerUnreachable("Unable to connect with the Process Manager") from e
+    return ProcessManagerDriver(settings.PROCESS_MANAGER_URL, token=token)
 
 
 def get_session_info(username: str) -> ProcessInstanceList:
     """Get info about all sessions from process manager."""
-    return asyncio.run(_get_session_info(username))
+    pmd = get_process_manager_driver(username)
+    query = ProcessQuery(names=[".*"])
+    try:
+        return pmd.ps(query)
+    except ServerUnreachable as e:
+        raise ServerUnreachable("Unable to connect with the Process Manager") from e
 
 
 class ProcessAction(Enum):
@@ -47,26 +39,9 @@ class ProcessAction(Enum):
     FLUSH = "flush"
 
 
-async def _process_call(
+def process_call(
     uuids: Iterable[str], action: ProcessAction, username: str
-) -> None:
-    pmd = get_process_manager_driver(username)
-    uuids_ = [ProcessUUID(uuid=u) for u in uuids]
-
-    match action:
-        case ProcessAction.RESTART:
-            for uuid_ in uuids_:
-                query = ProcessQuery(uuids=[uuid_])
-                await pmd.restart(query)
-        case ProcessAction.KILL:
-            query = ProcessQuery(uuids=uuids_)
-            await pmd.kill(query)
-        case ProcessAction.FLUSH:
-            query = ProcessQuery(uuids=uuids_)
-            await pmd.flush(query)
-
-
-def process_call(uuids: Iterable[str], action: ProcessAction, username: str) -> None:
+) -> ProcessInstanceList:
     """Perform an action on a process with a given UUID.
 
     Args:
@@ -74,17 +49,25 @@ def process_call(uuids: Iterable[str], action: ProcessAction, username: str) -> 
         action: Action to be performed {restart,flush,kill}.
         username: Username of the user performing the action
     """
-    return asyncio.run(_process_call(uuids, action, username))
-
-
-async def _get_process_logs(uuid: str, username: str) -> list[DecodedResponse]:
     pmd = get_process_manager_driver(username)
-    query = ProcessQuery(uuids=[ProcessUUID(uuid=uuid)])
-    request = LogRequest(query=query, how_far=100)
-    return [item async for item in pmd.logs(request)]
+    uuids_ = [ProcessUUID(uuid=u) for u in uuids]
+    query = ProcessQuery(uuids=uuids_)
+
+    try:
+        match action:
+            case ProcessAction.RESTART:
+                return pmd.restart(query)
+            case ProcessAction.KILL:
+                return pmd.kill(query)
+            case ProcessAction.FLUSH:
+                return pmd.flush(query)
+            case _:
+                raise ValueError(f"Unknown action: {action}")
+    except ServerUnreachable as e:
+        raise ServerUnreachable("Unable to connect with the Process Manager") from e
 
 
-def get_process_logs(uuid: str, username: str) -> list[DecodedResponse]:
+def get_process_logs(uuid: str, username: str) -> list[str]:
     """Retrieve logs for a process from the process manager.
 
     Args:
@@ -92,25 +75,29 @@ def get_process_logs(uuid: str, username: str) -> list[DecodedResponse]:
       username: Username of the user requesting the logs
 
     Returns:
-      The process logs.
+      The process logs, as a list of lines.
     """
-    return asyncio.run(_get_process_logs(uuid, username))
+    pmd = get_process_manager_driver(username)
+    query = ProcessQuery(uuids=[ProcessUUID(uuid=uuid)])
+    request = LogRequest(query=query, how_far=100)
+    response = pmd.logs(request)
+    return list(response.lines)
 
 
-async def _boot_process(user: str, data: dict[str, str | int]) -> None:
-    pmd = get_process_manager_driver(user)
-    async for item in pmd.dummy_boot(user="root", **data):
-        pass
-
-
-def boot_process(user: str, data: dict[str, str | int]) -> None:
+def boot_process(
+    user: str, session_name: str, n_processes: int, sleep: int, n_sleeps: int
+) -> None:
     """Boot a process with the given data.
 
     Args:
         user: the user to boot the process as.
-        data: the data for the process.
+        session_name: the name of the session.
+        n_processes: the number of processes to boot.
+        sleep: the sleep duration.
+        n_sleeps: the number of sleeps.
     """
-    return asyncio.run(_boot_process(user, data))
+    pmd = get_process_manager_driver(user)
+    pmd.dummy_boot("root", session_name, n_processes, sleep, n_sleeps)
 
 
 def get_hostnames(user: str) -> dict[str, str]:
@@ -122,9 +109,9 @@ def get_hostnames(user: str) -> dict[str, str]:
     Returns:
         The hostnames of the processes for the given user.
     """
-    session = get_session_info(user)
+    session_info = get_session_info(user)
     hostnames = {}
-    for process_instance in session.data.values:  # type: ignore [attr-defined]
+    for process_instance in session_info.values:
         hostnames[process_instance.process_description.metadata.name] = (
             process_instance.process_description.metadata.hostname
         )

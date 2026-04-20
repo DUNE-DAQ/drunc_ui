@@ -16,7 +16,14 @@ Including another URLconf
 """
 
 from django.contrib import admin
+from django.http import HttpRequest, HttpResponse
 from django.urls import include, path
+
+
+def healthz(request: HttpRequest) -> HttpResponse:
+    """Simple function for checking server health."""
+    return HttpResponse("OK\n", content_type="text/plain")
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -24,4 +31,5 @@ urlpatterns = [
     path("process_manager/", include("process_manager.urls")),
     path("controller/", include("controller.urls")),
     path("session_manager/", include("session_manager.urls")),
+    path("healthz", healthz),
 ]
