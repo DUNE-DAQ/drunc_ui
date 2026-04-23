@@ -96,7 +96,7 @@ indent = 2
 
 [tool.pytest.ini_options]
 addopts = "-v --mypy --cov=. --cov-report=html --ignore=manage.py --ignore=drunc_ui/settings/ --ignore=docs/ --ignore=example_deployment/ --ignore=ers/"
-DJANGO_SETTINGS_MODULE = "drunc_ui.settings"
+DJANGO_SETTINGS_MODULE = "tests.settings"
 FAIL_INVALID_TEMPLATE_VARS = true
 
 [tool.coverage.run]
