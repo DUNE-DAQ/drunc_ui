@@ -93,7 +93,7 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",  # noqa: E501
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
@@ -168,9 +168,9 @@ KAFKA_ADDRESS = os.getenv("KAFKA_ADDRESS", "kafka:9092")
 
 KAFKA_TOPIC_REGEX = {
     # PROCMAN matches topics of the form "control.<session>.process_manager".
-    "PROCMAN": "^control\..+\.process_manager$",
+    "PROCMAN": r"^control\..+\.process_manager$",
     # ERSCONTROL matches anything that starts with "erscontrol.".
-    "ERSCONTROL": "^erscontrol\..+",
+    "ERSCONTROL": r"^erscontrol\..+",
 }
 
 MESSAGE_EXPIRE_SECS = float(os.getenv("MESSAGE_EXPIRE_SECS", 1800))
