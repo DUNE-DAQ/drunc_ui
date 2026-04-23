@@ -51,10 +51,10 @@ def process_table(request: HttpRequest) -> HttpResponse:
     """
     session_info = get_session_info(request.user.username)
 
-    status_enum_lookup = dict(item[::-1] for item in ProcessInstance.StatusCode.items())
+    status_enum_lookup = {value: key for key, value in ProcessInstance.StatusCode.items()}
 
     # Build the table data
-    table_data = [
+    table_data: list[dict[str, str | int]] = [
         {
             "uuid": process_instance.uuid.uuid,
             "name": process_instance.process_description.metadata.name,
@@ -65,6 +65,7 @@ def process_table(request: HttpRequest) -> HttpResponse:
         }
         for process_instance in session_info.values
     ]
+
     # Get the values from the GET request
     search_dropdown = request.GET.get("search-drp", "")
     search_input = request.GET.get("search", "")
