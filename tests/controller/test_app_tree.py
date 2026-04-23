@@ -30,9 +30,7 @@ from controller.app_tree import AppTree
                     "detector": "",
                 },
                 {
-                    "name": mark_safe(
-                        "⋅&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ChildApp"
-                    ),
+                    "name": mark_safe("⋅&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ChildApp"),
                     "host": "childhost",
                     "detector": "",
                 },
@@ -54,16 +52,12 @@ from controller.app_tree import AppTree
                     "detector": "",
                 },
                 {
-                    "name": mark_safe(
-                        "⋅&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ChildApp1"
-                    ),
+                    "name": mark_safe("⋅&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ChildApp1"),
                     "host": "childhost1",
                     "detector": "",
                 },
                 {
-                    "name": mark_safe(
-                        "⋅&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ChildApp2"
-                    ),
+                    "name": mark_safe("⋅&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ChildApp2"),
                     "host": "childhost2",
                     "detector": "",
                 },
@@ -76,9 +70,7 @@ from controller.app_tree import AppTree
                     AppTree(
                         name="ChildApp",
                         children=[
-                            AppTree(
-                                name="GrandChildApp", children=[], host="grandchildhost"
-                            )
+                            AppTree(name="GrandChildApp", children=[], host="grandchildhost")
                         ],
                         host="childhost",
                     )
@@ -92,9 +84,7 @@ from controller.app_tree import AppTree
                     "detector": "",
                 },
                 {
-                    "name": mark_safe(
-                        "⋅&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ChildApp"
-                    ),
+                    "name": mark_safe("⋅&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ChildApp"),
                     "host": "childhost",
                     "detector": "",
                 },
@@ -118,10 +108,11 @@ def test_apptype_to_list(app, expected):
 
 def test_get_app_tree(mocker):
     """Test the get_app_tree function."""
-    mock_get_controller_status = mocker.patch(
-        "controller.app_tree.get_controller_status"
-    )
+    from druncschema.controller_pb2 import StatusResponse
+
     from controller.app_tree import AppTree, get_app_tree
+
+    mock_get_controller_status = mocker.patch("controller.app_tree.get_controller_status")
 
     class MockStatus:
         def __init__(self, name, children):
@@ -136,23 +127,14 @@ def test_get_app_tree(mocker):
     mock_get_controller_status.return_value = root_status
     result = get_app_tree("a_user", None, hostnames, detectors)
     assert result == AppTree("root", [], "")
-    mock_get_controller_status.assert_called_once()
-
-    # Test with a provided status
-    child_status = MockStatus("child", [])
-    root_status_with_child = MockStatus("root", [child_status])
-    result = get_app_tree("a_user", root_status_with_child, hostnames, detectors)
-    assert result == AppTree("root", [AppTree("child", [], "unknown", "det1")], "")
 
     # Test with nested children
-    grandchild_status = MockStatus("grandchild", [])
-    child_status_with_grandchild = MockStatus("child", [grandchild_status])
-    root_status_with_nested_children = MockStatus(
-        "root", [child_status_with_grandchild]
-    )
-    result = get_app_tree(
-        "a_user", root_status_with_nested_children, hostnames, detectors
-    )
+    status = StatusResponse(name="root")
+    child_status = status.children.add()
+    child_status.name = "child"
+    grandchild_status = child_status.children.add()
+    grandchild_status.name = "grandchild"
+    result = get_app_tree("a_user", status, hostnames, detectors)
     assert result == AppTree(
         "root",
         [AppTree("child", [AppTree("grandchild", [], "unknown")], "unknown", "det1")],

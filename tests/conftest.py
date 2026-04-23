@@ -26,36 +26,10 @@ def _privileged_user_client(django_user_model, username, permission_name):
 @pytest.fixture
 def auth_process_client(django_user_model) -> Client:
     """Return a authenticated client with modify process privilege."""
-    return _privileged_user_client(
-        django_user_model, "process_user", "can_modify_processes"
-    )
+    return _privileged_user_client(django_user_model, "process_user", "can_modify_processes")
 
 
 @pytest.fixture
 def auth_logs_client(django_user_model) -> Client:
     """Return a authenticated client with view logs privilege."""
-    return _privileged_user_client(
-        django_user_model, "logs_user", "can_view_process_logs"
-    )
-
-
-@pytest.fixture
-def dummy_session_data() -> dict[str, str | int]:
-    """A dictionary of dummy data to populate a dummy session."""
-    return dict(session_name="sess_name", n_processes=1, sleep=5, n_sleeps=4)
-
-
-@pytest.fixture(autouse=True)
-def grpc_mock(mocker):
-    """Mock out the method that generates gRPC calls to external interfaces."""
-    yield mocker.patch(
-        "interfaces.process_manager_interface.ProcessManagerDriver.send_command_aio"
-    )
-
-
-@pytest.fixture
-def mock_get_process_manager_driver(mocker):
-    """Mock out the get_process_manager_driver function."""
-    return mocker.patch(
-        "interfaces.process_manager_interface.get_process_manager_driver"
-    )
+    return _privileged_user_client(django_user_model, "logs_user", "can_view_process_logs")

@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 
 from django.utils.safestring import mark_safe
-from druncschema.controller_pb2 import Status
+from druncschema.controller_pb2 import StatusResponse
 
 from interfaces.controller_interface import get_controller_status, get_detectors
 from interfaces.process_manager_interface import get_hostnames
@@ -50,7 +50,7 @@ class AppTree:
 
 def get_app_tree(
     user: str,
-    status: Status | None = None,
+    status: StatusResponse | None = None,
     hostnames: dict[str, str] | None = None,
     detectors: dict[str, str] | None = None,
 ) -> AppTree:
@@ -74,11 +74,11 @@ def get_app_tree(
     detectors = detectors or get_detectors()
 
     return AppTree(
-        status.name,  # type: ignore [attr-defined]
+        status.name,
         [
-            get_app_tree(user, app, hostnames, detectors)
-            for app in status.children  # type: ignore [attr-defined]
+            get_app_tree(user, child_status, hostnames, detectors)
+            for child_status in status.children
         ],
-        hostnames.get(status.name, "unknown"),  # type: ignore [attr-defined]
-        detectors.get(status.name, ""),  # type: ignore [attr-defined]
+        hostnames.get(status.name, "unknown"),
+        detectors.get(status.name, ""),
     )

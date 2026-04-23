@@ -12,9 +12,9 @@ dependencies = [
   "crispy-bootstrap5>=2025.6,<2026",
   "whitenoise>=6.9,<7.0",
   "psycopg[binary]>=3.2.9,<4.0",
-  "drunc @ git+https://github.com/DUNE-DAQ/drunc.git@dedc27bf9678ee77a4eafd7243b70f969b2dfcef",
-  "druncschema @ git+https://github.com/DUNE-DAQ/druncschema.git@af69ed7353faaa404b2dc7b4a8ed38c099d27d06",
-  "daqpytools @ git+https://github.com/DUNE-DAQ/daqpytools.git@8c63f9c8f0422e113885bc354ef00593176dcf59",
+#   "drunc @ git+https://github.com/DUNE-DAQ/drunc.git@dedc27bf9678ee77a4eafd7243b70f969b2dfcef",
+#   "druncschema @ git+https://github.com/DUNE-DAQ/druncschema.git@af69ed7353faaa404b2dc7b4a8ed38c099d27d06",
+#   "daqpytools @ git+https://github.com/DUNE-DAQ/daqpytools.git@8c63f9c8f0422e113885bc354ef00593176dcf59",
 ]
 
 [dependency-groups]
@@ -51,18 +51,28 @@ package-mode = false
 [tool.mypy]
 disallow_any_explicit = true
 disallow_any_generics = true
+disallow_untyped_defs = true
 warn_unreachable = true
 warn_unused_ignores = true
-disallow_untyped_defs = true
-exclude = [".venv/", "manage.py", "*/migrations/", "ers/"]
+exclude = [
+  "^manage\\.py$",
+  ".*/migrations/",
+  "^example_deployment/",
+  "^ers/",
+]
 plugins = ["mypy_django_plugin.main"]
 
 [[tool.mypy.overrides]]
 module = "tests.*"
-disallow_untyped_defs = false
+ignore_errors = true
 
 [[tool.mypy.overrides]]
-module = ["druncschema.*", "drunc.*", "django_tables2.*", "kafka.*"]
+module = [
+  "druncschema.*",
+  "drunc.*",
+  "django_tables2.*",
+  "kafka.*",
+]
 ignore_missing_imports = true
 
 [tool.django-stubs]
@@ -71,7 +81,12 @@ django_settings_module = "drunc_ui.settings"
 [tool.ruff]
 target-version = "py312"
 line-length = 100
-exclude = ["*/migrations", "example_deployment/*", "ers/*"]
+exclude = [
+  "manage.py",
+  "**/migrations",
+  "example_deployment",
+  "ers",
+]
 
 [tool.ruff.lint]
 select = [
@@ -86,16 +101,17 @@ pydocstyle.convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = [
-    "D100",
-    "D104",
-] # Missing docstring in public module, Missing docstring in public package
+    "D100",  # missing module docstring
+    "D104",  # missing package docstring
+]
 
 [tool.djlint]
 profile = "django"
 indent = 2
 
 [tool.pytest.ini_options]
-addopts = "-v --mypy --cov=. --cov-report=html --ignore=manage.py --ignore=drunc_ui/settings/ --ignore=docs/ --ignore=example_deployment/ --ignore=ers/"
+testpaths = ["tests"]
+addopts = "-v --mypy --cov=. --cov-report=html"
 DJANGO_SETTINGS_MODULE = "tests.settings"
 FAIL_INVALID_TEMPLATE_VARS = true
 

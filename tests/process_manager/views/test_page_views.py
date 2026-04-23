@@ -29,7 +29,7 @@ class TestIndexView(LoginRequiredTest):
         assert not response.context["debug"]
         assertNotContains(
             response,
-            f'<a class="nav-link" href="{reverse("process_manager:boot_process")}">Boot</a>',  # noqa: E501
+            f'<a class="nav-link" href="{reverse("process_manager:boot_process")}">Boot</a>',
         )
 
 
@@ -63,9 +63,7 @@ class TestBootProcess(PermissionRequiredTest):
         assert response.status_code == HTTPStatus.OK
 
         assert "form" in response.context
-        assertContains(
-            response, f'form action="{reverse("process_manager:boot_process")}"'
-        )
+        assertContains(response, f'form action="{reverse("process_manager:boot_process")}"')
 
     def test_post_invalid(self, auth_process_client):
         """Test the POST request for the BootProcess view with invalid data."""
@@ -77,14 +75,25 @@ class TestBootProcess(PermissionRequiredTest):
 
         assert "form" in response.context
 
-    def test_post_valid(self, auth_process_client, mocker, dummy_session_data):
+    def test_post_valid(self, auth_process_client, mocker):
         """Test the POST request for the BootProcess view."""
+        session_name = "sess_name"
+        n_processes = 1
+        sleep = 5
+        n_sleeps = 4
+        session_data = dict(
+            session_name=session_name,
+            n_processes=n_processes,
+            sleep=sleep,
+            n_sleeps=n_sleeps,
+        )
+
         mock = mocker.patch("process_manager.views.pages.boot_process")
         response = auth_process_client.post(
-            reverse("process_manager:boot_process"), data=dummy_session_data
+            reverse("process_manager:boot_process"), data=session_data
         )
         assert response.status_code == HTTPStatus.FOUND
 
         assert response.url == reverse("process_manager:index")
 
-        mock.assert_called_once_with("process_user", dummy_session_data)
+        mock.assert_called_once_with("process_user", session_name, n_processes, sleep, n_sleeps)

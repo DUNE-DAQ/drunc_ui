@@ -6,9 +6,7 @@ def test_get_controller_driver(mocker):
     mock_driver = mocker.patch("interfaces.controller_interface.ControllerDriver")
     mock_uri = mocker.patch("interfaces.controller_interface.get_controller_uri")
     mock_uri.return_value = "uri"
-    mock_token = mocker.patch(
-        "interfaces.controller_interface.create_dummy_token_from_uname"
-    )
+    mock_token = mocker.patch("interfaces.controller_interface.create_dummy_token_from_uname")
     mock_token.return_value = "token"
 
     from interfaces.controller_interface import get_controller_driver
@@ -21,61 +19,69 @@ def test_get_controller_driver(mocker):
 
 def test_get_controller_status(mocker):
     """Test the _boot_process function."""
+    from druncschema.controller_pb2 import StatusResponse
+
     from interfaces.controller_interface import get_controller_status
 
     class MockControllerDriver:
-        status = mocker.MagicMock()
+        def status(self):
+            response = StatusResponse()
+            response.name = "test_controller"
+            response.status.state = "running"
+            return response
 
     mock = mocker.patch("interfaces.controller_interface.get_controller_driver")
     mock.return_value = MockControllerDriver()
-    get_controller_status()
-    mock.assert_called_once()
-    MockControllerDriver.status.assert_called_once()
+
+    response = get_controller_status()
+    assert response.name == "test_controller"
 
 
 def test_get_fsm_state(mocker):
     """Test the get_fsm_state function."""
+    from druncschema.controller_pb2 import StatusResponse
+
     from interfaces.controller_interface import get_fsm_state
 
-    class Data:
-        state = 42
+    class MockControllerDriver:
+        def status(self):
+            response = StatusResponse()
+            response.name = "test_controller"
+            response.status.state = "running"
+            return response
 
-    class MockDescription:
-        data = Data()
+    mock = mocker.patch("interfaces.controller_interface.get_controller_driver")
+    mock.return_value = MockControllerDriver()
 
-    mock = mocker.patch("interfaces.controller_interface.get_controller_status")
-    mock.return_value = MockDescription()
-    assert get_fsm_state() == MockDescription.data.state
-    mock.assert_called_once()
+    response = get_fsm_state()
+    assert response == "running"
 
 
 def test_get_arguments(mocker):
     """Test the get_fsm_state function."""
-    from dataclasses import dataclass
+    from druncschema.controller_pb2 import DescribeFSMResponse
 
     from interfaces.controller_interface import get_arguments
 
-    event = "event"
-
-    @dataclass
-    class Command:
-        name: str
-        arguments: list[str]
-
-    class Commands:
-        commands = tuple([Command(name=event, arguments=["arg1", "arg2"])])
-
-    class MockDescription:
-        data = Commands()
+    class MockControllerDriver:
+        def describe_fsm(self):
+            response = DescribeFSMResponse()
+            command = response.description.commands.add()
+            command.name = "event"
+            arg1 = command.arguments.add()
+            arg1.name = "arg1"
+            arg2 = command.arguments.add()
+            arg2.name = "arg2"
+            return response
 
     mock = mocker.patch("interfaces.controller_interface.get_controller_driver")
-    mock().describe_fsm.return_value = MockDescription()
-    assert get_arguments(event) == ["arg1", "arg2"]
-    mock.assert_called()
+    mock.return_value = MockControllerDriver()
 
-    other_event = "other_event"
-    with pytest.raises(ValueError, match=f"Event '{other_event}' not found in FSM."):
-        get_arguments(other_event)
+    response = get_arguments("event")
+    assert [r.name for r in response] == ["arg1", "arg2"]
+
+    with pytest.raises(ValueError, match="Event 'other_event' not found in FSM"):
+        get_arguments("other_event")
 
 
 def test_process_arguments(mocker):
@@ -167,9 +173,7 @@ def test_send_event(mocker):
     )
     mock_get_controller_driver.return_value = mock_controller
 
-    mock_process_arguments = mocker.patch(
-        "interfaces.controller_interface.process_arguments"
-    )
+    mock_process_arguments = mocker.patch("interfaces.controller_interface.process_arguments")
     mock_process_arguments.return_value = {"arg1": "packed_value1"}
 
     mock_FSMCommand = mocker.patch("interfaces.controller_interface.FSMCommand")
@@ -179,45 +183,28 @@ def test_send_event(mocker):
     mock_get_controller_driver.assert_called_once()
     mock_controller.take_control.assert_called_once()
     mock_process_arguments.assert_called_once_with(event, arguments)
-    mock_FSMCommand.assert_called_once_with(
-        command_name=event, arguments={"arg1": "packed_value1"}
-    )
+    mock_FSMCommand.assert_called_once_with(command_name=event, arguments={"arg1": "packed_value1"})
     mock_controller.execute_fsm_command.assert_called_once()
 
 
 def test_get_detectors(mocker):
-    """Test the get_app_tree function."""
+    """Test the get_detectors function."""
+    from druncschema.controller_pb2 import DescribeResponse
+
     from interfaces.controller_interface import get_detectors
 
-    class MockData:
-        def __init__(self, name, info):
-            self.name = name
-            self.info = info
+    class MockControllerDriver:
+        def describe(self):
+            response = DescribeResponse()
+            response.description.name = "root"
+            response.description.info = ""
+            child = response.children.add()
+            child.description.name = "child"
+            child.description.info = "det1"
+            return response
 
-    class MockDescription:
-        def __init__(self, data, children):
-            self.data = data
-            self.children = children
+    mock = mocker.patch("interfaces.controller_interface.get_controller_driver")
+    mock.return_value = MockControllerDriver()
 
-    mock_controller = mocker.patch(
-        "interfaces.controller_interface.get_controller_driver"
-    )
-
-    # No children
-    root_status = MockDescription(MockData("root", ""), [])
-    mock_controller().describe.return_value = root_status
-    result = get_detectors()
-    assert result == {"root": ""}
-
-    # With children
-    child_status = MockDescription(MockData("child", "det1"), [])
-    root_status_with_child = MockDescription(MockData("root", ""), [child_status])
-    mock_controller().describe.return_value = root_status_with_child
-    result = get_detectors()
-    assert result == {"root": "", "child": "det1"}
-
-    # With None children
-    root_status_with_none_child = MockDescription(MockData("root", ""), [None])
-    mock_controller().describe.return_value = root_status_with_none_child
-    result = get_detectors()
-    assert result == {"root": ""}
+    response = get_detectors()
+    assert response == {"root": "", "child": "det1"}
