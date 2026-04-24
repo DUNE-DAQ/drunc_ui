@@ -123,11 +123,18 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
+
 STATICFILES_DIRS = [
     BASE_DIR / "controller/templates/controller/static",
     BASE_DIR / "process_manager/templates/process_manager/static",
 ]
+
+STATIC_ROOT = Path(
+    os.getenv(
+        "DJANGO_STATIC_ROOT",
+        Path.cwd() / "staticfiles",
+    )
+)
 
 MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
 

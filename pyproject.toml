@@ -1,5 +1,5 @@
 [project]
-name = "drunc_ui"
+name = "drunc-ui"
 version = "0.1.0"
 description = "DUNE Run Control User Interface"
 requires-python = ">=3.12,<4.0"
