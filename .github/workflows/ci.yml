@@ -4,49 +4,50 @@ on:
   push:
     branches: [main]
   pull_request:
+  release:
   workflow_dispatch:
-  schedule:
-    - cron: '* 5 * * 0' # every Sunday at 5:00 UTC
 
 jobs:
   test:
-    runs-on: ${{matrix.os}}
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-latest
-        python-version: ['3.10']
+
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    container:
+      image: ghcr.io/dune-daq/nightly-release-alma9:development_v5
 
     steps:
-      - uses: actions/checkout@v6
-      - name: Install poetry
-        run: pipx install poetry==1.8.4
       - uses: actions/setup-python@v6
         with:
-          python-version: ${{matrix.python-version}}
-          cache: poetry
+          python-version: 3.12
+
+      - name: Set up dev nightly
+        run: |
+          mkdir nightly
+          cd nightly
+          . /cvmfs/dunedaq.opensciencegrid.org/setup_dunedaq.sh
+          setup_dbt latest_v5
+          dbt-create -n last_fddaq
+          cd NFD_DEV*
+          . env.shell
+          dbt-build
+
+      - uses: actions/checkout@v6
 
       - name: Install dependencies
-        run: poetry install
-
-      - name: Install latest drunc and druncschema
-        if: github.event_name == 'schedule'
-        run: |
-          pip install git+https://github.com/DUNE-DAQ/druncschema.git@develop
-          pip install git+https://github.com/DUNE-DAQ/drunc.git@develop
-
-      - name: Test building the docs
-        run: poetry run mkdocs build --strict
+        run: pip install .[dev,docs]
 
       - name: Run tests
-        if: ${{ !cancelled() }}
-        run: poetry run pytest --cov-report=xml
+        run: pytest --cov-report=xml
 
       - name: Upload coverage to Codecov
-        if: github.event.pull_request.user.login != 'dependabot[bot]' && github.event.pull_request.user.login != 'pre-commit-ci[bot]'
-        uses: codecov/codecov-action@v5
-        with:
-          fail_ci_if_error: true
+        if: success()
+        uses: codecov/codecov-action@v6
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Test building the docs
+        run: mkdocs build --strict
