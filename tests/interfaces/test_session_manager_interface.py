@@ -1,63 +1,46 @@
 def test_get_configs(mocker):
     """Test the get_configs function."""
-    from dataclasses import dataclass
+    from druncschema.session_manager_pb2 import AllConfigKeys
 
-    from interfaces.session_manager_interface import get_configs
+    from drunc_ui.interfaces.session_manager_interface import get_configs
 
-    @dataclass
-    class Config:
-        file: str
-        session_id: str
-
-    class Configs:
-        config_keys = (
-            Config("somefile.txt", "42"),
-            Config("another_file.txt", "42+1"),
-        )
-
-    class MockSessionManager:
-        data = Configs()
-
+    class MockSessionManagerDriver:
         def list_all_configs(self):
-            return self
+            response = AllConfigKeys()
+            config1 = response.config_keys.add()
+            config1.file = "somefile.txt"
+            config1.session_id = "42"
+            config2 = response.config_keys.add()
+            config2.file = "another_file.txt"
+            config2.session_id = "42+1"
+            return response
 
-    mock = mocker.patch(
-        "interfaces.session_manager_interface.get_session_manager_driver"
-    )
-    mock.return_value = MockSessionManager()
+    mock = mocker.patch("drunc_ui.interfaces.session_manager_interface.get_session_manager_driver")
+    mock.return_value = MockSessionManagerDriver()
 
     configs = get_configs()
-    assert all(
-        "file" in config.keys() and "session_id" in config.keys() for config in configs
-    )
+    assert all("file" in config.keys() and "session_id" in config.keys() for config in configs)
 
 
 def test_get_sessions(mocker):
     """Test the get_sessions function."""
-    from dataclasses import dataclass
+    from druncschema.session_manager_pb2 import AllActiveSessions
 
-    from interfaces.session_manager_interface import get_sessions
+    from drunc_ui.interfaces.session_manager_interface import get_sessions
 
-    @dataclass
-    class Session:
-        name: str
-        user: str
-
-    class Sessions:
-        active_sessions = (Session("Grey", "Gandalf"), Session("Brown", "Radagast"))
-
-    class MockSessionManager:
-        data = Sessions()
-
+    class MockSessionManagerDriver:
         def list_all_sessions(self):
-            return self
+            response = AllActiveSessions()
+            session1 = response.active_sessions.add()
+            session1.name = "Grey"
+            session1.user = "Gandalf"
+            session2 = response.active_sessions.add()
+            session2.name = "Brown"
+            session2.user = "Radagast"
+            return response
 
-    mock = mocker.patch(
-        "interfaces.session_manager_interface.get_session_manager_driver"
-    )
-    mock.return_value = MockSessionManager()
+    mock = mocker.patch("drunc_ui.interfaces.session_manager_interface.get_session_manager_driver")
+    mock.return_value = MockSessionManagerDriver()
 
     sessions = get_sessions()
-    assert all(
-        "name" in session.keys() and "actor" in session.keys() for session in sessions
-    )
+    assert all("name" in session.keys() and "actor" in session.keys() for session in sessions)

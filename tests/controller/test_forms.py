@@ -1,8 +1,8 @@
 def test_get_form_for_event_empty(mocker):
     """Test get_form_for_event with no arguments."""
-    from controller import forms
+    from drunc_ui.controller import forms
 
-    mocker.patch("controller.forms.ci.get_arguments", return_value=[])
+    mocker.patch("drunc_ui.controller.forms.ci.get_arguments", return_value=[])
 
     form_class = forms.get_form_for_event("test_event")
     form = form_class()
@@ -16,7 +16,7 @@ def test_get_form_for_event_with_arguments(mocker):
 
     from druncschema.controller_pb2 import Argument as Arg
 
-    from controller import forms
+    from drunc_ui.controller import forms
 
     @dataclass
     class Value:
@@ -59,7 +59,7 @@ def test_get_form_for_event_with_arguments(mocker):
             type=Arg.Type.FLOAT,
         ),
     ]
-    mocker.patch("controller.forms.ci.get_arguments", return_value=mock_data)
+    mocker.patch("drunc_ui.controller.forms.ci.get_arguments", return_value=mock_data)
 
     form_class = forms.get_form_for_event("test_event")
     form = form_class()

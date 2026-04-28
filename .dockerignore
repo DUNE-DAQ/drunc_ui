@@ -1,13 +1,6 @@
 *
-!main
 !manage.py
 !pyproject.toml
-!poetry.lock
-!drunc_ui
-!db
-db/*
-!drunc_docker_service/process-manager-kafka.json
-!process_manager
-!controller
-!interfaces
-!ers
+!src
+!staticfiles
+!NFD_DEV_*

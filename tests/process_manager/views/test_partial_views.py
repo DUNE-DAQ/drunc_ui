@@ -6,7 +6,7 @@ import pytest
 from django.test import Client
 from django.urls import reverse
 
-from process_manager.tables import ProcessTable
+from drunc_ui.process_manager.tables import ProcessTable
 
 from ...utils import LoginRequiredTest
 
@@ -28,7 +28,7 @@ class TestProcessTableView(LoginRequiredTest):
 
     def _mock_session_info(self, mocker, uuids, sessions: list[str] = []):
         """Mocks views.get_session_info with ProcessInstanceList like data."""
-        mock = mocker.patch("process_manager.views.partials.get_session_info")
+        mock = mocker.patch("drunc_ui.process_manager.views.partials.get_session_info")
         instance_mocks = [MagicMock() for _ in uuids]
         sessions = sessions or [f"session{i}" for i in range(len(uuids))]
 
@@ -58,9 +58,7 @@ class TestProcessTableView(LoginRequiredTest):
 
         # Check that each row in the table contains "session2" as the session value
         for row, uuid in zip(table.data.data, uuids[1:4]):
-            assert row["session"] == "session2", (
-                f"Expected 'session2', got '{row['session']}'"
-            )
+            assert row["session"] == "session2", f"Expected 'session2', got '{row['session']}'"
             assert row["uuid"] == uuid
 
 
@@ -131,6 +129,6 @@ process_2 = {
 )
 def test_filter_table(search, column, table, expected):
     """Test filter_table function."""
-    from process_manager.views.partials import filter_table
+    from drunc_ui.process_manager.views.partials import filter_table
 
     assert filter_table(search, column, table) == expected

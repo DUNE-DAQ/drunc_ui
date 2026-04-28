@@ -3,7 +3,7 @@ from unittest import mock
 from django.template.loader import render_to_string
 from django.test import RequestFactory, TestCase
 
-from process_manager.views.partials import handle_errors
+from drunc_ui.process_manager.views.partials import handle_errors
 
 
 class HandleErrorsTest(TestCase):

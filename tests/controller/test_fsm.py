@@ -1,8 +1,8 @@
 def test_get_fsm_architecture(mocker):
     """Test the DruncFSM.to_dict method."""
-    from controller import fsm
+    from drunc_ui.controller import fsm
 
-    mock_state = mocker.patch("interfaces.controller_interface.get_fsm_state")
+    mock_state = mocker.patch("drunc_ui.interfaces.controller_interface.get_fsm_state")
     mock_state.return_value = "initial"
 
     fsm_dict = fsm.get_fsm_architecture()

@@ -1,83 +1,109 @@
-[tool.poetry]
-name = "drunc_ui"
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "drunc-ui"
+description = "DUNE Run Control User Interface"
 version = "0.1.0"
-description = "[Description for project.]"
-authors = [
-    "Imperial College London RSE Team <ict-rse-team@imperial.ac.uk>",
+requires-python = ">=3.12"
+dependencies = [
+  "requests>=2.32.3",
+  "django>=5.2,<6.0",
+  "django-tables2>=2.7.5,<3.0",
+  "django-bootstrap5>=25.2,<26.0",
+  "django-crispy-forms>=2.4,<3.0",
+  "crispy-bootstrap5>=2025.6,<2026",
+  "whitenoise>=6.9,<7.0",
+  "psycopg[binary]>=3.2.9,<4.0",
+  # TODO: set the versions for below, once the DUNE-DAQ PyPI repository is operational.
+  # "drunc @ git+https://github.com/DUNE-DAQ/drunc.git@dedc27bf9678ee77a4eafd7243b70f969b2dfcef",
+  # "druncschema @ git+https://github.com/DUNE-DAQ/druncschema.git@af69ed7353faaa404b2dc7b4a8ed38c099d27d06",
+  # "daqpytools @ git+https://github.com/DUNE-DAQ/daqpytools.git@8c63f9c8f0422e113885bc354ef00593176dcf59",
 ]
 
-[tool.poetry.dependencies]
-python = ">=3.10,<3.11"
-django = "^5.2"
-whitenoise = "^6.9.0"
-drunc = { git = "https://github.com/DUNE-DAQ/drunc.git", rev = "d411037139c52554bb2d1db307d520d1184d4e96" }
-druncschema = { git = "https://github.com/DUNE-DAQ/druncschema.git", rev = "82e7fbcc780c4815e4ea910f111f6fe25a0aacfe" }
-django-tables2 = "^2.7.5"
-django-bootstrap5 = "^25.2"
-pytest-asyncio = "^1.1.0"
-django-crispy-forms = "^2.4"
-crispy-bootstrap5 = "^2025.6"
-django-stubs-ext = "^5.2.2"
-requests = "^2.32.3"
-types-protobuf = "^6.30.2.20250822"
+[project.optional-dependencies]
+dev = [
+  "build>=1.2",
+  "pytest>=8.4",
+  "pytest-cov>=6.2.1",
+  "pytest-mypy>=1.0.1",
+  "pytest-mock>=3.7.0",
+  "pytest-django>=4.11.1",
+  "pre-commit>=4.3.0",
+  "ruff>=0.12.11",
+  "djlint>=1.36.4",
+  "django-stubs[compatible-mypy]>=5.2.2",
+  "django-stubs-ext>=5.2.2",
+  "types-protobuf>=6.30.2.20250822",
+]
+docs = [
+  "mkdocs>=1.6.1",
+  "mkdocstrings>=0.30.0",
+  "mkdocstrings-python>=1.18.1",
+  "mkdocs-material>=9.6.18",
+  "mkdocs-gen-files>=0.5.0",
+  "mkdocs-literate-nav>=0.6.2",
+  "mkdocs-section-index>=0.3.10",
+]
 
-[tool.poetry.group.dev.dependencies]
-pytest = "^8.4"
-pytest-cov = "^6.2.1"
-pytest-mypy = "^1.0.1"
-pytest-mock = "^3.7.0"
-pre-commit = "^4.3.0"
-ruff = "^0.12.11"
-djlint = "^1.36.4"
-django-stubs = { extras = ["compatible-mypy"], version = "^5.2.2" }
-pytest-django = "^4.11.1"
+[project.scripts]
+drunc-ui-manage = "drunc_ui.cli:manage"
+drunc-ui-run-gunicorn = "drunc_ui.cli:run_gunicorn"
 
+[tool.setuptools]
+package-dir = {"" = "src"}
+include-package-data = true
 
-[tool.poetry.group.docs.dependencies]
-mkdocs = "^1.6.1"
-mkdocstrings = "^0.30.0"
-mkdocstrings-python = "^1.18.1"
-mkdocs-material = "^9.6.18"
-mkdocs-gen-files = "^0.5.0"
-mkdocs-literate-nav = "^0.6.2"
-mkdocs-section-index = "^0.3.10"
-
-
-[tool.poetry.group.postgres.dependencies]
-psycopg = { extras = ["binary"], version = "^3.2.9" }
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["drunc_ui*"]
 
 [tool.mypy]
+python_version = "3.12"
+mypy_path = ["src"]
+plugins = ["mypy_django_plugin.main"]
+
+exclude = [
+  "^manage\\.py$",
+  ".*/migrations/.*",
+  "^example_deployment/.*",
+]
+
 disallow_any_explicit = true
 disallow_any_generics = true
+disallow_untyped_defs = true
 warn_unreachable = true
 warn_unused_ignores = true
-disallow_untyped_defs = true
-exclude = [".venv/", "manage.py", "*/migrations/", "ers/"]
-plugins = ["mypy_django_plugin.main"]
 
 [[tool.mypy.overrides]]
 module = "tests.*"
-disallow_untyped_defs = false
+ignore_errors = true
 
 [[tool.mypy.overrides]]
-module = ["druncschema.*", "drunc.*", "django_tables2.*", "kafka.*"]
+module = [
+  "druncschema.*",
+  "drunc.*",
+  "django_tables2.*",
+  "kafka.*",
+]
 ignore_missing_imports = true
 
 [tool.django-stubs]
-django_settings_module = "drunc_ui.settings"
+django_settings_module = "drunc_ui.settings.settings"
 
-[tool.pytest.ini_options]
-addopts = "-v --mypy -p no:warnings --cov=. --cov-report=html --doctest-modules --ignore=manage.py --ignore=drunc_ui/settings/ --ignore=docs/ --ignore=example_deployment/ --ignore=ers/"
-DJANGO_SETTINGS_MODULE = "drunc_ui.settings"
-FAIL_INVALID_TEMPLATE_VARS = true
+[tool.djlint]
+profile = "django"
+indent = 2
 
 [tool.ruff]
-exclude = ["*/migrations", "example_deployment/*", "ers/*"]
-target-version = "py310"
+target-version = "py312"
+line-length = 100
+exclude = [
+  "manage.py",
+  "**/migrations/**",
+  "example_deployment/**",
+]
 
 [tool.ruff.lint]
 select = [
@@ -88,17 +114,22 @@ select = [
     "UP",  # pyupgrade
     "RUF", # ruff
 ]
-pydocstyle.convention = "google"
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = [
-    "D100",
-    "D104",
-] # Missing docstring in public module, Missing docstring in public package
+"tests/**/*.py" = [
+    "D100",  # missing module docstring
+    "D104",  # missing package docstring
+]
 
-[tool.djlint]
-profile = "django"
-indent = 2
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --mypy --cov --cov-report=html"
+DJANGO_SETTINGS_MODULE = "drunc_ui.settings.testing"
+FAIL_INVALID_TEMPLATE_VARS = true
 
 [tool.coverage.run]
-omit = ["tests/*", "scripts/*"]
+source = ["src/drunc_ui"]
+omit = ["*/migrations/*"]
