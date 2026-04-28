@@ -16,9 +16,10 @@ dependencies = [
   "crispy-bootstrap5>=2025.6,<2026",
   "whitenoise>=6.9,<7.0",
   "psycopg[binary]>=3.2.9,<4.0",
-#   "drunc @ git+https://github.com/DUNE-DAQ/drunc.git@dedc27bf9678ee77a4eafd7243b70f969b2dfcef",
-#   "druncschema @ git+https://github.com/DUNE-DAQ/druncschema.git@af69ed7353faaa404b2dc7b4a8ed38c099d27d06",
-#   "daqpytools @ git+https://github.com/DUNE-DAQ/daqpytools.git@8c63f9c8f0422e113885bc354ef00593176dcf59",
+  # TODO: set the versions for below, once the DUNE-DAQ PyPI repository is operational.
+  # "drunc @ git+https://github.com/DUNE-DAQ/drunc.git@dedc27bf9678ee77a4eafd7243b70f969b2dfcef",
+  # "druncschema @ git+https://github.com/DUNE-DAQ/druncschema.git@af69ed7353faaa404b2dc7b4a8ed38c099d27d06",
+  # "daqpytools @ git+https://github.com/DUNE-DAQ/daqpytools.git@8c63f9c8f0422e113885bc354ef00593176dcf59",
 ]
 
 [project.optional-dependencies]
