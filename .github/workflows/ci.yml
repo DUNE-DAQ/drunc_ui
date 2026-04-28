@@ -9,45 +9,44 @@ on:
 
 jobs:
   test:
-
     runs-on: ubuntu-latest
+
+    container:
+      image: ghcr.io/dune-daq/nightly-release-alma9:development_v5
 
     defaults:
       run:
         shell: bash
 
-    container:
-      image: ghcr.io/dune-daq/nightly-release-alma9:development_v5
-
     steps:
-      - uses: actions/setup-python@v6
-        with:
-          python-version: 3.12
+      - uses: actions/checkout@v6
 
-      - name: Set up dev nightly
+      - name: Set up dev nightly and run checks
         run: |
+          set -euo pipefail
+
           mkdir nightly
           cd nightly
+
           . /cvmfs/dunedaq.opensciencegrid.org/setup_dunedaq.sh
           setup_dbt latest_v5
           dbt-create -n last_fddaq
+
           cd NFD_DEV*
           . env.shell
+
           dbt-build
 
-      - uses: actions/checkout@v6
+          cd "$GITHUB_WORKSPACE"
 
-      - name: Install dependencies
-        run: pip install .[dev,docs]
+          python3 -m pip install --upgrade pip
+          python3 -m pip install '.[dev,docs]'
 
-      - name: Run tests
-        run: pytest --cov-report=xml
+          python3 -m pytest --cov-report=xml
+          python3 -m mkdocs build --strict
 
       - name: Upload coverage to Codecov
         if: success()
         uses: codecov/codecov-action@v6
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-
-      - name: Test building the docs
-        run: mkdocs build --strict
