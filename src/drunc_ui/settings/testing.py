@@ -1,3 +1,5 @@
+"""Django settings for the drunc_ui test suite."""
+
 from drunc_ui.settings.settings import *  # noqa: F403
 
 DATABASES = {
