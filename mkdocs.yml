@@ -1,6 +1,6 @@
 site_name: Drunc UI
 
-watch: [main, process_manager, controller, interfaces, session_manager]
+watch: [src/drunc_ui]
 
 theme:
   name: material
