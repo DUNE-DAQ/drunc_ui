@@ -33,7 +33,7 @@ jobs:
           dbt-create -n last_fddaq
 
           cd NFD_DEV*
-          . env.shell
+          . env.sh
 
           dbt-build
 
