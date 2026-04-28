@@ -47,6 +47,10 @@ docs = [
   "mkdocs-section-index>=0.3.10",
 ]
 
+[project.scripts]
+drunc-ui-manage = "drunc_ui.cli:manage"
+drunc-ui-run-gunicorn = "drunc_ui.cli:run_gunicorn"
+
 [tool.setuptools]
 package-dir = {"" = "src"}
 include-package-data = true
