@@ -1,6 +1,6 @@
 from django.utils.safestring import SafeString
 
-from controller.tables import FSMTable, toggle_button, toggle_text
+from drunc_ui.controller.tables import FSMTable, toggle_button, toggle_text
 
 
 def test_toggle_text_not_current():
@@ -18,7 +18,7 @@ def test_toggle_text_current():
 
 def test_toggle_button_not_current(mocker):
     """Test the toggle_button function when not current."""
-    mocker.patch("controller.tables.reverse", return_value="/mocked_url/")
+    mocker.patch("drunc_ui.controller.tables.reverse", return_value="/mocked_url/")
     result = toggle_button("event", False)
     assert isinstance(result, SafeString)
     assert result == (
@@ -28,7 +28,7 @@ def test_toggle_button_not_current(mocker):
 
 def test_toggle_button_current(mocker):
     """Test the toggle_button function when current."""
-    mocker.patch("controller.tables.reverse", return_value="/mocked_url/")
+    mocker.patch("drunc_ui.controller.tables.reverse", return_value="/mocked_url/")
     result = toggle_button("event", True)
     assert isinstance(result, SafeString)
     assert result == (
@@ -58,7 +58,7 @@ def test_from_dict_single_state_no_events():
 
 def test_from_dict_single_state_with_events(mocker):
     """Test the from_dict method with a single state and events."""
-    mocker.patch("controller.tables.reverse", return_value="/mocked_url/")
+    mocker.patch("drunc_ui.controller.tables.reverse", return_value="/mocked_url/")
     states = {"state1": {"event1": "state2", "event2": "state3"}}
     current_state = "state1"
     result = FSMTable.from_dict(states, current_state)
@@ -82,7 +82,7 @@ def test_from_dict_single_state_with_events(mocker):
 
 def test_from_dict_multiple_states(mocker):
     """Test the from_dict method with multiple states and events."""
-    mocker.patch("controller.tables.reverse", return_value="/mocked_url/")
+    mocker.patch("drunc_ui.controller.tables.reverse", return_value="/mocked_url/")
     states = {
         "state1": {"event1": "state2"},
         "state2": {"event2": "state3"},

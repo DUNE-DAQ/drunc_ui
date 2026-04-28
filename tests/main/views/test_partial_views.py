@@ -1,12 +1,12 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from http import HTTPStatus
 
 import pytest
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
-from main.models import DruncMessage
-from main.tables import DruncMessageTable
+from drunc_ui.main.models import DruncMessage
+from drunc_ui.main.tables import DruncMessageTable
 
 from ...utils import LoginRequiredTest
 
@@ -24,13 +24,11 @@ class TestMessagesView(LoginRequiredTest):
 
     def test_get(self, auth_client):
         """Test that the view returns messages in a table."""
-        t1 = datetime.now(tz=timezone.utc)
+        t1 = datetime.now(tz=UTC)
         t2 = t1 + timedelta(minutes=10)
         DruncMessage.objects.bulk_create(
             [
-                DruncMessage(
-                    topic=self.topic, timestamp=t1, message="message 0", severity="INFO"
-                ),
+                DruncMessage(topic=self.topic, timestamp=t1, message="message 0", severity="INFO"),
                 DruncMessage(
                     topic=self.topic,
                     timestamp=t2,
@@ -62,7 +60,7 @@ class TestMessagesView(LoginRequiredTest):
 
     def test_get_with_search(self, auth_client):
         """Test message filtering based on search query."""
-        t = datetime.now(tz=timezone.utc)
+        t = datetime.now(tz=UTC)
         DruncMessage.objects.bulk_create(
             [
                 DruncMessage(
@@ -110,7 +108,7 @@ class TestMessagesView(LoginRequiredTest):
         """Test that messages with non-matching topics are not included."""
         DruncMessage.objects.create(
             topic="the.wrong.topic",
-            timestamp=datetime.now(tz=timezone.utc),
+            timestamp=datetime.now(tz=UTC),
             message="message",
             severity="INFO",
         )

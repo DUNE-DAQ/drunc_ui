@@ -3,13 +3,15 @@ import pytest
 
 def test_get_controller_driver(mocker):
     """Test the get_controller_driver function."""
-    mock_driver = mocker.patch("interfaces.controller_interface.ControllerDriver")
-    mock_uri = mocker.patch("interfaces.controller_interface.get_controller_uri")
+    mock_driver = mocker.patch("drunc_ui.interfaces.controller_interface.ControllerDriver")
+    mock_uri = mocker.patch("drunc_ui.interfaces.controller_interface.get_controller_uri")
     mock_uri.return_value = "uri"
-    mock_token = mocker.patch("interfaces.controller_interface.create_dummy_token_from_uname")
+    mock_token = mocker.patch(
+        "drunc_ui.interfaces.controller_interface.create_dummy_token_from_uname"
+    )
     mock_token.return_value = "token"
 
-    from interfaces.controller_interface import get_controller_driver
+    from drunc_ui.interfaces.controller_interface import get_controller_driver
 
     get_controller_driver()
     mock_uri.assert_called_once()
@@ -21,7 +23,7 @@ def test_get_controller_status(mocker):
     """Test the _boot_process function."""
     from druncschema.controller_pb2 import StatusResponse
 
-    from interfaces.controller_interface import get_controller_status
+    from drunc_ui.interfaces.controller_interface import get_controller_status
 
     class MockControllerDriver:
         def status(self):
@@ -30,7 +32,7 @@ def test_get_controller_status(mocker):
             response.status.state = "running"
             return response
 
-    mock = mocker.patch("interfaces.controller_interface.get_controller_driver")
+    mock = mocker.patch("drunc_ui.interfaces.controller_interface.get_controller_driver")
     mock.return_value = MockControllerDriver()
 
     response = get_controller_status()
@@ -41,7 +43,7 @@ def test_get_fsm_state(mocker):
     """Test the get_fsm_state function."""
     from druncschema.controller_pb2 import StatusResponse
 
-    from interfaces.controller_interface import get_fsm_state
+    from drunc_ui.interfaces.controller_interface import get_fsm_state
 
     class MockControllerDriver:
         def status(self):
@@ -50,7 +52,7 @@ def test_get_fsm_state(mocker):
             response.status.state = "running"
             return response
 
-    mock = mocker.patch("interfaces.controller_interface.get_controller_driver")
+    mock = mocker.patch("drunc_ui.interfaces.controller_interface.get_controller_driver")
     mock.return_value = MockControllerDriver()
 
     response = get_fsm_state()
@@ -61,7 +63,7 @@ def test_get_arguments(mocker):
     """Test the get_fsm_state function."""
     from druncschema.controller_pb2 import DescribeFSMResponse
 
-    from interfaces.controller_interface import get_arguments
+    from drunc_ui.interfaces.controller_interface import get_arguments
 
     class MockControllerDriver:
         def describe_fsm(self):
@@ -74,7 +76,7 @@ def test_get_arguments(mocker):
             arg2.name = "arg2"
             return response
 
-    mock = mocker.patch("interfaces.controller_interface.get_controller_driver")
+    mock = mocker.patch("drunc_ui.interfaces.controller_interface.get_controller_driver")
     mock.return_value = MockControllerDriver()
 
     response = get_arguments("event")
@@ -90,7 +92,7 @@ def test_process_arguments(mocker):
     from druncschema.controller_pb2 import Argument
     from druncschema.generic_pb2 import bool_msg, float_msg, int_msg, string_msg
 
-    from interfaces.controller_interface import process_arguments
+    from drunc_ui.interfaces.controller_interface import process_arguments
 
     event = "event"
     arguments = {
@@ -107,7 +109,7 @@ def test_process_arguments(mocker):
         Argument(name="bool_arg", type=Argument.Type.BOOL),
     ]
 
-    mock_get_arguments = mocker.patch("interfaces.controller_interface.get_arguments")
+    mock_get_arguments = mocker.patch("drunc_ui.interfaces.controller_interface.get_arguments")
     mock_get_arguments.return_value = valid_args
 
     result = process_arguments(event, arguments)
@@ -127,7 +129,7 @@ def test_process_arguments_missing_args(mocker):
     from druncschema.controller_pb2 import Argument
     from druncschema.generic_pb2 import int_msg, string_msg
 
-    from interfaces.controller_interface import process_arguments
+    from drunc_ui.interfaces.controller_interface import process_arguments
 
     event = "event"
     arguments = {
@@ -144,7 +146,7 @@ def test_process_arguments_missing_args(mocker):
         Argument(name="bool_arg", type=Argument.Type.BOOL),
     ]
 
-    mock_get_arguments = mocker.patch("interfaces.controller_interface.get_arguments")
+    mock_get_arguments = mocker.patch("drunc_ui.interfaces.controller_interface.get_arguments")
     mock_get_arguments.return_value = valid_args
 
     result = process_arguments(event, arguments)
@@ -158,7 +160,7 @@ def test_process_arguments_missing_args(mocker):
 
 def test_send_event(mocker):
     """Test the send_event function."""
-    from interfaces.controller_interface import send_event
+    from drunc_ui.interfaces.controller_interface import send_event
 
     event = "test_event"
     arguments = {"arg1": "value1"}
@@ -169,14 +171,16 @@ def test_send_event(mocker):
     mock_controller.execute_fsm_command.return_value.flag = 0
 
     mock_get_controller_driver = mocker.patch(
-        "interfaces.controller_interface.get_controller_driver"
+        "drunc_ui.interfaces.controller_interface.get_controller_driver"
     )
     mock_get_controller_driver.return_value = mock_controller
 
-    mock_process_arguments = mocker.patch("interfaces.controller_interface.process_arguments")
+    mock_process_arguments = mocker.patch(
+        "drunc_ui.interfaces.controller_interface.process_arguments"
+    )
     mock_process_arguments.return_value = {"arg1": "packed_value1"}
 
-    mock_FSMCommand = mocker.patch("interfaces.controller_interface.FSMCommand")
+    mock_FSMCommand = mocker.patch("drunc_ui.interfaces.controller_interface.FSMCommand")
 
     send_event(event, arguments)
 
@@ -191,7 +195,7 @@ def test_get_detectors(mocker):
     """Test the get_detectors function."""
     from druncschema.controller_pb2 import DescribeResponse
 
-    from interfaces.controller_interface import get_detectors
+    from drunc_ui.interfaces.controller_interface import get_detectors
 
     class MockControllerDriver:
         def describe(self):
@@ -203,7 +207,7 @@ def test_get_detectors(mocker):
             child.description.info = "det1"
             return response
 
-    mock = mocker.patch("interfaces.controller_interface.get_controller_driver")
+    mock = mocker.patch("drunc_ui.interfaces.controller_interface.get_controller_driver")
     mock.return_value = MockControllerDriver()
 
     response = get_detectors()

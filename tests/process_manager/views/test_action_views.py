@@ -4,7 +4,7 @@ from uuid import uuid4
 import pytest
 from django.urls import reverse
 
-from process_manager.views.actions import ProcessAction
+from drunc_ui.process_manager.views.actions import ProcessAction
 
 from ...utils import PermissionRequiredTest
 
@@ -22,16 +22,14 @@ class TestProcessActionView(PermissionRequiredTest):
 
     def test_invalid_action(self, auth_process_client):
         """Test process_action view with an invalid action."""
-        response = auth_process_client.post(
-            self.endpoint, data={"action": "invalid_action"}
-        )
+        response = auth_process_client.post(self.endpoint, data={"action": "invalid_action"})
         assert response.status_code == HTTPStatus.FOUND
         assert response.url == reverse("process_manager:index")
 
     @pytest.mark.parametrize("action", ["kill", "restart", "flush"])
     def test_valid_action(self, action, auth_process_client, mocker):
         """Test process_action view with a valid action."""
-        mock = mocker.patch("process_manager.views.actions.process_call")
+        mock = mocker.patch("drunc_ui.process_manager.views.actions.process_call")
         uuids_ = [str(uuid4()), str(uuid4())]
         response = auth_process_client.post(
             self.endpoint, data={"action": action, "select": uuids_}

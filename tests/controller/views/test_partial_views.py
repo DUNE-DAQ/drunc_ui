@@ -5,15 +5,15 @@ import pytest
 from django.forms import Field
 from django.urls import reverse
 
-from controller import app_tree, fsm
-from controller.tables import FSMTable
+from drunc_ui.controller import app_tree, fsm
+from drunc_ui.controller.tables import FSMTable
 
 from ...utils import LoginRequiredTest
 
 
 def test_make_fsm_flowchart():
     """Test the make_fsm_flowchart function."""
-    from controller.views.partials import make_fsm_flowchart
+    from drunc_ui.controller.views.partials import make_fsm_flowchart
 
     states = {
         "state1": {
@@ -47,10 +47,10 @@ class TestFSMView(LoginRequiredTest):
 
     def test_empty_post(self, auth_client, mocker):
         """Tests basic calls of view method."""
-        mock_state = mocker.patch("interfaces.controller_interface.get_fsm_state")
+        mock_state = mocker.patch("drunc_ui.interfaces.controller_interface.get_fsm_state")
         mock_state.return_value = "initial"
 
-        mock_send = mocker.patch("interfaces.controller_interface.send_event")
+        mock_send = mocker.patch("drunc_ui.interfaces.controller_interface.send_event")
 
         response = auth_client.post(self.endpoint)
         assert response.status_code == HTTPStatus.OK
@@ -64,9 +64,9 @@ class TestFSMView(LoginRequiredTest):
         """Tests basic calls of view method."""
         from django.forms import Form
 
-        mock_state = mocker.patch("interfaces.controller_interface.get_fsm_state")
-        mock_send = mocker.patch("interfaces.controller_interface.send_event")
-        mock_form = mocker.patch("controller.forms.get_form_for_event")
+        mock_state = mocker.patch("drunc_ui.interfaces.controller_interface.get_fsm_state")
+        mock_send = mocker.patch("drunc_ui.interfaces.controller_interface.send_event")
+        mock_form = mocker.patch("drunc_ui.controller.forms.get_form_for_event")
 
         event = choice(fsm.STATES[state])
 
@@ -100,14 +100,12 @@ class TestArgumentsDialogView(LoginRequiredTest):
 
     endpoint = reverse("controller:dialog")
 
-    @pytest.mark.parametrize(
-        "fields,has_args", [({}, False), ({"arg1": Field()}, True)]
-    )
+    @pytest.mark.parametrize("fields,has_args", [({}, False), ({"arg1": Field()}, True)])
     def test_view(self, auth_client, mocker, fields, has_args):
         """Tests basic calls of view method."""
         from django.forms import Form
 
-        mock_form = mocker.patch("controller.forms.get_form_for_event")
+        mock_form = mocker.patch("drunc_ui.controller.forms.get_form_for_event")
         event = "an_event"
 
         form = Form()
@@ -128,7 +126,7 @@ class TestAppTreeView(LoginRequiredTest):
 
     def test_get_tree(self, auth_client, mocker):
         """Tests basic calls of view method."""
-        mock_tree = mocker.patch("controller.app_tree.get_app_tree")
+        mock_tree = mocker.patch("drunc_ui.controller.app_tree.get_app_tree")
         apps = app_tree.AppTree(
             "root",
             [app_tree.AppTree("child1", [app_tree.AppTree("grandchild1", [], "")], "")],

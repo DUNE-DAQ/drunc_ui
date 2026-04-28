@@ -41,7 +41,7 @@ class TestLogsView(PermissionRequiredTest):
 
     def test_get(self, auth_logs_client, mocker):
         """Test the logs view for a privileged user."""
-        mock = mocker.patch("process_manager.views.pages.get_process_logs")
+        mock = mocker.patch("drunc_ui.process_manager.views.pages.get_process_logs")
         with assertTemplateUsed(template_name="process_manager/logs.html"):
             response = auth_logs_client.get(self.endpoint)
         assert response.status_code == HTTPStatus.OK
@@ -88,7 +88,7 @@ class TestBootProcess(PermissionRequiredTest):
             n_sleeps=n_sleeps,
         )
 
-        mock = mocker.patch("process_manager.views.pages.boot_process")
+        mock = mocker.patch("drunc_ui.process_manager.views.pages.boot_process")
         response = auth_process_client.post(
             reverse("process_manager:boot_process"), data=session_data
         )

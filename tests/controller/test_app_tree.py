@@ -1,7 +1,7 @@
 import pytest
 from django.utils.safestring import mark_safe
 
-from controller.app_tree import AppTree
+from drunc_ui.controller.app_tree import AppTree
 
 
 @pytest.mark.parametrize(
@@ -110,9 +110,9 @@ def test_get_app_tree(mocker):
     """Test the get_app_tree function."""
     from druncschema.controller_pb2 import StatusResponse
 
-    from controller.app_tree import AppTree, get_app_tree
+    from drunc_ui.controller.app_tree import AppTree, get_app_tree
 
-    mock_get_controller_status = mocker.patch("controller.app_tree.get_controller_status")
+    mock_get_controller_status = mocker.patch("drunc_ui.controller.app_tree.get_controller_status")
 
     class MockStatus:
         def __init__(self, name, children):

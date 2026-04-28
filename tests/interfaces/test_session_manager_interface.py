@@ -2,7 +2,7 @@ def test_get_configs(mocker):
     """Test the get_configs function."""
     from druncschema.session_manager_pb2 import AllConfigKeys
 
-    from interfaces.session_manager_interface import get_configs
+    from drunc_ui.interfaces.session_manager_interface import get_configs
 
     class MockSessionManagerDriver:
         def list_all_configs(self):
@@ -15,7 +15,7 @@ def test_get_configs(mocker):
             config2.session_id = "42+1"
             return response
 
-    mock = mocker.patch("interfaces.session_manager_interface.get_session_manager_driver")
+    mock = mocker.patch("drunc_ui.interfaces.session_manager_interface.get_session_manager_driver")
     mock.return_value = MockSessionManagerDriver()
 
     configs = get_configs()
@@ -26,7 +26,7 @@ def test_get_sessions(mocker):
     """Test the get_sessions function."""
     from druncschema.session_manager_pb2 import AllActiveSessions
 
-    from interfaces.session_manager_interface import get_sessions
+    from drunc_ui.interfaces.session_manager_interface import get_sessions
 
     class MockSessionManagerDriver:
         def list_all_sessions(self):
@@ -39,7 +39,7 @@ def test_get_sessions(mocker):
             session2.user = "Radagast"
             return response
 
-    mock = mocker.patch("interfaces.session_manager_interface.get_session_manager_driver")
+    mock = mocker.patch("drunc_ui.interfaces.session_manager_interface.get_session_manager_driver")
     mock.return_value = MockSessionManagerDriver()
 
     sessions = get_sessions()

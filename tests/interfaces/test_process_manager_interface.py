@@ -2,7 +2,7 @@ from django.conf import settings
 from druncschema.process_manager_pb2 import LogRequest, ProcessQuery, ProcessUUID
 from druncschema.token_pb2 import Token
 
-from interfaces.process_manager_interface import (
+from drunc_ui.interfaces.process_manager_interface import (
     boot_process,
     get_process_logs,
     get_process_manager_driver,
@@ -11,7 +11,7 @@ from interfaces.process_manager_interface import (
 
 def test_get_process_manager_driver(mocker):
     """Test the get_process_manager_driver function."""
-    mock_driver = mocker.patch("interfaces.process_manager_interface.ProcessManagerDriver")
+    mock_driver = mocker.patch("drunc_ui.interfaces.process_manager_interface.ProcessManagerDriver")
 
     username = "testuser"
     driver = get_process_manager_driver(username)
@@ -34,7 +34,7 @@ def test_boot_process(mocker):
     sleep = 5
     n_sleeps = 4
 
-    mock = mocker.patch("interfaces.process_manager_interface.get_process_manager_driver")
+    mock = mocker.patch("drunc_ui.interfaces.process_manager_interface.get_process_manager_driver")
 
     boot_process("root", session_name, n_processes, sleep, n_sleeps)
 
@@ -49,7 +49,7 @@ def test_get_process_logs(mocker):
     query = ProcessQuery(uuids=[ProcessUUID(uuid="1234")])
     request = LogRequest(query=query, how_far=100)
 
-    mock = mocker.patch("interfaces.process_manager_interface.get_process_manager_driver")
+    mock = mocker.patch("drunc_ui.interfaces.process_manager_interface.get_process_manager_driver")
 
     get_process_logs("1234", "root")
 
