@@ -23,7 +23,7 @@ jobs:
 
       - name: Set up dev nightly and run checks
         run: |
-          set -euo pipefail
+          set -eo pipefail
 
           mkdir nightly
           cd nightly
