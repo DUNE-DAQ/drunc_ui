@@ -16,6 +16,7 @@ dependencies = [
   "crispy-bootstrap5>=2025.6,<2026",
   "whitenoise>=6.9,<7.0",
   "psycopg[binary]>=3.2.9,<4.0",
+  "gunicorn>=23.0",
   # TODO: set the versions for below, once the DUNE-DAQ PyPI repository is operational.
   # "drunc @ git+https://github.com/DUNE-DAQ/drunc.git@dedc27bf9678ee77a4eafd7243b70f969b2dfcef",
   # "druncschema @ git+https://github.com/DUNE-DAQ/druncschema.git@af69ed7353faaa404b2dc7b4a8ed38c099d27d06",
@@ -63,13 +64,10 @@ include = ["drunc_ui*"]
 python_version = "3.12"
 mypy_path = ["src"]
 plugins = ["mypy_django_plugin.main"]
-
 exclude = [
-  "^manage\\.py$",
   ".*/migrations/.*",
   "^example_deployment/.*",
 ]
-
 disallow_any_explicit = true
 disallow_any_generics = true
 disallow_untyped_defs = true
@@ -100,7 +98,6 @@ indent = 2
 target-version = "py312"
 line-length = 100
 exclude = [
-  "manage.py",
   "**/migrations/**",
   "example_deployment/**",
 ]
