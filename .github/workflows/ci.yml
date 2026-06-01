@@ -44,9 +44,3 @@ jobs:
 
           python3 -m pytest --cov-report=xml
           python3 -m mkdocs build --strict
-
-      - name: Upload coverage to Codecov
-        if: success()
-        uses: codecov/codecov-action@v6
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
