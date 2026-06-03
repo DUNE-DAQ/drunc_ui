@@ -1,56 +1,20 @@
-<!-- markdownlint-disable MD041 -->
-[![GitHub](https://img.shields.io/github/license/ImperialCollegeLondon/drunc_ui)](https://raw.githubusercontent.com/ImperialCollegeLondon/drunc_ui/main/LICENSE)
-[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/ImperialCollegeLondon/drunc_ui/main.svg)](https://results.pre-commit.ci/latest/github/ImperialCollegeLondon/drunc_ui/main)
-[![Test and build](https://github.com/ImperialCollegeLondon/drunc_ui/actions/workflows/ci.yml/badge.svg)](https://github.com/ImperialCollegeLondon/drunc_ui/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/ImperialCollegeLondon/drunc_ui/graph/badge.svg?token=PG0WTYF8EY)](https://codecov.io/gh/ImperialCollegeLondon/drunc_ui)
-
 # DUNE Run Control User Interface (drunc-ui)
 
 This README contains a short summary on getting started with the project. For more
 details see the [documentation].
 
-[documentation]: https://imperialcollegelondon.github.io/drunc_ui/
+This repo defines the web interface for various drunc tools, including:
 
-This repo defines the web interface for various drunc tools. Including:
-
-- [The Controllers]
+- [The Controller]
 - [The Process Manager]
 - [The Session Manager]
 
-## Running the Project Locally
+## Running the Project
 
 The DUNE control system comprises multiple services working in concert (see the
-[drunc repository] for an overview). Whilst it is possible to manually run the
-individual services as required it is strongly recommended to use the Docker setup
-provided.
-
-## Docker Setup
-
-This repository provides a Docker Compose configuration providing the requisite services
-suitable for development of the interfaces using realistic test data. Working with the
-full docker stack requires building a very larger docker base image and has heavy
-resource requirements when running.
-
-It is recommended to set the `COMPOSE_PROFILES` environment variable to select which stack
-you are working with. Use the value `drunc` for the full stack or not set anything for
-a more ligtweight configuration that, however, might be good enough to develop some
-aspects of the tool.
-
-You can also use the `--profile` flag when invoking `docker compose` however the
-instructions in this file assume you are using the environment variable.
+[drunc repository] for an overview).
 
 ## Process Manager UI
-
-You must use the `drunc` Docker Compose profile when working with the Process Manager UI.
-
-### Getting Started with the Process Manager UI
-
-Check you have a value set for `COMPOSE_PROFILES` (see above). Start the docker stack
-with:
-
-```bash
-docker compose up
-```
 
 It can take a few moments for the services to boot but the UI should then be available
 in the browser at <http://localhost:8000/process_manager/>.
@@ -63,7 +27,7 @@ Authentication is required to work with the application so you need to create a 
 account to work with:
 
 ```bash
-docker compose exec app python manage.py createsuperuser
+python manage.py createsuperuser
 ```
 
 and follow the prompts. You should then be able to use the details you supplied to pass
@@ -75,19 +39,12 @@ corresponding terminal.
 
 ## Controller UI
 
-You must use the `drunc` Docker Compose profile when working with the Controller UI.
-
-### Getting Started with the Controller UI
-
-Check you have value of the `COMPOSE_PROFILES` variable set to `drunc` (see above). As
-with the Process Manager UI start the Docker Compose services and create a user account
-if not already done. You can then boot a full test session:
+As with the Process Manager UI, create a user account if not already done. You can then
+boot a full test session:
 
 ```bash
-docker compose exec drunc /boot_test_session.sh
+/boot_test_session.sh
 ```
-
-_Note that the above consumes several Gb of memory._
 
 The test session boots a full set of processes and controllers suitable for UI testing
 and development. Once booted you can view the status of the root controller with the UI
@@ -96,37 +53,9 @@ at <http://localhost:8000/controller>.
 For details of working with the controller see the [drunc wiki]. You should also be able
 to see the booted processes in the Process Manager UI.
 
-#### Note for MacOS users
-
-The above `boot_test_session.sh` will not work on M-series Macs because of limitations
-with the x86 architecture emulation used by MacOS. There is a simpler configuration that
-can be used instead. To use this, set the following environment variables before
-starting the docker containers:
-
-- `CSC_SESSION=lr-session`
-- `CSC_URL=drunc:25000`
-
-[drunc wiki]: https://github.com/DUNE-DAQ/drunc/wiki/Controller
-
-## Not Using Docker
-
-Brief instructions are provided below on how to manually run the various services
-required to work with the Drunc UIs. These are only meant to be indicative however and
-are not regularly tested or maintained.
-
-1. Start Kafka - See [Running drunc with pocket kafka].
-
-1. Start the drunc shell:
-   `drunc-unified-shell --log-level debug ./data/process-manager-pocket-kafka.json`
-
-1. Start the application server: `python manage.py runserver`
-
-1. Start the Kafka consumer: `python manage.py kafka_consumer --debug`
-
-You may then need to perform subsequent actions such as booting test session data.
-
 [drunc repository]: https://github.com/DUNE-DAQ/drunc
-[running drunc with pocket kafka]: https://github.com/DUNE-DAQ/drunc/wiki/Running-drunc-with-pocket-kafka
-[the controllers]: https://imperialcollegelondon.github.io/drunc_ui/controller
-[the process manager]: https://imperialcollegelondon.github.io/drunc_ui/process_manager
-[the session manager]: https://imperialcollegelondon.github.io/drunc_ui/session_manager
+[drunc wiki]: https://github.com/DUNE-DAQ/drunc/wiki/Controller
+[documentation]: https://dune-daq.github.io/drunc_ui/
+[the controller]: https://dune-daq.github.io/drunc_ui/controller
+[the process manager]: https://dune-daq.github.io/drunc_ui/process_manager
+[the session manager]: https://dune-daq.github.io/drunc_ui/session_manager
