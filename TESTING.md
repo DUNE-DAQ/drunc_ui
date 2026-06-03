@@ -8,10 +8,13 @@ Run `drunc-ui-manage migrate` to create and migrate a database (db.sqlite3 in cu
 
 Create a test user with `drunc-ui-manage createsuperuser`, following prompts.
 
-Start an instance of `drunc-unified-shell`, noting its host and port, e.g:
+Start an instance of `drunc-unified-shell`, noting its host and port, and boot the session:
 
 ```bash
 drunc-unified-shell ssh-standalone config/daqsystemtest/example-configs.data.xml local-1x1-config JamesTest
+
+# Inside the shell:
+drunc-unified-shell > boot
 ```
 
 Start an instance of `drunc-session-manager`, noting its host and port.
