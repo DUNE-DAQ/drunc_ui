@@ -24,7 +24,7 @@ class TestIndexView(LoginRequiredTest):
 
         assertContains(
             response,
-            f'<a class="nav-link" href="{reverse("process_manager:index")}">Process Manager</a>',  # noqa: E501
+            f'<a class="nav-link" href="{reverse("process_manager:index")}">Process Manager</a>',
         )
         assertContains(
             response,
@@ -36,7 +36,11 @@ class TestIndexView(LoginRequiredTest):
         )
         assertContains(
             response,
-            f'<a href="{reverse("controller:index")}" class="btn btn-secondary">Controller</a>',  # noqa: E501
+            f'<a class="nav-link" href="{reverse("runconf:config_view")}">Run Conf Editor</a>',
+        )
+        assertContains(
+            response,
+            f'<a href="{reverse("controller:index")}" class="btn btn-secondary">Controller</a>',
         )
 
     def test_help_view(self, auth_client):

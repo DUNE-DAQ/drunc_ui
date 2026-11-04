@@ -1,0 +1,88 @@
+{% extends "main/base.html" %}
+{% load django_bootstrap5 %}
+{% block title %}
+  Configuration Selection
+{% endblock title %}
+{% block content %}
+  <div class="container mt-5"
+       id="configuration-selection"
+       hx-target="#configuration-selection"
+       hx-select="#configuration-selection"
+       hx-swap="outerHTML"
+       hx-sync="#configuration-selection:replace">
+    <h1>Configuration Selection</h1>
+    {% if selection_error %}<div class="alert alert-danger" role="alert">{{ selection_error }}</div>{% endif %}
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <label for="daqVersion" class="form-label">DAQ Version</label>
+        <select class="form-select"
+                id="daqVersion"
+                name="daq_version"
+                required
+                hx-get="{% url 'runconf:config_view' %}"
+                hx-trigger="change"
+                onchange="document.getElementById('daqSession').value = ''; document.getElementById('daqSession').disabled = true;">
+          <option value="">Select a DAQ version...</option>
+          {% for version in daq_versions %}
+            <option value="{{ version }}"
+                    {% if version == selected_version %}selected{% endif %}>{{ version }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label for="daqSession" class="form-label">DAQ Session</label>
+        <select class="form-select"
+                id="daqSession"
+                name="session"
+                required
+                {% if not selected_version %}disabled{% endif %}
+                hx-get="{% url 'runconf:config_view' %}"
+                hx-trigger="change"
+                hx-include="#daqVersion">
+          <option value="">Select a session...</option>
+          {% for session in sessions %}
+            <option value="{{ session }}"
+                    {% if session == selected_session %}selected{% endif %}>{{ session }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="card mb-4">
+      <div class="card-header">
+        <h2 class="h5 mb-0">Loaded Configuration</h2>
+      </div>
+      <div class="card-body" id="loaded-configuration" aria-live="polite">
+        {% if selected_config %}
+          <table class="table table-sm mb-0">
+            <tbody>
+              <tr>
+                <th scope="row">Apparatus</th>
+                <td>{{ selected_config.apparatus }}</td>
+              </tr>
+              <tr>
+                <th scope="row">DAQ Config</th>
+                <td class="text-break">{{ selected_config.daq_config }}</td>
+              </tr>
+              <tr>
+                <th scope="row">Current Config File</th>
+                <td class="text-break">{{ selected_config.current_config_file }}</td>
+              </tr>
+              <tr>
+                <th scope="row">Session in Config</th>
+                <td>{{ selected_config.session_in_config }}</td>
+              </tr>
+            </tbody>
+          </table>
+        {% else %}
+          <p class="text-muted mb-0">No configuration loaded</p>
+        {% endif %}
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h2 class="h5 mb-0">Configuration Editor</h2>
+      </div>
+      <div class="card-body" id="configuration-editor"></div>
+    </div>
+  </div>
+{% endblock content %}

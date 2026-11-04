@@ -164,6 +164,7 @@ INSTALLED_APPS += [
     "drunc_ui.controller.apps.ControllerConfig",
     "drunc_ui.process_manager.apps.ProcessManagerConfig",
     "drunc_ui.session_manager.apps.SessionManagerConfig",
+    "drunc_ui.runconf.apps.RunconfConfig",
 ]
 
 AUTH_USER_MODEL = "main.User"
