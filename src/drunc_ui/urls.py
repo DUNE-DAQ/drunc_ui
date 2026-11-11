@@ -31,5 +31,6 @@ urlpatterns = [
     path("process_manager/", include("drunc_ui.process_manager.urls")),
     path("controller/", include("drunc_ui.controller.urls")),
     path("session_manager/", include("drunc_ui.session_manager.urls")),
+    path("runconf/", include("drunc_ui.runconf.urls")),
     path("healthz", healthz),
 ]
