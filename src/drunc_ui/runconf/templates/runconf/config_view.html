@@ -41,8 +41,8 @@
                 hx-include="#daqVersion">
           <option value="">Select a session...</option>
           {% for session in sessions %}
-            <option value="{{ session }}"
-                    {% if session == selected_session %}selected{% endif %}>{{ session }}</option>
+            <option value="{{ session.value }}"
+                    {% if session.value == selected_session %}selected{% endif %}>{{ session.label }}</option>
           {% endfor %}
         </select>
       </div>
@@ -56,8 +56,8 @@
           <table class="table table-sm mb-0">
             <tbody>
               <tr>
-                <th scope="row">Apparatus</th>
-                <td>{{ selected_config.apparatus }}</td>
+                <th scope="row">Detector Configuration</th>
+                <td>{{ selected_config.detector_configuration }}</td>
               </tr>
               <tr>
                 <th scope="row">DAQ Config</th>
@@ -73,6 +73,7 @@
               </tr>
             </tbody>
           </table>
+          <p class="text-muted mt-2 mb-0">Loaded locally for inspection. No editable copy has been created.</p>
         {% else %}
           <p class="text-muted mb-0">No configuration loaded</p>
         {% endif %}
@@ -82,7 +83,18 @@
       <div class="card-header">
         <h2 class="h5 mb-0">Configuration Editor</h2>
       </div>
-      <div class="card-body" id="configuration-editor"></div>
+      <div class="card-body" id="configuration-editor">
+        {% if selected_config %}
+          <label for="configuration-contents" class="form-label">Configuration XML (read-only)</label>
+          <textarea id="configuration-contents"
+                    class="form-control font-monospace"
+                    rows="24"
+                    spellcheck="false"
+                    readonly>{{ selected_config.contents }}</textarea>
+        {% else %}
+          <p class="text-muted mb-0">Select a configuration to view its XML.</p>
+        {% endif %}
+      </div>
     </div>
   </div>
 {% endblock content %}
