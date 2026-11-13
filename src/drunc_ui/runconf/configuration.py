@@ -1,8 +1,8 @@
 """Production configuration catalogue for the configuration editor.
 
-``list_production_configs`` returns a mocked response from a proposed SessionManager
-endpoint of the same name. Once the endpoint exists in druncschema and drunc, this
-function should be replaced by a call through ``session_manager_interface``.
+The functions here return mocked SessionManager responses. Once the matching
+endpoints exist in druncschema and drunc, replace them with calls through
+``session_manager_interface``.
 """
 
 import copy
@@ -18,7 +18,7 @@ class ProductionConfig(TypedDict):
 
 
 class ProductionConfigs(TypedDict):
-    """Response of the proposed ``list_production_configs`` endpoint."""
+    """Response of the ``list_production_configs`` endpoint."""
 
     daq_version: str
     apparatus: str
@@ -49,7 +49,7 @@ _MOCK_RESPONSE: ProductionConfigs = {
 
 
 class ProductionConfigCopy(TypedDict):
-    """Response of the proposed ``get_production_config`` endpoint."""
+    """Response of the ``get_production_config`` endpoint."""
 
     file: str
     session_id: str
@@ -100,7 +100,7 @@ _MOCK_XML = """<?xml version="1.0" encoding="ASCII"?>
 
 
 def list_production_configs() -> ProductionConfigs:
-    """Return a mocked response from the proposed ``list_production_configs`` endpoint.
+    """Return a mocked ``list_production_configs`` response.
 
     The sessions match those the SessionManager lists once the production
     configuration setup script has been sourced.
@@ -109,7 +109,7 @@ def list_production_configs() -> ProductionConfigs:
 
 
 def get_production_config(file: str, session_id: str) -> ProductionConfigCopy:
-    """Return a mocked response from the proposed ``get_production_config`` endpoint.
+    """Return a mocked ``get_production_config`` response.
 
     The SessionManager would copy the production configuration to a working
     location and return the copy, which later editing features would modify.

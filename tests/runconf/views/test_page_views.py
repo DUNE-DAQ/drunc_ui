@@ -23,7 +23,7 @@ LISTING = {
 
 @pytest.fixture(autouse=True)
 def listing(mocker):
-    """Stand in for the proposed list_production_configs endpoint."""
+    """Mock list_production_configs."""
     return mocker.patch(
         "drunc_ui.runconf.views.pages.list_production_configs", return_value=LISTING
     )
@@ -31,7 +31,7 @@ def listing(mocker):
 
 @pytest.fixture(autouse=True)
 def config_copy(mocker):
-    """Stand in for the proposed get_production_config endpoint."""
+    """Mock get_production_config."""
 
     def get_copy(file, session_id):
         return {
