@@ -48,7 +48,7 @@ _MOCK_RESPONSE: ProductionConfigs = {
 }
 
 
-class ProductionConfigCopy(TypedDict):
+class ProductionConfigWorkingCopy(TypedDict):
     """Response of the ``get_production_config`` endpoint."""
 
     file: str
@@ -108,7 +108,7 @@ def list_production_configs() -> ProductionConfigs:
     return copy.deepcopy(_MOCK_RESPONSE)
 
 
-def get_production_config(file: str, session_id: str) -> ProductionConfigCopy:
+def get_production_config(file: str, session_id: str) -> ProductionConfigWorkingCopy:
     """Return a mocked ``get_production_config`` response.
 
     The SessionManager would copy the production configuration to a working
