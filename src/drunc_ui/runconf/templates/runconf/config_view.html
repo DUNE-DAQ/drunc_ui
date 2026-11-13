@@ -1,7 +1,7 @@
 {% extends "main/base.html" %}
 {% load django_bootstrap5 %}
 {% block title %}
-  Configuration Selection
+  Run Configuration Editor
 {% endblock title %}
 {% block content %}
   <div class="container mt-5"
@@ -10,7 +10,6 @@
        hx-select="#configuration-selection"
        hx-swap="outerHTML"
        hx-sync="#configuration-selection:replace">
-    <h1>Configuration Selection</h1>
     {% if selection_error %}<div class="alert alert-danger" role="alert">{{ selection_error }}</div>{% endif %}
     <div class="row mb-4">
       <div class="col-md-6">
