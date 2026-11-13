@@ -56,8 +56,8 @@
           <table class="table table-sm mb-0">
             <tbody>
               <tr>
-                <th scope="row">Detector Configuration</th>
-                <td>{{ selected_config.detector_configuration }}</td>
+                <th scope="row">Apparatus</th>
+                <td>{{ apparatus|default:"Not set" }}</td>
               </tr>
               <tr>
                 <th scope="row">DAQ Config</th>
@@ -73,7 +73,6 @@
               </tr>
             </tbody>
           </table>
-          <p class="text-muted mt-2 mb-0">Loaded locally for inspection. No editable copy has been created.</p>
         {% else %}
           <p class="text-muted mb-0">No configuration loaded</p>
         {% endif %}
@@ -85,7 +84,7 @@
       </div>
       <div class="card-body" id="configuration-editor">
         {% if selected_config %}
-          <label for="configuration-contents" class="form-label">Configuration XML (read-only)</label>
+          <label for="configuration-contents" class="form-label">Working copy (read-only until editing is added)</label>
           <textarea id="configuration-contents"
                     class="form-control font-monospace"
                     rows="24"

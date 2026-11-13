@@ -1,94 +1,42 @@
-"""Tests for local configuration resolution and reading."""
+"""Tests for the mocked production configuration catalogue."""
 
-from types import SimpleNamespace
+from xml.etree import ElementTree
 
 import pytest
 
-from drunc_ui.runconf.configuration import load_config
+from drunc_ui.runconf.configuration import get_production_config, list_production_configs
 
 
-@pytest.fixture
-def local_config(tmp_path, monkeypatch, mocker):
-    """Provide local files and mock only the OKS parser."""
-    path = tmp_path / "nested" / "example.data.xml"
-    path.parent.mkdir()
-    path.write_text('<oks-data description="detector café"/>\n', encoding="utf-8")
-    monkeypatch.setenv("DUNEDAQ_DB_PATH", str(tmp_path))
-    parser = mocker.patch("drunc_ui.runconf.configuration.Configuration")
-    parser.return_value.get_dals.return_value = [
-        SimpleNamespace(id="other", detector_configuration=None),
-        SimpleNamespace(id="selected", detector_configuration=SimpleNamespace(id="detector")),
-    ]
-    return path, parser
+def test_mock_response_shape():
+    """Return the fields the proposed endpoint provides, one entry per session."""
+    listing = list_production_configs()
+    assert listing["daq_version"]
+    assert listing["apparatus"] == "np02"
+    sessions = {config["session_id"] for config in listing["configs"]}
+    assert {"np02-session", "np04-session", "hd-coldbox-session"} <= sessions
+    for config in listing["configs"]:
+        assert config["file"] == f"{config['session_id']}.data.xml"
+        assert config["path"].endswith(f"/{config['file']}")
 
 
-def test_load_config(local_config):
-    """Read the selected Session, not simply the first DAL."""
-    path, parser = local_config
-    result = load_config(path.name, "selected")
-    parser.assert_called_once_with(f"oksconflibs:{path}")
-    assert result == {
-        "detector_configuration": "detector",
-        "daq_config": str(path),
-        "current_config_file": str(path),
-        "session_in_config": "selected",
-        "contents": '<oks-data description="detector café"/>\n',
-    }
+def test_mock_response_is_a_copy():
+    """Callers cannot change the mock response seen by later requests."""
+    list_production_configs()["configs"].clear()
+    assert list_production_configs()["configs"]
 
 
-def test_overlapping_paths(local_config, monkeypatch):
-    """Do not treat the same file discovered under overlapping roots as ambiguous."""
-    path, _ = local_config
-    monkeypatch.setenv("DUNEDAQ_DB_PATH", f"{path.parent}:{path.parent.parent}:")
-    assert load_config(path.name, "selected")["daq_config"] == str(path)
+def test_get_production_config():
+    """Return a working copy of a listed configuration."""
+    config = list_production_configs()["configs"][0]
+    copy = get_production_config(config["file"], config["session_id"])
+    assert copy["path"] == config["path"]
+    assert copy["working_path"] != copy["path"]
+    assert copy["working_path"].endswith(f"/{config['file']}")
+    ElementTree.fromstring(copy["contents"])
+    assert f'<obj class="Session" id="{config["session_id"]}">' in copy["contents"]
 
 
-def test_ambiguous_file(local_config):
-    """Reject duplicate basenames rather than loading an arbitrary configuration."""
-    path, parser = local_config
-    (path.parent.parent / path.name).touch()
-    with pytest.raises(ValueError, match="ambiguous"):
-        load_config(path.name, "selected")
-    parser.assert_not_called()
-
-
-def test_missing_file(local_config):
-    """Reject a catalogue entry which cannot be resolved locally."""
-    with pytest.raises(FileNotFoundError, match="not found"):
-        load_config("missing.data.xml", "selected")
-
-
-def test_missing_session(local_config):
-    """Reject stale SessionManager IDs."""
-    with pytest.raises(ValueError, match=r"Session .* was not found"):
-        load_config(local_config[0].name, "missing")
-
-
-def test_missing_search_path(monkeypatch):
-    """Require the DAQ database search path."""
-    monkeypatch.delenv("DUNEDAQ_DB_PATH", raising=False)
-    with pytest.raises(ValueError, match="DUNEDAQ_DB_PATH is not set"):
-        load_config("example.data.xml", "selected")
-
-
-@pytest.mark.parametrize("file", ["../example.data.xml", "/tmp/example.data.xml", "other.txt"])
-def test_invalid_basename(local_config, file):
-    """Only resolve basenames advertised by the service."""
-    with pytest.raises(ValueError, match="basename"):
-        load_config(file, "selected")
-
-
-def test_parse_error(local_config):
-    """Preserve parser failures for the view to report."""
-    path, parser = local_config
-    parser.side_effect = RuntimeError("invalid OKS")
-    with pytest.raises(RuntimeError, match="invalid OKS"):
-        load_config(path.name, "selected")
-
-
-def test_read_error(local_config, mocker):
-    """Propagate file read errors instead of showing an empty editor."""
-    path, _ = local_config
-    mocker.patch("pathlib.Path.read_text", side_effect=PermissionError("read denied"))
-    with pytest.raises(PermissionError, match="read denied"):
-        load_config(path.name, "selected")
+def test_get_unknown_config():
+    """Reject configurations that were not listed."""
+    with pytest.raises(ValueError, match="not a production configuration"):
+        get_production_config("appSession.data.xml", "test-session")

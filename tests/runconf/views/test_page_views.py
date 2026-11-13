@@ -10,19 +10,39 @@ from pytest_django.asserts import assertContains, assertRedirects, assertTemplat
 
 from ...utils import LoginRequiredTest
 
+LISTING = {
+    "daq_version": "v1.0.0",
+    "apparatus": "np02",
+    "configs": [
+        {"file": "first.data.xml", "session_id": "shared", "path": "/prod/first.data.xml"},
+        {"file": "second.data.xml", "session_id": "shared", "path": "/prod/second.data.xml"},
+        {"file": "first.data.xml", "session_id": "another", "path": "/prod/first.data.xml"},
+    ],
+}
+
 
 @pytest.fixture(autouse=True)
-def config_catalogue(monkeypatch, mocker):
-    """Provide a real-shaped catalogue without contacting a running service."""
-    monkeypatch.setenv("SPACK_RELEASE", "v1.0.0")
+def listing(mocker):
+    """Stand in for the proposed list_production_configs endpoint."""
     return mocker.patch(
-        "drunc_ui.interfaces.session_manager_interface.get_configs",
-        return_value=[
-            {"file": "first.data.xml", "session_id": "shared"},
-            {"file": "second.data.xml", "session_id": "shared"},
-            {"file": "first.data.xml", "session_id": "another"},
-        ],
+        "drunc_ui.runconf.views.pages.list_production_configs", return_value=LISTING
     )
+
+
+@pytest.fixture(autouse=True)
+def config_copy(mocker):
+    """Stand in for the proposed get_production_config endpoint."""
+
+    def get_copy(file, session_id):
+        return {
+            "file": file,
+            "session_id": session_id,
+            "path": f"/prod/{file}",
+            "working_path": f"/work/{file}",
+            "contents": '<oks-data>café</oks-data></textarea><script>alert("x")</script>',
+        }
+
+    return mocker.patch("drunc_ui.runconf.views.pages.get_production_config", side_effect=get_copy)
 
 
 class TestConfigView(LoginRequiredTest):
@@ -91,7 +111,10 @@ class TestConfigView(LoginRequiredTest):
             ({"session": "np02-session"}, "Select a DAQ version before selecting a session."),
             ({"daq_version": "invalid"}, "Select an available DAQ version."),
             (
-                {"daq_version": "v1.0.0", "session": "np02-test"},
+                {
+                    "daq_version": "v1.0.0",
+                    "session": json.dumps(["appSession.data.xml", "test-session"]),
+                },
                 "Select an available session for this DAQ version.",
             ),
             (
@@ -117,80 +140,32 @@ class TestConfigView(LoginRequiredTest):
         assert response.context["selection_error"] == ""
         assertContains(response, "No configuration loaded")
 
-    def test_load_selection(self, auth_client, mocker):
-        """Use both file and session identity, and render metadata read from disk."""
-        loader = mocker.patch(
-            "drunc_ui.runconf.views.pages.load_config",
-            return_value={
-                "detector_configuration": "actual-detector",
-                "daq_config": "/configs/second.data.xml",
-                "current_config_file": "/configs/second.data.xml",
-                "session_in_config": "shared",
-                "contents": '<oks-data>café</oks-data></textarea><script>alert("x")</script>',
-            },
-        )
+    def test_load_selection(self, auth_client: Client, config_copy) -> None:
+        """Request the selected file and session, and show the working copy read-only."""
         key = json.dumps(["second.data.xml", "shared"])
         response = auth_client.get(self.endpoint, {"daq_version": "v1.0.0", "session": key})
-        loader.assert_called_once_with("second.data.xml", "shared")
+        config_copy.assert_called_once_with("second.data.xml", "shared")
         assert response.context["selected_session"] == key
-        assertContains(response, "/configs/second.data.xml", count=2)
-        assertContains(response, "actual-detector")
-        assertContains(response, "No editable copy has been created.")
-        assertContains(response, "Configuration XML (read-only)")
+        assertContains(response, '<th scope="row">Apparatus</th>')
+        assertContains(response, "<td>np02</td>")
+        assertContains(response, "/prod/second.data.xml", count=1)
+        assertContains(response, "/work/second.data.xml", count=1)
         assertContains(response, "&lt;oks-data&gt;café&lt;/oks-data&gt;")
         assertContains(response, "&lt;/textarea&gt;&lt;script&gt;")
         assert '<script>alert("x")</script>' not in response.content.decode()
-        assertContains(response, "readonly")
+        textarea = response.content.decode().split('id="configuration-contents"', 1)[1]
+        assert "readonly" in textarea.split(">", 1)[0]
 
-    @pytest.mark.parametrize(
-        "error",
-        [
-            FileNotFoundError("missing.data.xml was not found"),
-            ValueError("configuration is ambiguous"),
-            RuntimeError("configuration cannot be parsed"),
-        ],
-    )
-    def test_load_failure(self, auth_client, mocker, error):
-        """Render load errors inside the HTMX replacement without stale metadata."""
-        mocker.patch("drunc_ui.runconf.views.pages.load_config", side_effect=error)
-        response = auth_client.get(
-            self.endpoint,
-            {"daq_version": "v1.0.0", "session": json.dumps(["first.data.xml", "shared"])},
-            HTTP_HX_REQUEST="true",
-        )
-        assert response.context["selected_config"] is None
-        assertContains(response, "Unable to load configuration:")
-        assertContains(response, 'id="configuration-selection"')
-        assert 'id="configuration-contents"' not in response.content.decode()
+    def test_no_copy_without_selection(self, auth_client: Client, config_copy) -> None:
+        """Only request a working copy once a session is selected."""
+        auth_client.get(self.endpoint, {"daq_version": "v1.0.0"})
+        config_copy.assert_not_called()
 
-    def test_service_unavailable(self, auth_client, config_catalogue):
-        """Surface service failures rather than showing an empty success state."""
-        from grpc import RpcError
-
-        config_catalogue.side_effect = RpcError("service unavailable")
+    def test_missing_apparatus(self, auth_client: Client, listing) -> None:
+        """Say when no apparatus is reported."""
+        listing.return_value = {**LISTING, "apparatus": ""}
         response = auth_client.get(
             self.endpoint,
             {"daq_version": "v1.0.0", "session": json.dumps(["first.data.xml", "shared"])},
         )
-        assert response.context["selected_config"] is None
-        assert response.context["selected_session"] == ""
-        assertContains(response, "Unable to retrieve configurations from the SessionManager:")
-
-    def test_no_configs(self, auth_client, config_catalogue):
-        """Explain an empty service catalogue."""
-        config_catalogue.return_value = []
-        response = auth_client.get(self.endpoint, {"daq_version": "v1.0.0"})
-        assertContains(response, "The SessionManager returned no available configurations.")
-
-    def test_missing_release(self, auth_client, monkeypatch, config_catalogue):
-        """Require a DBT release instead of inventing version data."""
-        monkeypatch.delenv("SPACK_RELEASE")
-        response = auth_client.get(self.endpoint)
-        assert response.context["daq_versions"] == []
-        assertContains(response, "SPACK_RELEASE is not set.")
-        config_catalogue.assert_not_called()
-
-    def test_initial_page_does_not_contact_service(self, auth_client, config_catalogue):
-        """Only request configurations after a release is selected."""
-        auth_client.get(self.endpoint)
-        config_catalogue.assert_not_called()
+        assertContains(response, "<td>Not set</td>")

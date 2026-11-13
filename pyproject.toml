@@ -84,7 +84,6 @@ module = [
   "drunc.*",
   "django_tables2.*",
   "kafka.*",
-  "conffwk.*",
 ]
 ignore_missing_imports = true
 
