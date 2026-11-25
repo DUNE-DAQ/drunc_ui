@@ -1,7 +1,7 @@
 {% extends "main/base.html" %}
 {% load django_bootstrap5 %}
 {% block title %}
-  Configuration Selection
+  Run Configuration Editor
 {% endblock title %}
 {% block content %}
   <div class="container mt-5"
@@ -10,7 +10,6 @@
        hx-select="#configuration-selection"
        hx-swap="outerHTML"
        hx-sync="#configuration-selection:replace">
-    <h1>Configuration Selection</h1>
     {% if selection_error %}<div class="alert alert-danger" role="alert">{{ selection_error }}</div>{% endif %}
     <div class="row mb-4">
       <div class="col-md-6">
@@ -41,8 +40,8 @@
                 hx-include="#daqVersion">
           <option value="">Select a session...</option>
           {% for session in sessions %}
-            <option value="{{ session }}"
-                    {% if session == selected_session %}selected{% endif %}>{{ session }}</option>
+            <option value="{{ session.value }}"
+                    {% if session.value == selected_session %}selected{% endif %}>{{ session.label }}</option>
           {% endfor %}
         </select>
       </div>
@@ -57,7 +56,7 @@
             <tbody>
               <tr>
                 <th scope="row">Apparatus</th>
-                <td>{{ selected_config.apparatus }}</td>
+                <td>{{ apparatus|default:"Not set" }}</td>
               </tr>
               <tr>
                 <th scope="row">DAQ Config</th>
@@ -82,7 +81,18 @@
       <div class="card-header">
         <h2 class="h5 mb-0">Configuration Editor</h2>
       </div>
-      <div class="card-body" id="configuration-editor"></div>
+      <div class="card-body" id="configuration-editor">
+        {% if selected_config %}
+          <label for="configuration-contents" class="form-label">Working copy (read-only until editing is added)</label>
+          <textarea id="configuration-contents"
+                    class="form-control font-monospace"
+                    rows="24"
+                    spellcheck="false"
+                    readonly>{{ selected_config.contents }}</textarea>
+        {% else %}
+          <p class="text-muted mb-0">Select a configuration to view its XML.</p>
+        {% endif %}
+      </div>
     </div>
   </div>
 {% endblock content %}
