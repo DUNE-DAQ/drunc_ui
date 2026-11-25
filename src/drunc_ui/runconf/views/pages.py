@@ -1,24 +1,31 @@
 """View functions for runconf pages."""
 
 import json
+from typing import Any
 
 from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, QueryDict
 from django.shortcuts import render
+from django.views.decorators.http import require_POST
 
-from drunc_ui.runconf.configuration import get_production_config, list_production_configs
+from drunc_ui.runconf.configuration import (
+    create_run_config,
+    get_production_config,
+    list_production_configs,
+)
+
+TEMPLATE = "runconf/config_view.html"
 
 
-@login_required
-def config_view(request: HttpRequest) -> HttpResponse:
-    """View that renders the configuration selection and display page."""
+def _selection_context(params: QueryDict) -> dict[str, Any]:
+    """Validate the version and session in ``params`` and build the page context."""
     listing = list_production_configs()
     daq_versions = [listing["daq_version"]]
     configs = {
         json.dumps([config["file"], config["session_id"]]): config for config in listing["configs"]
     }
-    selected_version = request.GET.get("daq_version", "")
-    selected_session = request.GET.get("session", "")
+    selected_version = params.get("daq_version", "")
+    selected_session = params.get("session", "")
     selection_error = ""
 
     if selected_version and selected_version not in daq_versions:
@@ -50,7 +57,7 @@ def config_view(request: HttpRequest) -> HttpResponse:
             "contents": working_copy["contents"],
         }
 
-    context = {
+    return {
         "apparatus": listing["apparatus"],
         "daq_versions": daq_versions,
         "sessions": sessions,
@@ -60,4 +67,27 @@ def config_view(request: HttpRequest) -> HttpResponse:
         "selection_error": selection_error,
     }
 
-    return render(request=request, template_name="runconf/config_view.html", context=context)
+
+@login_required
+def config_view(request: HttpRequest) -> HttpResponse:
+    """View that renders the configuration selection and display page."""
+    context = _selection_context(request.GET)
+    return render(request=request, template_name=TEMPLATE, context=context)
+
+
+@login_required
+@require_POST
+def create_config(request: HttpRequest) -> HttpResponse:
+    """Create a run configuration from the selected working copy."""
+    context = _selection_context(request.POST)
+    selected_config = context["selected_config"]
+    if selected_config is None:
+        if not context["selection_error"]:
+            context["selection_error"] = (
+                "Select a configuration before creating a run configuration."
+            )
+    else:
+        context["created_config"] = create_run_config(
+            selected_config["current_config_file"], selected_config["session_in_config"]
+        )
+    return render(request=request, template_name=TEMPLATE, context=context)

@@ -8,4 +8,5 @@ app_name = "runconf"
 
 urlpatterns = [
     path("", pages.config_view, name="config_view"),
+    path("create/", pages.create_config, name="create_config"),
 ]

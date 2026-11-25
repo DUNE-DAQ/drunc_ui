@@ -1,0 +1,59 @@
+<div class="modal fade"
+     id="helpModal"
+     tabindex="-1"
+     aria-labelledby="helpModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title h5" id="helpModalLabel">Welcome to the Run Configuration Editor</h2>
+        <button type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>To get started, select the following from the dropdown menus:</p>
+        <ol>
+          <li>The DAQ version you would like to use.</li>
+          <li>Once this is selected, the session you would like to access.</li>
+        </ol>
+        <p>The configuration loads as soon as a session is selected.</p>
+        <p class="text-muted fst-italic">
+          The include/exclude, map and adjustable attribute panels described below are not yet
+          available in the web UI.
+        </p>
+        <h3 class="h6">Include/Exclude Panel</h3>
+        <p>
+          These tabs contain everything in the detector that can be toggled on/off. To toggle an
+          object on/off press its button. If a parent of the object is switched off, the button
+          will not be pressable. To see these relationships you can use the map panels.
+        </p>
+        <h3 class="h6">Map Panels</h3>
+        <p>
+          The Configuration view is an overview of a large subset of objects within the detector.
+          It gives you a global view of what's currently included/excluded.
+        </p>
+        <p>
+          The System Maps give you maps of elements in the include/exclude panel. This can tell you
+          exactly what the panels are turning on and off.
+        </p>
+        <h3 class="h6">Adjustable Attributes</h3>
+        <p>
+          Adjustable attributes are things we want to set the value of before the run, for
+          example, trigger rates.
+        </p>
+        <h3 class="h6">Creating a Configuration</h3>
+        <p>
+          Once you're done modifying the configuration, press "Create Run Configuration". This
+          generates a configuration file and shows the command to use it with DRUNC.
+        </p>
+        <h3 class="h6">Resetting</h3>
+        <p class="mb-0">"Reset to Default" reloads the selected session, discarding any changes you have made.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

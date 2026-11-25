@@ -130,3 +130,36 @@ def get_production_config(file: str, session_id: str) -> ProductionConfigWorking
         "working_path": f"{_MOCK_WORKING_ROOT}/{file}",
         "contents": _MOCK_XML.format(session_id=session_id, apparatus=apparatus),
     }
+
+
+class CreatedRunConfig(TypedDict):
+    """Response of the ``create_run_config`` endpoint."""
+
+    session_id: str
+    source_path: str
+    path: str
+    drunc_command: str
+
+
+_MOCK_RUN_CONFIG_ROOT = "/mock/run-configs"
+_MOCK_PROCESS_MANAGER = "ssh-standalone"
+_MOCK_SESSION_NAME = "mock-session"
+
+
+def create_run_config(working_path: str, session_id: str) -> CreatedRunConfig:
+    """Return a mocked ``create_run_config`` response.
+
+    The SessionManager would do what runconf-ui's ``save_config`` does: commit
+    the working copy, write a consolidated ``<apparatus>_<time>.data.xml`` and
+    return its path along with the drunc command that boots it.
+    """
+    apparatus = session_id.removesuffix("-session")
+    path = f"{_MOCK_RUN_CONFIG_ROOT}/{apparatus}_20260101T000000.data.xml"
+    return {
+        "session_id": session_id,
+        "source_path": working_path,
+        "path": path,
+        "drunc_command": (
+            f"drunc-unified-shell {_MOCK_PROCESS_MANAGER} {path} {session_id} {_MOCK_SESSION_NAME}"
+        ),
+    }

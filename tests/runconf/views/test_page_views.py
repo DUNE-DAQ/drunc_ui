@@ -169,3 +169,98 @@ class TestConfigView(LoginRequiredTest):
             {"daq_version": "v1.0.0", "session": json.dumps(["first.data.xml", "shared"])},
         )
         assertContains(response, "<td>Not set</td>")
+
+    def test_options_disabled_without_config(self, auth_client: Client) -> None:
+        """Only Help is usable until a configuration is loaded."""
+        content = auth_client.get(self.endpoint, {"daq_version": "v1.0.0"}).content.decode()
+        assert "disabled" in _button(content, "create-run-config")
+        assert "disabled" in _button(content, "reset")
+        assert "disabled" not in _button(content, "help")
+
+    def test_options_enabled_with_config(self, auth_client: Client) -> None:
+        """Create and Reset become usable once a configuration is loaded."""
+        response = auth_client.get(self.endpoint, SELECTION)
+        content = response.content.decode()
+        for button_id in ("create-run-config", "help", "reset"):
+            assert "disabled" not in _button(content, button_id)
+
+    def test_reset_reloads_selection(self, auth_client: Client) -> None:
+        """Reset re-requests the page with the current version and session."""
+        content = auth_client.get(self.endpoint, SELECTION).content.decode()
+        reset = _button(content, "reset")
+        assert f'hx-get="{self.endpoint}"' in reset
+        assert 'hx-include="#daqVersion, #daqSession"' in reset
+
+    def test_modals_rendered(self, auth_client: Client) -> None:
+        """Render the help modal and the create confirmation modal."""
+        content = auth_client.get(self.endpoint).content.decode()
+        assert 'id="createConfigModal"' in content
+        assert 'id="helpModal"' in content
+        assert "Welcome to the Run Configuration Editor" in content
+        confirm = _button(content, "confirm-create-run-config")
+        assert f'hx-post="{reverse("runconf:create_config")}"' in confirm
+        assert "X-CSRFToken" in confirm
+
+
+SELECTION = {"daq_version": "v1.0.0", "session": json.dumps(["second.data.xml", "shared"])}
+
+
+def _button(content: str, button_id: str) -> str:
+    """Return the opening tag attributes of the button with ``button_id``."""
+    return content.split(f'id="{button_id}"', 1)[1].split(">", 1)[0]
+
+
+@pytest.fixture
+def created(mocker):
+    """Mock create_run_config."""
+    return mocker.patch(
+        "drunc_ui.runconf.views.pages.create_run_config",
+        return_value={
+            "session_id": "shared",
+            "source_path": "/work/second.data.xml",
+            "path": "/run/np02_now.data.xml",
+            "drunc_command": "drunc-unified-shell ssh-standalone /run/np02_now.data.xml shared x",
+        },
+    )
+
+
+class TestCreateConfigView(LoginRequiredTest):
+    """Test the run configuration creation view."""
+
+    endpoint = reverse("runconf:create_config")
+
+    def test_get_not_allowed(self, auth_client: Client) -> None:
+        """Only POST creates a run configuration."""
+        response = auth_client.get(self.endpoint, SELECTION)
+        assert response.status_code == HTTPStatus.METHOD_NOT_ALLOWED
+
+    def test_create(self, auth_client: Client, created) -> None:
+        """Create from the selected working copy and show the result."""
+        response = auth_client.post(self.endpoint, SELECTION)
+        created.assert_called_once_with("/work/second.data.xml", "shared")
+        assertTemplateUsed(response, "runconf/config_view.html")
+        assert response.context["selected_session"] == SELECTION["session"]
+        assertContains(response, 'id="created-config"')
+        assertContains(response, "/run/np02_now.data.xml")
+        assertContains(response, "drunc-unified-shell ssh-standalone")
+
+    @pytest.mark.parametrize(
+        ("selection", "error"),
+        [
+            ({}, "Select a configuration before creating a run configuration."),
+            ({"daq_version": "v1.0.0"}, "Select a configuration before creating"),
+            ({"daq_version": "invalid"}, "Select an available DAQ version."),
+            (
+                {"daq_version": "v1.0.0", "session": "invalid"},
+                "Select an available session for this DAQ version.",
+            ),
+        ],
+    )
+    def test_invalid_selection(
+        self, auth_client: Client, created, selection: dict[str, str], error: str
+    ) -> None:
+        """Refuse to create without a valid loaded configuration."""
+        response = auth_client.post(self.endpoint, selection)
+        created.assert_not_called()
+        assertContains(response, error)
+        assert 'id="created-config"' not in response.content.decode()
