@@ -54,7 +54,7 @@ def _selection_context(params: QueryDict) -> dict[str, Any]:
             "daq_config": working_copy["path"],
             "current_config_file": working_copy["working_path"],
             "session_in_config": working_copy["session_id"],
-            "contents": working_copy["contents"],
+            "tree": json.dumps(working_copy["tree"], indent=2, ensure_ascii=False),
         }
 
     return {

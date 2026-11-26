@@ -1,5 +1,6 @@
 """Tests for runconf page views."""
 
+import html
 import json
 from http import HTTPStatus
 
@@ -39,7 +40,22 @@ def config_copy(mocker):
             "session_id": session_id,
             "path": f"/prod/{file}",
             "working_path": f"/work/{file}",
-            "contents": '<oks-data>café</oks-data></textarea><script>alert("x")</script>',
+            "contents": "<oks-data/>",
+            "tree": {
+                "id": session_id,
+                "class": "Session",
+                "state": "INCLUDED",
+                "relations": {
+                    "segment": [
+                        {
+                            "id": 'café</textarea><script>alert("x")</script>',
+                            "class": "Segment",
+                            "state": "EXCLUDED",
+                            "relations": {},
+                        }
+                    ]
+                },
+            },
         }
 
     return mocker.patch("drunc_ui.runconf.views.pages.get_production_config", side_effect=get_copy)
@@ -82,8 +98,8 @@ class TestConfigView(LoginRequiredTest):
         assertContains(response, "Loaded Configuration")
         assertContains(response, "Configuration Editor")
         assertContains(response, "No configuration loaded")
-        assertContains(response, "Select a configuration to view its XML.")
-        assert 'id="configuration-contents"' not in response.content.decode()
+        assertContains(response, "Select a configuration to view its tree.")
+        assert 'id="configuration-tree"' not in response.content.decode()
         content = response.content.decode()
         session_select = content.split('id="daqSession"', 1)[1].split(">", 1)[0]
         assert "disabled" in session_select
@@ -141,7 +157,7 @@ class TestConfigView(LoginRequiredTest):
         assertContains(response, "No configuration loaded")
 
     def test_load_selection(self, auth_client: Client, config_copy) -> None:
-        """Request the selected file and session, and show the working copy read-only."""
+        """Request the selected file and session, and show its tree as JSON read-only."""
         key = json.dumps(["second.data.xml", "shared"])
         response = auth_client.get(self.endpoint, {"daq_version": "v1.0.0", "session": key})
         config_copy.assert_called_once_with("second.data.xml", "shared")
@@ -150,11 +166,16 @@ class TestConfigView(LoginRequiredTest):
         assertContains(response, "<td>np02</td>")
         assertContains(response, "/prod/second.data.xml", count=1)
         assertContains(response, "/work/second.data.xml", count=1)
-        assertContains(response, "&lt;oks-data&gt;café&lt;/oks-data&gt;")
-        assertContains(response, "&lt;/textarea&gt;&lt;script&gt;")
-        assert '<script>alert("x")</script>' not in response.content.decode()
-        textarea = response.content.decode().split('id="configuration-contents"', 1)[1]
+        textarea = response.content.decode().split('id="configuration-tree"', 1)[1]
         assert "readonly" in textarea.split(">", 1)[0]
+        tree = textarea.split(">", 1)[1].split("</textarea>", 1)[0]
+        assert (
+            json.loads(html.unescape(tree))
+            == config_copy.side_effect("second.data.xml", "shared")["tree"]
+        )
+        assert "&quot;state&quot;: &quot;EXCLUDED&quot;" in tree
+        assert "café&lt;/textarea&gt;&lt;script&gt;" in tree
+        assert "alert(" not in response.content.decode().replace(tree, "")
 
     def test_no_copy_without_selection(self, auth_client: Client, config_copy) -> None:
         """Only request a working copy once a session is selected."""
@@ -240,7 +261,12 @@ class TestCreateConfigView(LoginRequiredTest):
         created.assert_called_once_with("/work/second.data.xml", "shared")
         assertTemplateUsed(response, "runconf/config_view.html")
         assert response.context["selected_session"] == SELECTION["session"]
-        assertContains(response, 'id="created-config"')
+        modal = response.content.decode().split('id="createdConfigModal"', 1)[1]
+        assert "/work/second.data.xml" in modal
+        assert "bootstrap.Modal.getOrCreateInstance" in modal
+        content = response.content.decode()
+        # htmx only swaps #configuration-selection, so the popup must be inside it.
+        assert content.index('id="createdConfigModal"') < content.index('id="createConfigModal"')
         assertContains(response, "/run/np02_now.data.xml")
         assertContains(response, "drunc-unified-shell ssh-standalone")
 
@@ -263,4 +289,4 @@ class TestCreateConfigView(LoginRequiredTest):
         response = auth_client.post(self.endpoint, selection)
         created.assert_not_called()
         assertContains(response, error)
-        assert 'id="created-config"' not in response.content.decode()
+        assert 'id="createdConfigModal"' not in response.content.decode()

@@ -12,107 +12,94 @@
        hx-sync="#configuration-selection:replace">
     {% if selection_error %}<div class="alert alert-danger" role="alert">{{ selection_error }}</div>{% endif %}
     {% if created_config %}
-      <div class="alert alert-success" role="alert" id="created-config">
-        <p class="mb-1">
-          Run configuration for <strong>{{ created_config.session_id }}</strong> created at
-          <code class="text-break">{{ created_config.path }}</code>
-        </p>
-        <p class="mb-1">Boot it with:</p>
-        <pre class="mb-0"><code>{{ created_config.drunc_command }}</code></pre>
-      </div>
+      {% include "runconf/partials/created_modal.html" %}
     {% endif %}
-    <div class="row">
-      <div class="col-lg-9">
-        <div class="row mb-4">
-          <div class="col-md-6">
-            <label for="daqVersion" class="form-label">DAQ Version</label>
-            <select class="form-select"
-                    id="daqVersion"
-                    name="daq_version"
-                    required
-                    hx-get="{% url 'runconf:config_view' %}"
-                    hx-trigger="change"
-                    onchange="document.getElementById('daqSession').value = ''; document.getElementById('daqSession').disabled = true;">
-              <option value="">Select a DAQ version...</option>
-              {% for version in daq_versions %}
-                <option value="{{ version }}"
-                        {% if version == selected_version %}selected{% endif %}>{{ version }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="col-md-6">
-            <label for="daqSession" class="form-label">DAQ Session</label>
-            <select class="form-select"
-                    id="daqSession"
-                    name="session"
-                    required
-                    {% if not selected_version %}disabled{% endif %}
-                    hx-get="{% url 'runconf:config_view' %}"
-                    hx-trigger="change"
-                    hx-include="#daqVersion">
-              <option value="">Select a session...</option>
-              {% for session in sessions %}
-                <option value="{{ session.value }}"
-                        {% if session.value == selected_session %}selected{% endif %}>{{ session.label }}</option>
-              {% endfor %}
-            </select>
-          </div>
-        </div>
-        <div class="card mb-4">
-          <div class="card-header">
-            <h2 class="h5 mb-0">Loaded Configuration</h2>
-          </div>
-          <div class="card-body" id="loaded-configuration" aria-live="polite">
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <label for="daqVersion" class="form-label">DAQ Version</label>
+        <select class="form-select"
+                id="daqVersion"
+                name="daq_version"
+                required
+                hx-get="{% url 'runconf:config_view' %}"
+                hx-trigger="change"
+                onchange="document.getElementById('daqSession').value = ''; document.getElementById('daqSession').disabled = true;">
+          <option value="">Select a DAQ version...</option>
+          {% for version in daq_versions %}
+            <option value="{{ version }}"
+                    {% if version == selected_version %}selected{% endif %}>{{ version }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label for="daqSession" class="form-label">DAQ Session</label>
+        <select class="form-select"
+                id="daqSession"
+                name="session"
+                required
+                {% if not selected_version %}disabled{% endif %}
+                hx-get="{% url 'runconf:config_view' %}"
+                hx-trigger="change"
+                hx-include="#daqVersion">
+          <option value="">Select a session...</option>
+          {% for session in sessions %}
+            <option value="{{ session.value }}"
+                    {% if session.value == selected_session %}selected{% endif %}>{{ session.label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="card mb-4">
+      <div class="card-header">
+        <h2 class="h5 mb-0">Loaded Configuration</h2>
+      </div>
+      <div class="card-body" id="loaded-configuration" aria-live="polite">
+        {% if selected_config %}
+          <table class="table table-sm mb-0">
+            <tbody>
+              <tr>
+                <th scope="row">Apparatus</th>
+                <td>{{ apparatus|default:"Not set" }}</td>
+              </tr>
+              <tr>
+                <th scope="row">DAQ Config</th>
+                <td class="text-break">{{ selected_config.daq_config }}</td>
+              </tr>
+              <tr>
+                <th scope="row">Current Config File</th>
+                <td class="text-break">{{ selected_config.current_config_file }}</td>
+              </tr>
+              <tr>
+                <th scope="row">Session in Config</th>
+                <td>{{ selected_config.session_in_config }}</td>
+              </tr>
+            </tbody>
+          </table>
+        {% else %}
+          <p class="text-muted mb-0">No configuration loaded</p>
+        {% endif %}
+      </div>
+    </div>
+    <div class="card" id="configuration-editor-card">
+      <div class="card-header">
+        <h2 class="h5 mb-0">Configuration Editor</h2>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-lg-9" id="configuration-editor">
             {% if selected_config %}
-              <table class="table table-sm mb-0">
-                <tbody>
-                  <tr>
-                    <th scope="row">Apparatus</th>
-                    <td>{{ apparatus|default:"Not set" }}</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">DAQ Config</th>
-                    <td class="text-break">{{ selected_config.daq_config }}</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Current Config File</th>
-                    <td class="text-break">{{ selected_config.current_config_file }}</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Session in Config</th>
-                    <td>{{ selected_config.session_in_config }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            {% else %}
-              <p class="text-muted mb-0">No configuration loaded</p>
-            {% endif %}
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header">
-            <h2 class="h5 mb-0">Configuration Editor</h2>
-          </div>
-          <div class="card-body" id="configuration-editor">
-            {% if selected_config %}
-              <label for="configuration-contents" class="form-label">Working copy (read-only until editing is added)</label>
-              <textarea id="configuration-contents"
+              <label for="configuration-tree" class="form-label">Configuration tree (read-only until editing is added)</label>
+              <textarea id="configuration-tree"
                         class="form-control font-monospace"
                         rows="24"
                         spellcheck="false"
-                        readonly>{{ selected_config.contents }}</textarea>
+                        readonly>{{ selected_config.tree }}</textarea>
             {% else %}
-              <p class="text-muted mb-0">Select a configuration to view its XML.</p>
+              <p class="text-muted mb-0">Select a configuration to view its tree.</p>
             {% endif %}
           </div>
-        </div>
-      </div>
-      <div class="col-lg-3 mt-4 mt-lg-0">
-        <div class="card" id="options-panel">
-          <div class="card-header">
-            <h2 class="h5 mb-0">Options</h2>
-          </div>
-          <div class="card-body d-grid gap-2">
+          <div class="col-lg-3 mt-4 mt-lg-0 d-grid gap-2 align-content-start"
+               id="options-panel">
             <button type="button"
                     class="btn btn-success"
                     id="create-run-config"

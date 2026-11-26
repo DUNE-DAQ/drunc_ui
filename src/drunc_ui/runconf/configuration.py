@@ -48,6 +48,21 @@ _MOCK_RESPONSE: ProductionConfigs = {
 }
 
 
+ConfigNode = TypedDict(
+    "ConfigNode",
+    {
+        "id": str,
+        "class": str,
+        "state": str,
+        "relations": dict[str, list["ConfigNode"]],
+    },
+)
+"""One object in the configuration tree, with the objects it relates to by relation name.
+
+``state`` is ``INCLUDED``, ``EXCLUDED`` or ``PARENT_EXCLUDED``, as computed by runconf-ui.
+"""
+
+
 class ProductionConfigWorkingCopy(TypedDict):
     """Response of the ``get_production_config`` endpoint."""
 
@@ -56,6 +71,7 @@ class ProductionConfigWorkingCopy(TypedDict):
     path: str
     working_path: str
     contents: str
+    tree: ConfigNode
 
 
 _MOCK_WORKING_ROOT = "/mock/working-copies"
@@ -99,6 +115,35 @@ _MOCK_XML = """<?xml version="1.0" encoding="ASCII"?>
 """
 
 
+def _mock_node(class_name: str, object_id: str) -> ConfigNode:
+    """Return an included tree node with no related objects."""
+    return {"id": object_id, "class": class_name, "state": "INCLUDED", "relations": {}}
+
+
+def _mock_tree(session_id: str, apparatus: str) -> ConfigNode:
+    """Return the configuration tree of ``_MOCK_XML``, rooted at its Session.
+
+    Relations are listed in the order they appear in the XML. Nothing is
+    excluded, because the Session has no ``excluded`` relation.
+    """
+    return {
+        "id": session_id,
+        "class": "Session",
+        "state": "INCLUDED",
+        "relations": {
+            "environment": [_mock_node("VariableSet", f"{apparatus}-common-env")],
+            "segment": [_mock_node("Segment", f"{apparatus}-root-segment")],
+            "infrastructure_applications": [
+                _mock_node("ConnectivityService", "local-connection-server")
+            ],
+            "detector_configuration": [
+                _mock_node("DetectorConfig", f"{apparatus}-detector-config")
+            ],
+            "opmon_uri": [_mock_node("OpMonURI", f"{apparatus}-opmon-uri")],
+        },
+    }
+
+
 def list_production_configs() -> ProductionConfigs:
     """Return a mocked ``list_production_configs`` response.
 
@@ -129,6 +174,7 @@ def get_production_config(file: str, session_id: str) -> ProductionConfigWorking
         **config,
         "working_path": f"{_MOCK_WORKING_ROOT}/{file}",
         "contents": _MOCK_XML.format(session_id=session_id, apparatus=apparatus),
+        "tree": _mock_tree(session_id, apparatus),
     }
 
 
