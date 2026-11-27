@@ -9,56 +9,49 @@ from django.test import Client
 from django.urls import reverse
 from pytest_django.asserts import assertContains, assertRedirects, assertTemplateUsed
 
+from drunc_ui.runconf.runconf_backend_placeholder import (
+    ConfigurationInfo,
+    MockCatalogue,
+    MockRunconfService,
+    RunconfServiceError,
+)
+
 from ...utils import LoginRequiredTest
 
-LISTING = {
-    "daq_version": "v1.0.0",
+CATALOGUE: MockCatalogue = {
     "apparatus": "np02",
-    "configs": [
-        {"file": "first.data.xml", "session_id": "shared", "path": "/prod/first.data.xml"},
-        {"file": "second.data.xml", "session_id": "shared", "path": "/prod/second.data.xml"},
-        {"file": "first.data.xml", "session_id": "another", "path": "/prod/first.data.xml"},
-    ],
+    "default_version": "v1.0.0",
+    "sessions": {"v1.0.0": ["first-session", "second-session", "another-session"]},
 }
+XSS_LABEL = 'café</textarea><script>alert("x")</script>'
+
+
+class _Service(MockRunconfService):
+    """The mock server, with an excluded entry whose label needs escaping."""
+
+    def get_configuration_info(self) -> ConfigurationInfo:
+        info = super().get_configuration_info()
+        if info["config_open"]:
+            info["config_tree"].append(
+                {
+                    "label": "segment",
+                    "children": [{"label": XSS_LABEL, "state": "EXCLUDED", "children": []}],
+                }
+            )
+        return info
 
 
 @pytest.fixture(autouse=True)
-def listing(mocker):
-    """Mock list_production_configs."""
-    return mocker.patch(
-        "drunc_ui.runconf.views.pages.list_production_configs", return_value=LISTING
-    )
+def services(mocker) -> list[MockRunconfService]:
+    """Serve each request from a new mock server, and keep them for inspection."""
+    created: list[MockRunconfService] = []
 
+    def new_service(catalogue: MockCatalogue = CATALOGUE) -> MockRunconfService:
+        created.append(_Service(catalogue))
+        return created[-1]
 
-@pytest.fixture(autouse=True)
-def config_copy(mocker):
-    """Mock get_production_config."""
-
-    def get_copy(file, session_id):
-        return {
-            "file": file,
-            "session_id": session_id,
-            "path": f"/prod/{file}",
-            "working_path": f"/work/{file}",
-            "contents": "<oks-data/>",
-            "tree": {
-                "id": session_id,
-                "class": "Session",
-                "state": "INCLUDED",
-                "relations": {
-                    "segment": [
-                        {
-                            "id": 'café</textarea><script>alert("x")</script>',
-                            "class": "Segment",
-                            "state": "EXCLUDED",
-                            "relations": {},
-                        }
-                    ]
-                },
-            },
-        }
-
-    return mocker.patch("drunc_ui.runconf.views.pages.get_production_config", side_effect=get_copy)
+    mocker.patch("drunc_ui.runconf.views.pages.get_runconf_service", side_effect=new_service)
+    return created
 
 
 class TestConfigView(LoginRequiredTest):
@@ -128,20 +121,20 @@ class TestConfigView(LoginRequiredTest):
         session_select = content.split('id="daqSession"', 1)[1].split(">", 1)[0]
         assert "disabled" not in session_select
         assertContains(response, "No configuration loaded")
-        assertContains(response, "shared (first.data.xml)")
-        assertContains(response, "shared (second.data.xml)")
-        assert len({session["value"] for session in response.context["sessions"]}) == 3
+        assert response.context["sessions"] == CATALOGUE["sessions"][version]
+        assertContains(response, '<option value="second-session"')
 
     @pytest.mark.parametrize(
         ("selection", "error"),
         [
-            ({"session": "np02-session"}, "Select a DAQ version before selecting a session."),
+            ({"session": "first-session"}, "Select a DAQ version before selecting a session."),
             ({"daq_version": "invalid"}, "Select an available DAQ version."),
             (
-                {
-                    "daq_version": "v1.0.0",
-                    "session": json.dumps(["appSession.data.xml", "test-session"]),
-                },
+                {"daq_version": "invalid", "session": "first-session"},
+                "Select an available DAQ version.",
+            ),
+            (
+                {"daq_version": "v1.0.0", "session": json.dumps(["x.data.xml", "first-session"])},
                 "Select an available session for this DAQ version.",
             ),
             (
@@ -167,39 +160,38 @@ class TestConfigView(LoginRequiredTest):
         assert response.context["selection_error"] == ""
         assertContains(response, "No configuration loaded")
 
-    def test_load_selection(self, auth_client: Client, config_copy) -> None:
-        """Request the selected file and session, and show its tree as JSON read-only."""
-        key = json.dumps(["second.data.xml", "shared"])
-        response = auth_client.get(self.endpoint, {"daq_version": "v1.0.0", "session": key})
-        config_copy.assert_called_once_with("second.data.xml", "shared")
-        assert response.context["selected_session"] == key
+    def test_load_selection(self, auth_client: Client, services) -> None:
+        """Open the selected session, and show its configuration tree as JSON read-only."""
+        response = auth_client.get(self.endpoint, SELECTION)
+        assert response.context["selected_session"] == "second-session"
         assertContains(response, '<th scope="row">Apparatus</th>')
         assertContains(response, "<td>np02</td>")
-        assertContains(response, "/prod/second.data.xml", count=1)
-        assertContains(response, "/work/second.data.xml", count=1)
+        assertContains(response, "/mock/prod-configs/second-session.data.xml", count=1)
+        assertContains(response, "/mock/working-copies/second-session.data.xml", count=1)
+        assertContains(response, "<td>second-session</td>")
         textarea = response.content.decode().split('id="configuration-tree"', 1)[1]
         assert "readonly" in textarea.split(">", 1)[0]
         tree = textarea.split(">", 1)[1].split("</textarea>", 1)[0]
         assert (
-            json.loads(html.unescape(tree))
-            == config_copy.side_effect("second.data.xml", "shared")["tree"]
+            json.loads(html.unescape(tree)) == services[-1].get_configuration_info()["config_tree"]
         )
+        assert "&quot;label&quot;: &quot;second-root-segment@Segment&quot;" in tree
         assert "&quot;state&quot;: &quot;EXCLUDED&quot;" in tree
         assert "café&lt;/textarea&gt;&lt;script&gt;" in tree
         assert "alert(" not in response.content.decode().replace(tree, "")
 
-    def test_no_copy_without_selection(self, auth_client: Client, config_copy) -> None:
-        """Only request a working copy once a session is selected."""
+    def test_no_open_without_selection(self, auth_client: Client, services) -> None:
+        """Only open a configuration once a session is selected."""
         auth_client.get(self.endpoint, {"daq_version": "v1.0.0"})
-        config_copy.assert_not_called()
+        assert services[-1].get_configuration_info()["config_open"] is False
 
-    def test_missing_apparatus(self, auth_client: Client, listing) -> None:
+    def test_missing_apparatus(self, auth_client: Client, services, mocker) -> None:
         """Say when no apparatus is reported."""
-        listing.return_value = {**LISTING, "apparatus": ""}
-        response = auth_client.get(
-            self.endpoint,
-            {"daq_version": "v1.0.0", "session": json.dumps(["first.data.xml", "shared"])},
+        mocker.patch(
+            "drunc_ui.runconf.views.pages.get_runconf_service",
+            side_effect=lambda: _Service({**CATALOGUE, "apparatus": ""}),
         )
+        response = auth_client.get(self.endpoint, SELECTION)
         assertContains(response, "<td>Not set</td>")
 
     def test_options_disabled_without_config(self, auth_client: Client) -> None:
@@ -234,26 +226,12 @@ class TestConfigView(LoginRequiredTest):
         assert "X-CSRFToken" in confirm
 
 
-SELECTION = {"daq_version": "v1.0.0", "session": json.dumps(["second.data.xml", "shared"])}
+SELECTION = {"daq_version": "v1.0.0", "session": "second-session"}
 
 
 def _button(content: str, button_id: str) -> str:
     """Return the opening tag attributes of the button with ``button_id``."""
     return content.split(f'id="{button_id}"', 1)[1].split(">", 1)[0]
-
-
-@pytest.fixture
-def created(mocker):
-    """Mock create_run_config."""
-    return mocker.patch(
-        "drunc_ui.runconf.views.pages.create_run_config",
-        return_value={
-            "session_id": "shared",
-            "source_path": "/work/second.data.xml",
-            "path": "/run/np02_now.data.xml",
-            "drunc_command": "drunc-unified-shell ssh-standalone /run/np02_now.data.xml shared x",
-        },
-    )
 
 
 class TestCreateConfigView(LoginRequiredTest):
@@ -266,20 +244,46 @@ class TestCreateConfigView(LoginRequiredTest):
         response = auth_client.get(self.endpoint, SELECTION)
         assert response.status_code == HTTPStatus.METHOD_NOT_ALLOWED
 
-    def test_create(self, auth_client: Client, created) -> None:
-        """Create from the selected working copy and show the result."""
+    def test_create(self, auth_client: Client, services) -> None:
+        """Create from the opened configuration and show the result."""
         response = auth_client.post(self.endpoint, SELECTION)
-        created.assert_called_once_with("/work/second.data.xml", "shared")
         assertTemplateUsed(response, "runconf/config_view.html")
         assert response.context["selected_session"] == SELECTION["session"]
+        # CREATE_QUIT shuts the server down.
+        with pytest.raises(RunconfServiceError):
+            services[-1].initialise()
+        path = "/mock/run-configs/second_20260101T000000.data.xml"
+        assert response.context["created_config"] == {
+            "session_id": "second-session",
+            "source_path": "/mock/working-copies/second-session.data.xml",
+            "path": path,
+            "drunc_command": (
+                f"drunc-unified-shell ssh-standalone {path} second-session mock-session"
+            ),
+        }
         modal = response.content.decode().split('id="createdConfigModal"', 1)[1]
-        assert "/work/second.data.xml" in modal
+        assert "/mock/working-copies/second-session.data.xml" in modal
         assert "bootstrap.Modal.getOrCreateInstance" in modal
         content = response.content.decode()
         # htmx only swaps #configuration-selection, so the popup must be inside it.
         assert content.index('id="createdConfigModal"') < content.index('id="createConfigModal"')
-        assertContains(response, "/run/np02_now.data.xml")
+        assertContains(response, path)
         assertContains(response, "drunc-unified-shell ssh-standalone")
+
+    def test_create_failed(self, auth_client: Client, mocker) -> None:
+        """Show the server's message when it fails to create the configuration."""
+        mocker.patch.object(
+            MockRunconfService,
+            "runconf_command",
+            return_value={
+                "response": {"outcome": "FAIL", "message": "CREATE_QUIT failed"},
+                "command": "CREATE_QUIT",
+            },
+        )
+        response = auth_client.post(self.endpoint, SELECTION)
+        assertContains(response, "CREATE_QUIT failed")
+        assert "created_config" not in response.context
+        assert 'id="createdConfigModal"' not in response.content.decode()
 
     @pytest.mark.parametrize(
         ("selection", "error"),
@@ -294,10 +298,10 @@ class TestCreateConfigView(LoginRequiredTest):
         ],
     )
     def test_invalid_selection(
-        self, auth_client: Client, created, selection: dict[str, str], error: str
+        self, auth_client: Client, services, selection: dict[str, str], error: str
     ) -> None:
         """Refuse to create without a valid loaded configuration."""
         response = auth_client.post(self.endpoint, selection)
-        created.assert_not_called()
+        services[-1].initialise()  # Still running, so CREATE_QUIT wasn't sent.
         assertContains(response, error)
         assert 'id="createdConfigModal"' not in response.content.decode()

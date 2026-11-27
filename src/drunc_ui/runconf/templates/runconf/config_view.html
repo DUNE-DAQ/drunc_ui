@@ -46,8 +46,8 @@
                 hx-include="#daqVersion">
           <option value="">Select a session...</option>
           {% for session in sessions %}
-            <option value="{{ session.value }}"
-                    {% if session.value == selected_session %}selected{% endif %}>{{ session.label }}</option>
+            <option value="{{ session }}"
+                    {% if session == selected_session %}selected{% endif %}>{{ session }}</option>
           {% endfor %}
         </select>
       </div>
