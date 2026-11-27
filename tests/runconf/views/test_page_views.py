@@ -105,6 +105,17 @@ class TestConfigView(LoginRequiredTest):
         assert "disabled" in session_select
         assert "required" in session_select
 
+    def test_selects_not_restored_by_browser(self, auth_client: Client) -> None:
+        """Stop browsers restoring stale selections the server didn't render."""
+        content = auth_client.get(self.endpoint, {"daq_version": "v1.0.0"}).content.decode()
+        version_select = content.split('id="daqVersion"', 1)[1].split(">", 1)[0]
+        session_select = content.split('id="daqSession"', 1)[1].split(">", 1)[0]
+        assert 'autocomplete="off"' in version_select
+        assert 'autocomplete="off"' in session_select
+        # If the shown version still differs from the rendered one, resync on load.
+        assert 'data-selected="v1.0.0"' in version_select
+        assert "load[this.value !== this.dataset.selected]" in version_select
+
     @pytest.mark.parametrize("version", ["v1.0.0"])
     def test_version_selection(self, auth_client: Client, version: str) -> None:
         """Populate version-specific sessions without loading a configuration."""

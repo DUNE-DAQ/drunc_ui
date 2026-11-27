@@ -21,8 +21,10 @@
                 id="daqVersion"
                 name="daq_version"
                 required
+                autocomplete="off"
+                data-selected="{{ selected_version }}"
                 hx-get="{% url 'runconf:config_view' %}"
-                hx-trigger="change"
+                hx-trigger="change, load[this.value !== this.dataset.selected]"
                 onchange="document.getElementById('daqSession').value = ''; document.getElementById('daqSession').disabled = true;">
           <option value="">Select a DAQ version...</option>
           {% for version in daq_versions %}
@@ -37,6 +39,7 @@
                 id="daqSession"
                 name="session"
                 required
+                autocomplete="off"
                 {% if not selected_version %}disabled{% endif %}
                 hx-get="{% url 'runconf:config_view' %}"
                 hx-trigger="change"
