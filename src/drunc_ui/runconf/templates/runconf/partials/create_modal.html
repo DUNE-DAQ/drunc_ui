@@ -1,0 +1,33 @@
+<div class="modal fade"
+     id="createConfigModal"
+     tabindex="-1"
+     aria-labelledby="createConfigModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title h5" id="createConfigModalLabel">Create Run Configuration?</h2>
+        <button type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="mb-0">This writes a run configuration from the loaded working copy.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button"
+                class="btn btn-success"
+                id="confirm-create-run-config"
+                data-bs-dismiss="modal"
+                hx-post="{% url 'runconf:create_config' %}"
+                hx-include="#daqVersion, #daqSession"
+                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                hx-target="#configuration-selection"
+                hx-select="#configuration-selection"
+                hx-swap="outerHTML">Create Run Configuration</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>

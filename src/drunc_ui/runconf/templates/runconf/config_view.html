@@ -11,6 +11,9 @@
        hx-swap="outerHTML"
        hx-sync="#configuration-selection:replace">
     {% if selection_error %}<div class="alert alert-danger" role="alert">{{ selection_error }}</div>{% endif %}
+    {% if created_config %}
+      {% include "runconf/partials/created_modal.html" %}
+    {% endif %}
     <div class="row mb-4">
       <div class="col-md-6">
         <label for="daqVersion" class="form-label">DAQ Version</label>
@@ -18,8 +21,10 @@
                 id="daqVersion"
                 name="daq_version"
                 required
+                autocomplete="off"
+                data-selected="{{ selected_version }}"
                 hx-get="{% url 'runconf:config_view' %}"
-                hx-trigger="change"
+                hx-trigger="change, load[this.value !== this.dataset.selected]"
                 onchange="document.getElementById('daqSession').value = ''; document.getElementById('daqSession').disabled = true;">
           <option value="">Select a DAQ version...</option>
           {% for version in daq_versions %}
@@ -34,14 +39,15 @@
                 id="daqSession"
                 name="session"
                 required
+                autocomplete="off"
                 {% if not selected_version %}disabled{% endif %}
                 hx-get="{% url 'runconf:config_view' %}"
                 hx-trigger="change"
                 hx-include="#daqVersion">
           <option value="">Select a session...</option>
           {% for session in sessions %}
-            <option value="{{ session.value }}"
-                    {% if session.value == selected_session %}selected{% endif %}>{{ session.label }}</option>
+            <option value="{{ session }}"
+                    {% if session == selected_session %}selected{% endif %}>{{ session }}</option>
           {% endfor %}
         </select>
       </div>
@@ -77,22 +83,48 @@
         {% endif %}
       </div>
     </div>
-    <div class="card">
+    <div class="card" id="configuration-editor-card">
       <div class="card-header">
         <h2 class="h5 mb-0">Configuration Editor</h2>
       </div>
-      <div class="card-body" id="configuration-editor">
-        {% if selected_config %}
-          <label for="configuration-contents" class="form-label">Working copy (read-only until editing is added)</label>
-          <textarea id="configuration-contents"
-                    class="form-control font-monospace"
-                    rows="24"
-                    spellcheck="false"
-                    readonly>{{ selected_config.contents }}</textarea>
-        {% else %}
-          <p class="text-muted mb-0">Select a configuration to view its XML.</p>
-        {% endif %}
+      <div class="card-body">
+        <div class="row">
+          <div class="col-lg-9" id="configuration-editor">
+            {% if selected_config %}
+              <label for="configuration-tree" class="form-label">Configuration tree (read-only until editing is added)</label>
+              <textarea id="configuration-tree"
+                        class="form-control font-monospace"
+                        rows="24"
+                        spellcheck="false"
+                        readonly>{{ selected_config.tree }}</textarea>
+            {% else %}
+              <p class="text-muted mb-0">Select a configuration to view its tree.</p>
+            {% endif %}
+          </div>
+          <div class="col-lg-3 mt-4 mt-lg-0 d-grid gap-2 align-content-start"
+               id="options-panel">
+            <button type="button"
+                    class="btn btn-success"
+                    id="create-run-config"
+                    data-bs-toggle="modal"
+                    data-bs-target="#createConfigModal"
+                    {% if not selected_config %}disabled{% endif %}>Create Run Configuration</button>
+            <button type="button"
+                    class="btn btn-primary"
+                    id="help"
+                    data-bs-toggle="modal"
+                    data-bs-target="#helpModal">Help</button>
+            <button type="button"
+                    class="btn btn-warning"
+                    id="reset"
+                    hx-get="{% url 'runconf:config_view' %}"
+                    hx-include="#daqVersion, #daqSession"
+                    {% if not selected_config %}disabled{% endif %}>Reset to Default</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
+  {% include "runconf/partials/create_modal.html" %}
+  {% include "runconf/partials/help_modal.html" %}
 {% endblock content %}

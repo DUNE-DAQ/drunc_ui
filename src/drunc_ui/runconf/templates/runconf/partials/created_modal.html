@@ -1,0 +1,55 @@
+<div class="modal fade"
+     id="createdConfigModal"
+     tabindex="-1"
+     aria-labelledby="createdConfigModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title h5" id="createdConfigModalLabel">Run Configuration Created</h2>
+        <button type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-sm">
+          <tbody>
+            <tr>
+              <th scope="row">Session</th>
+              <td>{{ created_config.session_id }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Created from</th>
+              <td class="text-break">{{ created_config.source_path }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Run configuration</th>
+              <td class="text-break">
+                <code>{{ created_config.path }}</code>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="mb-1">Boot it with:</p>
+        <pre class="mb-0"><code>{{ created_config.drunc_command }}</code></pre>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  (() => {
+    // Wait for the confirmation modal to finish closing, so the two modals'
+    // backdrops and body scroll locking don't interfere.
+    const show = () => bootstrap.Modal.getOrCreateInstance("#createdConfigModal").show();
+    const confirmModal = document.getElementById("createConfigModal");
+    if (confirmModal && confirmModal.style.display === "block") {
+      confirmModal.addEventListener("hidden.bs.modal", show, { once: true });
+    } else {
+      show();
+    }
+  })();
+</script>
